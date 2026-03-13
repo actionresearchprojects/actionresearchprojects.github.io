@@ -1,20 +1,16 @@
 /*
- * Responsive fixes for Framer-generated layouts.
- * Prevents overflow without altering Framer's layout system.
+ * Scaling fixes for the 1440px locked layout.
+ * fluid-scaling.js handles zoom; this CSS ensures
+ * nothing clips during the scaling.
  */
 
-/* Prevent horizontal scrollbar from fixed-width layouts */
-html, body {
-  overflow-x: hidden;
-  max-width: 100vw;
-}
-
-#main {
-  max-width: 100vw;
+html {
   overflow-x: hidden;
 }
 
-/* Make iframes responsive within their containers */
-iframe {
-  max-width: 100% !important;
+/* Let the Framer container expand naturally when zoomed */
+[data-framer-root] > div {
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 100vh !important;
 }
