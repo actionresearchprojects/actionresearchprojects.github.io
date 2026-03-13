@@ -444,6 +444,7 @@
           font-weight: 300;
           border-radius: 10px;
           white-space: nowrap;
+          text-align: center;
           transition: background 0.2s;
         }
         #dots-menu-overlay a:hover {
@@ -497,9 +498,11 @@
 
   function positionOverlay() {
     var r = dotsBtn.getBoundingClientRect();
-    overlay.style.left = r.left + 'px';
-    overlay.style.top = (r.bottom + 8) + 'px';
     overlay.style.position = 'fixed';
+    overlay.style.top = (r.bottom + 8) + 'px';
+    // Right edge of overlay aligns with right edge of dots button
+    overlay.style.right = (window.innerWidth - r.right) + 'px';
+    overlay.style.left = 'auto';
   }
 
   dotsBtn.addEventListener('click', function(e) {
