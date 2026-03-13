@@ -1,0 +1,82 @@
+[
+{
+  "id": "house5",
+  "type": "Project",
+  "title": "House for 10 people",
+  "link": "https://passivehouseplus.co.uk/magazine/feature/tanzanian-children-s-eco-village-aims-to-inspire-low-carbon-example",
+  "address": "iHelp Eco Village, Mkuranga, Tanzania",
+  "zones": [
+    {
+      "code": "Aw",
+      "text": "Tropical savanna (Aw)",
+      "colour": "#45aafa"
+    }
+  ],
+  "latitude": -7.038843170281359,
+  "longitude": 39.2885198994216,
+  "radiusKm": 5,
+  "gdpr": true,
+  "imageUrl": "https://i.postimg.cc/CMHhhq6b/whatsapp-image-2024-09-02-at-17-27-08.jpg",
+  "colour": "#b80d0d"
+},
+{
+  "id": "cevtestunit",
+  "type": "Project",
+  "title": "Experimental Test Unit at Children's Ecovillage",
+  "link": "https://passivehouseplus.co.uk/magazine/feature/tanzanian-children-s-eco-village-aims-to-inspire-low-carbon-example ",
+  "address": "Mkuranga, Tanzania",
+  "zones": [
+    {
+      "code": "Aw",
+      "text": "Tropical savanna (Aw)",
+      "colour": "#45aafa"
+    }
+  ],
+  "latitude": -7.057561706015876,
+  "longitude": 39.28331899984988,
+  "radiusKm": 5,
+  "gdpr": true,
+  "imageUrl": "https://i.postimg.cc/bJ5sWnq7/66a54350e94d9d93612885188af705a6-XL-2.jpg",
+  "colour": "#b80d0d"
+},
+{
+  "id": "deshhouses",
+  "type": "Project",
+  "title": "Desh Houses : Twin Passive Solar Courtyard Houses",
+  "link": "https://actionresearchprojects.net/reflections/shely-begum-desh-houses",
+  "address": "Bangladesh",
+  "zones": [
+    {
+      "code": "Cwa",
+      "text": "Monsoon-influenced humid subtropical (Cwa)",
+      "colour": "#96ff96"
+    }
+  ],
+  "latitude": 24.58159168275369,
+  "longitude": 91.92809654585386,
+  "radiusKm": 5,
+  "gdpr": true,
+  "imageUrl": "https://i.postimg.cc/vHywnPHy/2.jpg",
+  "colour": "#b80d0d"
+},
+{
+  "id": "refit_testcells",
+  "type": "Project",
+  "title": "REFIT Experimental buildings",
+  "link": "https://www.thebritishacademy.ac.uk/projects/urban-well-being-reducing-impact-extreme-heat-improve-cities/",
+  "address": "University for Development Studies, Nyankpala Campus, Tamale, Ghana",
+  "zones": [
+    {
+      "code": "Aw",
+      "text": "Tropical savanna (Aw)",
+      "colour": "#45aafa"
+    }
+  ],
+  "latitude": 9.412444,
+  "longitude": -0.980861,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://i.postimg.cc/QCycXgBs/PXL-20220611-112628242.jpg",
+  "colour": "#b80d0d"
+}
+]

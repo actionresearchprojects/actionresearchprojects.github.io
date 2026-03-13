@@ -1,0 +1,21 @@
+[
+{
+  "id": "tanzania_kisemvule",
+  "title": "Kisemvule Weather Station",
+  "link": "https://actionresearchprojects.net/weather-stations/tanzania-kisemvule",
+  "address": "Tanzania, Kisemvule, altitude 81.6m",
+  "zones": [
+    {
+      "code": "Aw",
+      "text": "Tropical savanna (Aw)",
+      "colour": "#45aafa"
+    }
+  ],
+  "latitude": -7.047387,
+  "longitude": 39.291994,
+  "radiusKm": 5,
+  "gdpr": true,
+  "imageUrl": "https://i.postimg.cc/ryD6ZXV6/IMG-6672.jpg",
+  "colour": "#006400"
+}
+]

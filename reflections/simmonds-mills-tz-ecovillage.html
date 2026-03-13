@@ -230,7 +230,52 @@
     }
   </style>
 
-  <link rel="stylesheet" href="../fluid-scaling.css"><link rel="stylesheet" href="../orientation-lock.css"></head><body><div id="orientation-overlay" class="force-landscape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32z"></path><path d="M7.52 21.48C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.33 1.32z"></path><path d="M16 9V5l-6 6 6 6v-4c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3z"></path></svg><p>Please rotate your device to landscape mode</p></div><main>
+  <link rel="stylesheet" href="../fluid-scaling.css"><link rel="stylesheet" href="../orientation-lock.css"><style id="dots-menu-style">
+        #dots-menu-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          right: 0;
+          width: 320px;
+          height: auto;
+          max-height: 90vh;
+          background: #000;
+          border-radius: 0 0 0 18px;
+          box-shadow: -3px 3px 12px rgba(0,0,0,0.5);
+          z-index: 9999;
+          padding: 20px;
+          flex-direction: column;
+          gap: 8px;
+          overflow-y: auto;
+        }
+        #dots-menu-overlay.open {
+          display: flex;
+        }
+        #dots-menu-overlay a {
+          display: block;
+          padding: 14px 18px;
+          color: #fff;
+          text-decoration: none;
+          font-family: "Ubuntu", sans-serif;
+          font-size: 22px;
+          font-weight: 300;
+          border-radius: 10px;
+          transition: background 0.2s;
+        }
+        #dots-menu-overlay a:hover {
+          background: rgba(255,255,255,0.12);
+        }
+        #dots-menu-overlay a.support-link {
+          background: #ff4a4a;
+          font-weight: 700;
+          font-size: 18px;
+          text-align: center;
+          margin-top: 8px;
+        }
+        #dots-menu-overlay a.support-link:hover {
+          background: #e03e3e;
+        }
+      </style></head><body><div id="orientation-overlay" class="force-landscape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32z"></path><path d="M7.52 21.48C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.33 1.32z"></path><path d="M16 9V5l-6 6 6 6v-4c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3z"></path></svg><p>Please rotate your device to landscape mode</p></div><main>
     <div class="logo">
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="21" fill="currentColor" class="framer-logo">
         <path d="M 14 0 L 14 7 L 7 7 L 0 0 Z M 14 14 L 7 14 L 7 21 L 0 14 L 0 7 L 7 7 Z"></path>
@@ -240,7 +285,53 @@
     <div class="description">
       The page you are looking for does not exist or may have been moved.
     </div>
-    <a href="/index.html" role="button" class="btn--back">Back to Home</a>
+    <a href="/" role="button" class="btn--back">Back to Home</a>
   </main>
 
-<script src="../fluid-scaling.js"></script></body></html>
+<script src="../fluid-scaling.js"></script><div id="dots-menu-overlay">
+        <a href="/">Home</a>
+        <a href="/cool-buildings-guide">Cool Buildings Guide</a>
+        <a href="/map">Map</a>
+        <a href="/reflections">Reflections</a>
+        <a href="/people">People</a>
+        <a href="/science">Science</a>
+        <a href="/projects">Projects</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a class="support-link" href="/support" target="_blank">Support ARC</a>
+      </div><script id="dots-menu-script">
+(function() {
+  // Find the three-dots element: a div with tabindex="0" containing "…"
+  var dots = document.querySelectorAll('div[tabindex="0"]');
+  var dotsBtn = null;
+  for (var i = 0; i < dots.length; i++) {
+    if (dots[i].textContent.trim() === '…' || dots[i].textContent.trim() === '...') {
+      dotsBtn = dots[i];
+      break;
+    }
+  }
+  if (!dotsBtn) return;
+
+  var overlay = document.getElementById('dots-menu-overlay');
+  if (!overlay) return;
+
+  dotsBtn.style.cursor = 'pointer';
+
+  dotsBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    overlay.classList.toggle('open');
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!overlay.contains(e.target) && e.target !== dotsBtn && !dotsBtn.contains(e.target)) {
+      overlay.classList.remove('open');
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') overlay.classList.remove('open');
+  });
+})();
+</script></body></html>
