@@ -712,24 +712,24 @@
   var overlay = document.getElementById('dots-menu-overlay');
   if (!overlay) return;
 
-  // Place the overlay inside the same positioned parent so it sits relative to the dots
-  dotsBtn.parentNode.appendChild(overlay);
   dotsBtn.style.cursor = 'pointer';
+  dotsBtn.style.position = 'relative';
+  dotsBtn.style.zIndex = '9998';
 
   function positionOverlay() {
     var r = dotsBtn.getBoundingClientRect();
-    overlay.style.position = 'fixed';
-    overlay.style.top = (r.bottom + 8) + 'px';
-    // Right edge of overlay aligns with right edge of dots button
-    overlay.style.right = (window.innerWidth - r.right) + 'px';
+    var zoom = parseFloat(document.body.style.zoom) || 1;
+    overlay.style.top = ((r.bottom / zoom) + 8) + 'px';
+    overlay.style.right = ((window.innerWidth / zoom - r.right / zoom)) + 'px';
     overlay.style.left = 'auto';
   }
 
+  // Use capturing phase to ensure we get the click even if children intercept
   dotsBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     overlay.classList.toggle('open');
     if (overlay.classList.contains('open')) positionOverlay();
-  });
+  }, true);
 
   document.addEventListener('click', function(e) {
     if (!overlay.contains(e.target) && e.target !== dotsBtn && !dotsBtn.contains(e.target)) {
