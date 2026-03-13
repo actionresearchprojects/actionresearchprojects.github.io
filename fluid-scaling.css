@@ -1,71 +1,17 @@
 /*
  * Fluid scaling for Framer-generated layouts.
  *
- * Framer uses fixed pixel widths at each breakpoint. This stylesheet
- * applies viewport-relative zoom so the layout scales smoothly at
- * ANY viewport width, instead of snapping between fixed sizes.
- *
- * How it works:
- *   zoom = viewportWidth / designWidth
- *
- *   At the exact design width, zoom = 1 (no change).
- *   Below the design width, zoom < 1 (scales down to fit).
- *   Above the design width, zoom > 1 (scales up to fill).
- *
- * The existing Framer CSS is completely untouched — this only adds
- * a proportional scale factor on top.
+ * The JS in fluid-scaling.js handles zoom-based scaling.
+ * This CSS handles overflow, iframe responsiveness, and
+ * text scaling that zoom alone can't fix.
  */
 
-/* ── Mobile: designed at 640px ──────────────────────────────────── */
-@media (max-width: 895.98px) {
-  #main {
-    zoom: calc(100vw / 640);
-  }
-}
-
-/* ── Small tablet: designed at 896px ────────────────────────────── */
-@media (min-width: 896px) and (max-width: 1024.98px) {
-  #main {
-    zoom: calc(100vw / 896);
-  }
-}
-
-/* ── Tablet/small laptop: designed at 1025px ────────────────────── */
-@media (min-width: 1025px) and (max-width: 1365.98px) {
-  #main {
-    zoom: calc(100vw / 1025);
-  }
-}
-
-/* ── Laptop: designed at 1366px ─────────────────────────────────── */
-@media (min-width: 1366px) and (max-width: 1439.98px) {
-  #main {
-    zoom: calc(100vw / 1366);
-  }
-}
-
-/* ── Desktop: designed at 1440px ────────────────────────────────── */
-@media (min-width: 1440px) and (max-width: 1919.98px) {
-  #main {
-    zoom: calc(100vw / 1440);
-  }
-}
-
-/* ── Large desktop: designed at 1920px ──────────────────────────── */
-@media (min-width: 1920px) and (max-width: 2559.98px) {
-  #main {
-    zoom: calc(100vw / 1920);
-  }
-}
-
-/* ── Ultra-wide: designed at 2560px ─────────────────────────────── */
-@media (min-width: 2560px) {
-  #main {
-    zoom: calc(100vw / 2560);
-  }
-}
-
-/* Prevent horizontal scrollbar from rounding errors */
+/* Prevent horizontal scrollbar */
 html, body {
   overflow-x: hidden;
+}
+
+/* Make all iframes fill their container width */
+iframe {
+  max-width: 100% !important;
 }
