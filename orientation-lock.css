@@ -1,0 +1,52 @@
+/*
+ * Orientation lock overlay.
+ * Forces landscape on all pages except support.html (which forces portrait).
+ * Shows a semi-opaque overlay with a rotate icon when in the wrong orientation.
+ */
+
+#orientation-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 999999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  text-align: center;
+  padding: 40px;
+}
+
+#orientation-overlay svg {
+  width: 80px;
+  height: 80px;
+  fill: white;
+}
+
+#orientation-overlay p {
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.4;
+}
+
+/* Default: force landscape (show overlay in portrait) */
+@media (orientation: portrait) and (max-width: 1024px) {
+  #orientation-overlay.force-landscape {
+    display: flex;
+  }
+}
+
+/* Support page: force portrait (show overlay in landscape) */
+@media (orientation: landscape) and (max-width: 1024px) {
+  #orientation-overlay.force-portrait {
+    display: flex;
+  }
+}
