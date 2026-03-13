@@ -1,0 +1,152 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="assets/css2" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Ubuntu', sans-serif;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 10px;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+    }
+
+    .grid a {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      overflow: hidden;
+      border: 1px solid black;
+      background-color: #000;
+    }
+
+    .grid a img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .grid a:hover img {
+      transform: scale(1.05);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .overlay-text {
+      color: black;
+      font-size: clamp(1rem, 2.5vw, 2rem);
+      font-weight: bold;
+      text-shadow:
+        -1px -1px 0 white,
+         1px -1px 0 white,
+        -1px  1px 0 white,
+         1px  1px 0 white;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .label {
+      display: none;
+    }
+
+    .grid a:hover .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .grid a:hover .overlay-text {
+      opacity: 1;
+    }
+
+    @media (max-width: 764px) {
+      .grid {
+        gap: 4px;
+      }
+
+      .grid a {
+        border-width: 0.5px;
+      }
+
+      .overlay {
+        display: none;
+      }
+
+      .overlay-text {
+        display: none;
+      }
+
+      .label {
+        display: block;
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        z-index: 2;
+        color: black;
+        font-size: clamp(0.8rem, 4vw, 1.2rem);
+        font-weight: bold;
+        text-shadow:
+          -1px -1px 0 white,
+           1px -1px 0 white,
+          -1px  1px 0 white,
+           1px  1px 0 white;
+        pointer-events: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
+      <img src="assets/projects-grid/icons/placeholder.jpg" alt="">
+      <div class="overlay"><div class="overlay-text">Project 1</div></div>
+      <div class="label">Project 1</div>
+    </a>
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
+      <img src="assets/projects-grid/icons/placeholder.jpg" alt="">
+      <div class="overlay"><div class="overlay-text">Project 1</div></div>
+      <div class="label">Project 1</div>
+    </a>
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
+      <img src="assets/projects-grid/icons/placeholder.jpg" alt="">
+      <div class="overlay"><div class="overlay-text">Project 1</div></div>
+      <div class="label">Project 1</div>
+    </a>
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
+      <img src="assets/projects-grid/icons/placeholder.jpg" alt="">
+      <div class="overlay"><div class="overlay-text">Project 1</div></div>
+      <div class="label">Project 1</div>
+    </a>
+  </div>
+
+
+</body></html>

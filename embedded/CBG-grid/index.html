@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="assets/css2" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Ubuntu', sans-serif;
+      background: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 10px;
+      height: 100%;
+      width: 100%;
+    }
+
+    .grid a {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      overflow: hidden;
+      border: 1px solid black;
+      background: #000;
+    }
+
+    .grid a img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .grid a:hover img {
+      transform: scale(1.05);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0);
+      transition: background-color 0.3s ease;
+      pointer-events: none;
+    }
+
+    .grid a:hover .overlay {
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .label {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: black;
+      font-size: clamp(1rem, 2.5vw, 2rem);
+      font-weight: bold;
+      text-shadow:
+        -1px -1px 0 white,
+         1px -1px 0 white,
+        -1px  1px 0 white,
+         1px  1px 0 white;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        gap: 4px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+
+      .grid a {
+        border-width: 0.5px;
+      }
+
+      .label {
+        font-size: clamp(0.8rem, 4vw, 1.2rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/avoiding-heat" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Avoiding Heat</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/keeping-heat-out" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Keeping Heat Out</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/air-movement" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Air Movement</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/cooling-the-air" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Cooling the Air</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/drying-the-air" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Drying the Air</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/thermal-mass" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Thermal Mass</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/practical-constraints" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Practical Constraints</div>
+    </a>
+
+    <a href="https://www.actionresearchprojects.net/cool-buildings-guide/environmental-performance" target="_top">
+      <img src="assets/CBG-grid/icons/houseinawclimate.jpg" alt="">
+      <div class="overlay"></div>
+      <div class="label">Environmental Performance</div>
+    </a>
+  </div>
+
+
+</body></html>

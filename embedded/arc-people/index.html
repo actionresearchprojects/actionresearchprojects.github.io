@@ -1,0 +1,418 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <title>Responsive Bio Carousel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Optional: first images preloaded to speed first paint -->
+  <link rel="preload" href="biogs/portrait/portrait1.webp" as="image">
+  <link rel="preload" href="biogs/landscape/landscape1.webp" as="image">
+  <style>
+    :root {
+      --border-radius: clamp(1rem, 2vw, 2.5rem);
+      --arrow-size: clamp(3rem, 8vw, 5rem);
+      --vertical-gap: 0vh;
+      --horizontal-gap: 0.375rem;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: Ubuntu, sans-serif;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+    }
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding-top: var(--vertical-gap);
+      padding-bottom: var(--vertical-gap);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-track {
+      display: flex;
+      align-items: center;
+      gap: var(--horizontal-gap);
+      scroll-behavior: smooth;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      width: 100%;
+      height: calc(100% - (var(--vertical-gap) * 2));
+    }
+    .carousel-track::-webkit-scrollbar { display: none; }
+
+    .carousel-image {
+      position: relative;
+      flex: 0 0 auto;
+      border-radius: var(--border-radius);
+      border: clamp(2px, 0.208vw, 4px) solid #000;
+      overflow: hidden;
+      background: #f0f0f0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .carousel-image:hover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--border-radius);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .carousel-image img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 10;
+      transition: transform 0.1s ease;
+    }
+    .arrow:active { transform: translateY(-50%) scale(0.9); }
+    .arrow.left { left: var(--horizontal-gap); }
+    .arrow.right { right: var(--horizontal-gap); }
+    .arrow img { width: var(--arrow-size); height: auto; }
+
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+    }
+    .popup.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .popup-inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .popup-inner img {
+      max-width: 98vw;
+      max-height: 98vh;
+      object-fit: contain;
+      border: clamp(2px, 0.375rem, 6px) solid #000;
+      border-radius: var(--border-radius);
+      display: block;
+      background: #fff;
+    }
+    .info-button {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      aspect-ratio: 1 / 1;
+      width: clamp(2rem, 3vw, 2.75rem);
+      border-radius: 50%;
+      border: clamp(2px, 0.3vw, 4px) solid #000;
+      background: #fff;
+      color: #000;
+      font-family: Ubuntu, sans-serif;
+      font-weight: 400;
+      font-size: clamp(1.25rem, 2vw, 1.5rem);
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    @media (max-width: 799px) {
+      .info-button-inline {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 18px;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        border: 1.5px solid #000;
+        background: #fff;
+        color: #000;
+        font-family: Ubuntu, sans-serif;
+        font-weight: 400;
+        font-size: 10px;
+        line-height: 1;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(1px);
+        cursor: pointer;
+        z-index: 10;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="carousel-container">
+    <button class="arrow left" id="prevBtn" aria-label="Previous image" style="display: none;">
+      <img src="assets/arc-people/arrows/backward-arrow.png" alt="Previous">
+    </button>
+    <div class="carousel-track" id="track" tabindex="0" role="list"><div class="carousel-image" role="listitem" data-idx="0"><img src="assets/arc-people/biogs/portrait/portrait1.webp" alt="Andrew Simmonds" loading="eager" fetchpriority="high"></div><div class="carousel-image" role="listitem" data-idx="1"><img src="assets/arc-people/biogs/portrait/portrait2.webp" alt="Huda Elsherif" loading="eager" fetchpriority="high"></div><div class="carousel-image" role="listitem" data-idx="2"><img src="assets/arc-people/biogs/portrait/portrait3.webp" alt="Archie Worthington" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="3"><img src="assets/arc-people/biogs/portrait/portrait4.webp" alt="Kamran Fazil" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="4"><img src="assets/arc-people/biogs/portrait/portrait5.webp" alt="Ben Roberts" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="5"><img src="assets/arc-people/biogs/portrait/portrait6.webp" alt="Toby Cambray" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="6"><img src="assets/arc-people/biogs/portrait/portrait7.webp" alt="Suleiman Dauda" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="7"><img src="assets/arc-people/biogs/portrait/portrait8.webp" alt="Marwa Mohabe" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="8"><img src="assets/arc-people/biogs/portrait/portrait9.webp" alt="Shely Begum" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="9"><img src="assets/arc-people/biogs/portrait/portrait10.webp" alt="Eric Rirsch" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="10"><img src="assets/arc-people/biogs/portrait/portrait11.webp" alt="Hudson Lambert" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="11"><img src="assets/arc-people/biogs/portrait/portrait12.webp" alt="Adele Mills" loading="lazy"></div></div>
+    <button class="arrow right" id="nextBtn" aria-label="Next image" style="display: block;">
+      <img src="assets/arc-people/arrows/forward-arrow.png" alt="Next">
+    </button>
+  </div>
+
+  <div class="popup" id="popup" role="dialog" aria-modal="true">
+    <div class="popup-inner">
+      <img id="popupImg" src="" alt="Expanded view">
+      <button id="infoBtn" class="info-button" aria-label="Open external link">i</button>
+    </div>
+  </div>
+
+  <script>
+    // State
+    window.currentPopupLink = '#';
+    let links = [];
+    let isWide = window.innerWidth >= 800;
+
+    // Orientation sets and selection for thumbs vs popup
+    let imagesPortraitGlobal = [];
+    let imagesLandscapeGlobal = [];
+    let sourcesForThumbs = [];
+    let sourcesForPopup  = [];
+
+    // Elements
+    const prevBtn  = document.getElementById('prevBtn');
+    const nextBtn  = document.getElementById('nextBtn');
+    const track    = document.getElementById('track');
+    const popup    = document.getElementById('popup');
+    const popupImg = document.getElementById('popupImg');
+    const infoBtn  = document.getElementById('infoBtn');
+
+    // Data
+    async function fetchLinks() {
+      try {
+        const res = await fetch('links.txt', { credentials: 'omit' });
+        if (!res.ok) return [];
+        return (await res.text()).trim().split('\n').map(line => {
+          const [index, label, url] = line.split(',').map(p => p.trim());
+          return { index: +index, label, url };
+        });
+      } catch {
+        return [];
+      }
+    }
+
+    // Utils
+    function generateImages(prefix, count) {
+      return Array.from({ length: count }, (_, i) => `biogs/${prefix}/${prefix}${i + 1}.webp`);
+    }
+
+    function warmPreload(src) {
+      if (!src) return;
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+    }
+
+    function getScrollAmount() {
+      const slide = track.children[0];
+      if (!slide) return 100;
+      const gap = parseFloat(getComputedStyle(track).gap) || 0;
+      const visibleCount = Math.max(1, Math.floor(track.clientWidth / (slide.offsetWidth + gap)));
+      return visibleCount * (slide.offsetWidth + gap);
+    }
+
+    function updateControls() {
+      const maxScroll = track.scrollWidth - track.clientWidth - 1;
+      prevBtn.style.display = track.scrollLeft > 0 ? 'block' : 'none';
+      nextBtn.style.display = track.scrollLeft < maxScroll ? 'block' : 'none';
+    }
+
+    // Slide factory
+    function createImageSlide(src, label, linkUrl, idx) {
+      const container = document.createElement('div');
+      container.className = 'carousel-image';
+      container.setAttribute('role', 'listitem');
+      container.dataset.idx = String(idx);
+
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = label || `Image ${idx + 1}`;
+      if (idx < 2) { // first couple come in hot
+        img.loading = 'eager';
+        if ('fetchPriority' in img) img.fetchPriority = 'high';
+      } else {
+        img.loading = 'lazy';
+      }
+
+      const hasValidLink = linkUrl && linkUrl !== '#' && linkUrl.toLowerCase() !== 'n/a';
+
+      if (isWide) {
+        container.onclick = async () => {
+          const newSrc = sourcesForPopup[idx];
+          // Image likely already warmed by IntersectionObserver; ensure decode is ready before showing
+          if (popupImg.src !== newSrc) {
+            try {
+              // start load early
+              const pre = new Image();
+              pre.decoding = 'async';
+              pre.src = newSrc;
+              if (pre.decode) { await pre.decode(); }
+              popupImg.src = newSrc;
+            } catch {
+              popupImg.src = newSrc;
+            }
+          }
+          popup.classList.add('visible');
+
+          window.currentPopupLink = hasValidLink ? linkUrl : '#';
+          infoBtn.style.display = hasValidLink ? 'flex' : 'none';
+        };
+      } else if (hasValidLink) {
+        const infoButton = document.createElement('button');
+        infoButton.className = 'info-button-inline';
+        infoButton.textContent = 'i';
+        infoButton.setAttribute('aria-label', 'Open external link');
+        infoButton.onclick = e => {
+          e.stopPropagation();
+          const a = document.createElement('a');
+          a.href = linkUrl;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        };
+        container.appendChild(infoButton);
+      }
+
+      container.append(img);
+      return container;
+    }
+
+    // Preload popup targets for visible slides (+ lookahead)
+    function setupPopupPreload() {
+      if (!('IntersectionObserver' in window)) {
+        [0, 1, 2].forEach(i => warmPreload(sourcesForPopup[i]));
+        return;
+      }
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const idx = Number(entry.target.dataset.idx);
+          const candidates = [idx, idx + 1, idx + 2]
+            .map(i => sourcesForPopup[i])
+            .filter(Boolean);
+
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => candidates.forEach(warmPreload), { timeout: 500 });
+          } else {
+            setTimeout(() => candidates.forEach(warmPreload), 0);
+          }
+        });
+      }, { root: track, threshold: 0.25 });
+
+      [...track.children].forEach(child => io.observe(child));
+      [0, 1, 2].forEach(i => warmPreload(sourcesForPopup[i]));
+    }
+
+    // Render
+    async function renderCarousel() {
+      links = await fetchLinks();
+      isWide = window.innerWidth >= 800;
+
+      const count = links.length || 0;
+      const imagesPortrait  = generateImages('portrait', count);
+      const imagesLandscape = generateImages('landscape', count);
+
+      imagesPortraitGlobal  = imagesPortrait;
+      imagesLandscapeGlobal = imagesLandscape;
+
+      // Thumbnails follow existing behaviour; popup swaps orientation
+      sourcesForThumbs = isWide ? imagesPortrait : imagesLandscape;
+      sourcesForPopup  = isWide ? imagesLandscape : imagesPortrait;
+
+      // Load thumbnails (gracefully tolerate missing images)
+      const loaded = (await Promise.all(
+        sourcesForThumbs.map((src, i) => new Promise(resolve => {
+          const img = new Image();
+          img.onload = () => resolve({ src, i });
+          img.onerror = () => resolve(null);
+          img.src = src;
+        }))
+      )).filter(Boolean);
+
+      track.innerHTML = '';
+      if (loaded.length === 0) {
+        updateControls();
+        return;
+      }
+
+      loaded.forEach(({ src, i }) => {
+        const entry = links[i] || {};
+        track.append(
+          createImageSlide(src, entry.label, entry.url || '#', i)
+        );
+      });
+
+      setupPopupPreload();
+      requestAnimationFrame(updateControls);
+    }
+
+    // Controls and events
+    prevBtn.onclick = () => track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' });
+    nextBtn.onclick = () => track.scrollBy({ left:  getScrollAmount(), behavior: 'smooth' });
+    track.addEventListener('scroll', updateControls);
+
+    popup.addEventListener('click', e => {
+      if (e.target === popup) popup.classList.remove('visible');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') popup.classList.remove('visible');
+    });
+
+    infoBtn.onclick = e => {
+      e.stopPropagation();
+      if (window.currentPopupLink && window.currentPopupLink !== '#' && window.currentPopupLink.toLowerCase() !== 'n/a') {
+        const a = document.createElement('a');
+        a.href = window.currentPopupLink;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    };
+
+    // Re-render on resize (debounced to avoid thrash)
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(renderCarousel, 150);
+    });
+
+    document.addEventListener('DOMContentLoaded', renderCarousel);
+  </script>
+
+
+</body></html>

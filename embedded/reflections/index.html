@@ -1,0 +1,389 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Responsive Image Carousel — same height, variable width (Safari + Chrome mobile safe)</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="assets/css2" rel="stylesheet">
+
+  <!-- Preload a few images and arrows -->
+  <link rel="preload" as="image" href="images/1.jpg">
+  <link rel="preload" as="image" href="images/2.jpg">
+  <link rel="preload" as="image" href="images/3.jpg">
+  <link rel="preload" as="image" href="arrows/backward-arrow.png">
+  <link rel="preload" as="image" href="arrows/forward-arrow.png">
+
+  <style>
+    :root { --row-gap: clamp(4px, 0.75vw, 12px); --arrow-size: clamp(3rem, 8vw, 5rem); }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; min-width: 0; min-height: 0; }
+    body { font-family: 'Ubuntu', sans-serif; background: #fff; height: 100dvh; height: 100vh; overflow: hidden; }
+
+    .container { position: relative; height: 100dvh; height: 100vh; width: 100vw; min-width: 0; min-height: 0; }
+    #imageContainer { height: 100%; width: 100%; min-width: 0; min-height: 0; }
+
+    .desktop-wrapper { height: 100%; flex: 1 1 auto; display: flex; flex-direction: column; overflow: hidden; min-width: 0; min-height: 0; }
+
+    .scroller {
+      display: flex; flex-direction: column; gap: var(--row-gap);
+      overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth;
+      height: 100%; flex: 1; min-width: 0; min-height: 0;
+    }
+
+    .image-row {
+      display: flex; flex-direction: row; gap: var(--row-gap);
+      height: calc((100% - var(--row-gap)) / 2);
+      flex: 0 0 auto; overflow: hidden; min-width: 0; min-height: 0;
+      align-items: stretch;
+    }
+
+    .image-box {
+      position: relative; overflow: hidden;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      height: 100%; width: auto;
+      flex: 0 0 auto;
+      background: transparent;
+      min-width: 0; min-height: 0;
+    }
+    .image-box.clickable { cursor: pointer; }
+
+    .image-box img {
+      display: block;
+      height: 100%;
+      width: auto;
+      max-height: 100%;
+      max-width: none;          /* allow wide panoramas */
+      min-width: 0;             /* Chrome mobile: allow shrink */
+      object-fit: contain;      /* no cropping */
+      opacity: 0; transition: opacity 200ms ease;
+    }
+    .image-box.loaded img { opacity: 0.9; }
+    .image-box.clickable:hover img { opacity: 0.75; }
+
+    .image-title {
+      position: absolute; bottom: 10px; left: 10px; z-index: 4; color: #000;
+      font-size: clamp(0.66rem, 1.7vw, 1.33rem); font-weight: bold;
+      text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+      pointer-events: none;
+    }
+
+    .skeleton { background: #f3f3f3; position: relative; }
+    .skeleton::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.04), transparent);
+      animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+    .arrow { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0; z-index: 10; transition: transform 0.1s ease; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .arrow:active { transform: translateY(-50%) scale(0.9); }
+    .arrow.left { left: 0.75rem; } .arrow.right { right: 0.75rem; }
+    .arrow img { width: var(--arrow-size); height: auto; display: block; }
+
+    /* Mobile: single row, fixed height, variable widths.
+       Use dynamic viewport units to avoid URL-bar "vh" bugs on Chrome iOS/Android.
+       Also cap each slide to viewport width to prevent pre-load ballooning. */
+    @media (max-width: 763px) {
+      #imageContainer {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+        overflow-x: auto; overflow-y: hidden;
+        height: 100dvh; height: 100vh;
+        gap: var(--row-gap); align-items: center;
+        scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        min-width: 0; min-height: 0;
+      }
+      .image-box {
+        height: 100dvh; height: 100vh;
+        width: auto;
+        max-width: 100vw;           /* critical for Chrome mobile */
+        flex: 0 0 auto;
+        scroll-snap-align: start;
+        min-width: 0;               /* critical */
+      }
+      .image-title { font-size: clamp(0.53rem, 2.6vw, 0.8rem); }
+      .image-box img {
+        height: 100dvh; height: 100vh;
+        width: auto;
+        max-width: 100%;
+        min-width: 0;               /* critical */
+        object-fit: contain;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="arrow left" id="arrowLeft" aria-label="Previous" style="display: none;">
+      <img id="arrowLeftImg" alt="Previous" src="assets/reflections/arrows/backward-arrow.png">
+    </button>
+    <div id="imageContainer"><div class="desktop-wrapper"><div class="scroller"><div class="image-row"><div class="image-box clickable loaded"><img alt="Expert Advisor: Huda Elsherif" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/1.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/1.png?v=v2025-09-16-5" src="assets/reflections/images/1.jpg"><div class="image-title">Expert Advisor: Huda Elsherif</div></div><div class="image-box clickable loaded"><img alt="Tanzanian children's eco village aims to inspire low carbon example" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/3.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/3.png?v=v2025-09-16-5" src="assets/reflections/images/3.png" fetchpriority="high"><div class="image-title">Tanzanian children's eco village aims to inspire low carbon example</div></div><div class="image-box loaded"><img alt="" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/5.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/5.png?v=v2025-09-16-5" src="assets/reflections/images/5.png"></div><div class="image-box loaded"><img alt="" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/7.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/7.png?v=v2025-09-16-5" src="assets/reflections/images/7.png"></div></div><div class="image-row"><div class="image-box clickable loaded"><img alt="Shely Begum: Desh Houses" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/2.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/2.png?v=v2025-09-16-5" src="assets/reflections/images/2.jpg"><div class="image-title">Shely Begum: Desh Houses</div></div><div class="image-box clickable loaded"><img alt="SimmondsMills: Tanzania Eco Village" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/4.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/4.png?v=v2025-09-16-5" src="assets/reflections/images/4.png" fetchpriority="high"><div class="image-title">SimmondsMills: Tanzania Eco Village</div></div><div class="image-box loaded"><img alt="" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/6.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/6.png?v=v2025-09-16-5" src="assets/reflections/images/6.png"></div><div class="image-box loaded"><img alt="" loading="lazy" decoding="async" data-primary="https://actionresearchprojects.github.io/reflections/images/8.jpg?v=v2025-09-16-5" data-fallback="https://actionresearchprojects.github.io/reflections/images/8.png?v=v2025-09-16-5" src="assets/reflections/images/8.png"></div></div></div></div></div>
+    <button class="arrow right" id="arrowRight" aria-label="Next" style="display: none;">
+      <img id="arrowRightImg" alt="Next" src="assets/reflections/arrows/forward-arrow.png">
+    </button>
+  </div>
+
+  <script>
+    const VERSION = 'v2025-09-16-5';
+    function asset(path) {
+      const here = document.currentScript?.src ? new URL('.', document.currentScript.src) : new URL('.', location.href);
+      const url = new URL(path, here);
+      url.searchParams.set('v', VERSION);
+      return url.href;
+    }
+
+    document.getElementById('arrowLeftImg').src = asset('arrows/backward-arrow.png');
+    document.getElementById('arrowRightImg').src = asset('arrows/forward-arrow.png');
+
+    let _currentLayout = null;
+    let _resizeAnimationFrame = null;
+
+    // State preservation
+    function captureScrollState() {
+      const isMobile = window.matchMedia('(max-width: 763px)').matches;
+      const scroller = isMobile ? 
+        document.getElementById('imageContainer') : 
+        document.querySelector('.scroller');
+      
+      if (!scroller) return null;
+      
+      // Calculate which image is most visible
+      const boxes = scroller.querySelectorAll('.image-box');
+      let mostVisibleIndex = 0;
+      let maxVisibility = 0;
+      
+      for (let i = 0; i < boxes.length; i++) {
+        const box = boxes[i];
+        const rect = box.getBoundingClientRect();
+        const scrollerRect = scroller.getBoundingClientRect();
+        
+        const visibleWidth = Math.max(0, 
+          Math.min(rect.right, scrollerRect.right) - 
+          Math.max(rect.left, scrollerRect.left)
+        );
+        
+        if (visibleWidth > maxVisibility) {
+          maxVisibility = visibleWidth;
+          mostVisibleIndex = i;
+        }
+      }
+      
+      return { mostVisibleIndex };
+    }
+
+    function restoreScrollState(state) {
+      if (!state) return;
+      
+      const isMobile = window.matchMedia('(max-width: 763px)').matches;
+      const scroller = isMobile ? 
+        document.getElementById('imageContainer') : 
+        document.querySelector('.scroller');
+      
+      if (!scroller) return;
+      
+      const boxes = scroller.querySelectorAll('.image-box');
+      if (boxes[state.mostVisibleIndex]) {
+        // Use requestAnimationFrame to ensure layout is complete
+        requestAnimationFrame(() => {
+          boxes[state.mostVisibleIndex].scrollIntoView({
+            behavior: 'auto',
+            block: 'nearest',
+            inline: 'start'
+          });
+        });
+      }
+    }
+
+    function attachLazy(imgEl, index, priority=false) {
+      const primary = asset(`images/${index}.jpg`);
+      const fallback = asset(`images/${index}.png`);
+      const loadSrc = (src) => { imgEl.src = src; if (priority) imgEl.fetchPriority = 'high'; };
+      let triedPng = false;
+      imgEl.addEventListener('error', () => { if (!triedPng) { triedPng = true; loadSrc(fallback); } }, { once: true });
+      imgEl.addEventListener('load', () => { imgEl.closest('.image-box')?.classList.add('loaded'); }, { once: true });
+      imgEl.dataset.primary = primary; imgEl.dataset.fallback = fallback;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          const img = e.target;
+          if (!img.src) img.src = img.dataset.primary;
+          io.unobserve(img);
+        }
+      }
+    }, { root: null, rootMargin: '800px 100px', threshold: 0.01 });
+
+    function safeNavigate(link) {
+      if (!link) return;
+      try { window.open(link, '_top'); return; } catch {}
+      try { window.open(link, '_blank', 'noopener'); return; } catch {}
+      location.href = link;
+    }
+
+    function createImageBox(index, title, link, hideCaption, priority=false) {
+      const box = document.createElement('div');
+      box.className = 'image-box skeleton';
+      if (link && link.trim()) {
+        box.classList.add('clickable');
+        box.addEventListener('click', () => safeNavigate(link), { passive: true });
+      }
+
+      const img = document.createElement('img');
+      img.alt = title || '';
+      img.loading = 'lazy';
+      img.decoding = 'async';
+
+      attachLazy(img, index, priority);
+      io.observe(img);
+
+      img.addEventListener('load', () => { box.classList.remove('skeleton'); }, { once: true });
+
+      box.appendChild(img);
+
+      if (!hideCaption && (title && title.length)) {
+        const caption = document.createElement('div');
+        caption.className = 'image-title';
+        caption.textContent = title;
+        box.appendChild(caption);
+      }
+      return box;
+    }
+
+    function setupArrowVisibility(scroller) {
+      const left = document.getElementById('arrowLeft');
+      const right = document.getElementById('arrowRight');
+      if (!scroller) { left.style.display = 'none'; right.style.display = 'none'; return; }
+      const maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
+      left.style.display = scroller.scrollLeft > 10 ? 'block' : 'none';
+      right.style.display = scroller.scrollLeft < Math.max(0, maxScrollLeft - 10) ? 'block' : 'none';
+    }
+
+    function getScrollableElement() {
+      const isMobile = window.matchMedia('(max-width: 763px)').matches;
+      return isMobile ? document.getElementById('imageContainer') : document.querySelector('.scroller');
+    }
+
+    async function loadMetadata() {
+      const res = await fetch(asset('metadata.txt'));
+      const raw = await res.text();
+      return raw
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 0)
+        .map(line => {
+          const hideToken = line.includes('|*|');
+          const cleaned = line.replace('|*|', '');
+          const parts = cleaned.split('|~|');
+          const titleRaw = (parts[0] ?? '').trim();
+          const link = (parts[1] ?? '').trim();
+          const hideCaption = hideToken || titleRaw === '*';
+          const title = hideCaption ? '' : titleRaw;
+          return { title, link, hideCaption };
+        });
+    }
+
+    async function renderMobile(items) {
+      const container = document.getElementById('imageContainer');
+      container.innerHTML = '';
+      container.style.display = 'flex';
+      const frag = document.createDocumentFragment();
+
+      for (let i = 0; i < items.length; i++) {
+        const { title, link, hideCaption } = items[i];
+        const box = createImageBox(i + 1, title, link, hideCaption, i < 2);
+        frag.appendChild(box);
+      }
+      container.appendChild(frag);
+
+      setupArrowVisibility(container);
+      container.addEventListener('scroll', () => setupArrowVisibility(container), { passive: true });
+    }
+
+    async function renderDesktop(items) {
+      const container = document.getElementById('imageContainer');
+      container.innerHTML = '';
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'desktop-wrapper';
+
+      const scroller = document.createElement('div');
+      scroller.className = 'scroller';
+
+      const topRow = document.createElement('div');
+      topRow.className = 'image-row';
+
+      const bottomRow = document.createElement('div');
+      bottomRow.className = 'image-row';
+
+      scroller.appendChild(topRow);
+      scroller.appendChild(bottomRow);
+      wrapper.appendChild(scroller);
+      container.appendChild(wrapper);
+
+      let topCount = 0, bottomCount = 0;
+      for (let i = 0; i < items.length; i++) {
+        const { title, link, hideCaption } = items[i];
+        const box = createImageBox(i + 1, title, link, hideCaption, i < 4);
+        if (topCount <= bottomCount) { topRow.appendChild(box); topCount++; }
+        else { bottomRow.appendChild(box); bottomCount++; }
+      }
+
+      setupArrowVisibility(scroller);
+      scroller.addEventListener('scroll', () => setupArrowVisibility(scroller), { passive: true });
+    }
+
+    async function renderBasedOnViewport(preserveState = true) {
+      if (!window.__items) window.__items = await loadMetadata();
+      
+      const isMobile = window.matchMedia('(max-width: 763px)').matches;
+      const layoutKey = isMobile ? 'mobile' : 'desktop';
+      
+      // Only rebuild if layout actually changed
+      if (layoutKey === _currentLayout && document.querySelector('.image-box')) {
+        return;
+      }
+      
+      // Capture state before rebuilding
+      const scrollState = preserveState ? captureScrollState() : null;
+      
+      _currentLayout = layoutKey;
+      await (isMobile ? renderMobile : renderDesktop)(window.__items);
+      
+      // Restore state after rebuilding
+      if (scrollState) {
+        restoreScrollState(scrollState);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => renderBasedOnViewport(false), { passive: true });
+    
+    window.addEventListener('resize', () => {
+      // Cancel any pending animation frame
+      if (_resizeAnimationFrame) {
+        cancelAnimationFrame(_resizeAnimationFrame);
+      }
+      
+      // Use requestAnimationFrame instead of setTimeout for smoother handling
+      _resizeAnimationFrame = requestAnimationFrame(() => {
+        renderBasedOnViewport(true);
+        _resizeAnimationFrame = null;
+      });
+    }, { passive: true });
+
+    document.getElementById('arrowLeft').onclick = () => {
+      const scroller = getScrollableElement();
+      if (scroller) scroller.scrollBy({ left: -Math.max(300, scroller.clientWidth * 0.8), behavior: 'smooth' });
+    };
+    document.getElementById('arrowRight').onclick = () => {
+      const scroller = getScrollableElement();
+      if (scroller) scroller.scrollBy({ left: Math.max(300, scroller.clientWidth * 0.8), behavior: 'smooth' });
+    };
+  </script>
+
+
+</body></html>

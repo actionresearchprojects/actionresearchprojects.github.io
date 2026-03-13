@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://fonts.wp.com/s/poppins/v24/pxiGyp8kv8JHgFVrJJLufntF.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 700;
+  src: url(https://fonts.wp.com/s/poppins/v24/pxiDyp8kv8JHgFVrJJLmy15VGdeL.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.wp.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnedw.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  src: url(https://fonts.wp.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlEA.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://fonts.wp.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1JlEA.ttf) format('truetype');
+}
