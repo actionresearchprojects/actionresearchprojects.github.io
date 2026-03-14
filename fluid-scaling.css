@@ -8,8 +8,8 @@ html {
   overflow-x: hidden;
 }
 
-/* Let the Framer container expand naturally when zoomed */
-[data-framer-root] > div {
+/* Let the page container expand naturally when zoomed */
+[data-site-root] > div {
   overflow: visible !important;
   height: auto !important;
   min-height: 100vh !important;
