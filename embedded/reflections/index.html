@@ -8,11 +8,11 @@
   <link href="assets/css2" rel="stylesheet">
 
   <!-- Preload a few images and arrows -->
-  <link rel="preload" as="image" href="images/1.jpg">
-  <link rel="preload" as="image" href="images/2.jpg">
-  <link rel="preload" as="image" href="images/3.jpg">
-  <link rel="preload" as="image" href="arrows/backward-arrow.png">
-  <link rel="preload" as="image" href="arrows/forward-arrow.png">
+  <link rel="preload" as="image" href="assets/reflections/images/1.jpg">
+  <link rel="preload" as="image" href="assets/reflections/images/2.jpg">
+  <link rel="preload" as="image" href="assets/reflections/images/3.jpg">
+  <link rel="preload" as="image" href="assets/reflections/arrows/backward-arrow.png">
+  <link rel="preload" as="image" href="assets/reflections/arrows/forward-arrow.png">
 
   <style>
     :root { --row-gap: clamp(4px, 0.75vw, 12px); --arrow-size: clamp(3rem, 8vw, 5rem); }
@@ -136,8 +136,8 @@
       return url.href;
     }
 
-    document.getElementById('arrowLeftImg').src = asset('arrows/backward-arrow.png');
-    document.getElementById('arrowRightImg').src = asset('arrows/forward-arrow.png');
+    document.getElementById('arrowLeftImg').src = asset('assets/reflections/arrows/backward-arrow.png');
+    document.getElementById('arrowRightImg').src = asset('assets/reflections/arrows/forward-arrow.png');
 
     let _currentLayout = null;
     let _resizeAnimationFrame = null;
@@ -199,8 +199,8 @@
     }
 
     function attachLazy(imgEl, index, priority=false) {
-      const primary = asset(`images/${index}.jpg`);
-      const fallback = asset(`images/${index}.png`);
+      const primary = asset(`assets/reflections/images/${index}.jpg`);
+      const fallback = asset(`assets/reflections/images/${index}.png`);
       const loadSrc = (src) => { imgEl.src = src; if (priority) imgEl.fetchPriority = 'high'; };
       let triedPng = false;
       imgEl.addEventListener('error', () => { if (!triedPng) { triedPng = true; loadSrc(fallback); } }, { once: true });
