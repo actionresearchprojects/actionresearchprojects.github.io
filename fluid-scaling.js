@@ -15,6 +15,33 @@
     var vw = document.documentElement.clientWidth;
     var zoom = vw / DESIGN_WIDTH;
     document.body.style.zoom = zoom;
+
+    /*
+     * Vertical centering at small viewport widths.
+     *
+     * The Framer root has min-height:100vh. With body zoom < 1, that 100vh
+     * value renders visually smaller than the viewport, leaving blank space
+     * below. We override min-height with the compensated pixel value so the
+     * background fills the full viewport. Since framer-sxt1tt is centred
+     * inside via top:calc(50% - 335px), this also centres the content block.
+     */
+    if (zoom < 1) {
+      var root = document.querySelector('[data-site-root]');
+      if (root) root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
+    }
+
+    /*
+     * Orientation overlay full-viewport coverage.
+     *
+     * position:fixed inside a body with CSS zoom is still in the zoomed
+     * coordinate system, so width:100vw / height:100vh render at a fraction
+     * of the viewport. Override with explicit px values that compensate.
+     */
+    var overlay = document.getElementById('orientation-overlay');
+    if (overlay) {
+      overlay.style.width  = Math.ceil(window.innerWidth  / zoom) + 'px';
+      overlay.style.height = Math.ceil(window.innerHeight / zoom) + 'px';
+    }
   }
 
   /*
