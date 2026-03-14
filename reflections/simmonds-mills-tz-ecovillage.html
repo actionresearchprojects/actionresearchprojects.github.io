@@ -263,12 +263,15 @@
           background: rgba(255,255,255,0.12);
         }
       </style><style id="nav-hover-style">
-a[data-nav-button], [data-nav-button="dots"] { transition: background-color 0.2s ease, opacity 0.2s ease; }
+a[data-nav-button], [data-nav-button="dots"] { transition: background-color 0.2s ease; }
+a[data-nav-button="cbg"] *, a[data-nav-button="map"] *, [data-nav-button="dots"] * { transition: color 0.2s ease; }
 a[data-nav-button="projects"]:hover { background-color: #e8c9a97d !important; }
 a[data-nav-button="science"]:hover { background-color: #ed8e774d !important; }
 a[data-nav-button="people"]:hover { background-color: #f5dca691 !important; }
 a[data-nav-button="reflections"]:hover { background-color: #82a18fab !important; }
-a[data-nav-button="cbg"]:hover, a[data-nav-button="map"]:hover, [data-nav-button="dots"]:hover { opacity: 0.6; }
+a[data-nav-button="cbg"]:hover * { color: #aaa !important; }
+a[data-nav-button="map"]:hover * { color: #aaa !important; }
+[data-nav-button="dots"]:hover * { color: #aaa !important; }
 a[data-nav-button="support"]:hover { background-color: #d93e3e !important; }
 </style></head><body><div id="orientation-overlay" class="force-landscape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32z"></path><path d="M7.52 21.48C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.33 1.32z"></path><path d="M16 9V5l-6 6 6 6v-4c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5h2c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3z"></path></svg><p>Please rotate your device to landscape mode</p></div><main>
     <div class="logo">
