@@ -17,11 +17,46 @@
     document.body.style.zoom = zoom;
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', update);
-  } else {
-    update();
+  /*
+   * Fix content-area iframe position.
+   *
+   * Framer positions the content iframe with top:calc(50% - Xpx), which is a
+   * percentage of the parent's height. When min-height:100vh makes the parent
+   * taller than the 670px design height (e.g. on large monitors), the iframe
+   * drifts down. The nav buttons use fixed top values so they stay correct.
+   *
+   * We find the iframe container (identified by being to the right of the nav,
+   * offsetLeft > 300px) and pin its top/height to the ARC Projects and
+   * Reflections buttons, which are already tagged with data-nav-button.
+   */
+  function fixIframePosition() {
+    var projectsBtn = document.querySelector('a[data-nav-button="projects"]');
+    var reflectionsBtn = document.querySelector('a[data-nav-button="reflections"]');
+    if (!projectsBtn || !reflectionsBtn) return;
+
+    var allIframes = document.querySelectorAll('#main iframe');
+    for (var i = 0; i < allIframes.length; i++) {
+      var container = allIframes[i].parentElement;
+      if (container.offsetLeft > 300) {
+        var top = projectsBtn.offsetTop;
+        var bottom = reflectionsBtn.offsetTop + reflectionsBtn.offsetHeight;
+        container.style.top = top + 'px';
+        container.style.height = (bottom - top) + 'px';
+        break;
+      }
+    }
   }
 
-  window.addEventListener('resize', update);
+  function runAll() {
+    update();
+    fixIframePosition();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runAll);
+  } else {
+    runAll();
+  }
+
+  window.addEventListener('resize', runAll);
 })();
