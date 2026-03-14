@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute password hash
+        id: hash
+        run: |
+          HASH=$(echo -n "${{ secrets.ARC_GRAPHS_PASSWORD }}" | sha256sum | awk '{print $1}')
+          echo "value=$HASH" >> $GITHUB_OUTPUT
+
+      - name: Inject hash into HTML
+        run: |
+          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-weather.html
+          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-temp-humid/index.html
+          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-temp-humid/config.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - uses: actions/deploy-pages@v4
+        id: deployment
