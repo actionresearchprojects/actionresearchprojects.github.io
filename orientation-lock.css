@@ -42,9 +42,6 @@
   line-height: 1.5;
 }
 
-/* Show overlay when in portrait orientation on small screens */
-@media (orientation: portrait) and (max-width: 1024px) {
-  #orientation-overlay.force-landscape {
-    display: flex;
-  }
-}
+/* Overlay show/hide is handled by fluid-scaling.js via window.innerWidth/innerHeight,
+ * because viewport width=1440 makes CSS max-width media queries check the layout
+ * viewport (always 1440px) rather than the actual device width. */

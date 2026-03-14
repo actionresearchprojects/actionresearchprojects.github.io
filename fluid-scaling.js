@@ -31,16 +31,31 @@
     }
 
     /*
-     * Orientation overlay full-viewport coverage.
+     * Orientation overlay show/hide.
      *
-     * position:fixed inside a body with CSS zoom is still in the zoomed
-     * coordinate system, so width:100vw / height:100vh render at a fraction
-     * of the viewport. Override with explicit px values that compensate.
+     * With viewport width=1440, CSS max-width media queries check the layout
+     * viewport (always 1440px), so we use JS to detect small screens instead.
+     * window.innerWidth/innerHeight give the actual device dimensions.
+     *
+     * When body zoom != 1 (desktop), position:fixed is in the zoomed
+     * coordinate system so we compensate the overlay size with explicit px.
      */
     var overlay = document.getElementById('orientation-overlay');
     if (overlay) {
-      overlay.style.width  = Math.ceil(window.innerWidth  / zoom) + 'px';
-      overlay.style.height = Math.ceil(window.innerHeight / zoom) + 'px';
+      var isSmall = Math.min(window.innerWidth, window.innerHeight) <= 1024;
+      var isPortrait = window.innerHeight > window.innerWidth;
+      if (isSmall && isPortrait) {
+        overlay.style.display = 'flex';
+        if (zoom !== 1) {
+          overlay.style.width  = Math.ceil(window.innerWidth  / zoom) + 'px';
+          overlay.style.height = Math.ceil(window.innerHeight / zoom) + 'px';
+        } else {
+          overlay.style.width  = '';
+          overlay.style.height = '';
+        }
+      } else {
+        overlay.style.display = 'none';
+      }
     }
   }
 
@@ -86,4 +101,7 @@
   }
 
   window.addEventListener('resize', runAll);
+  window.addEventListener('orientationchange', function () {
+    requestAnimationFrame(runAll);
+  });
 })();
