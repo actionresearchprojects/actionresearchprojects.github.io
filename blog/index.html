@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog - ARC (Architecture, Resilience, Community)</title>
+  <meta name="description" content="Latest updates from ARC — Architecture, Resilience, Community">
+  <link rel="icon" type="image/png" sizes="any" href="../assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="../assets/images/favicon.png">
+  <meta name="theme-color" content="#333333">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Blog - ARC">
+  <meta property="og:description" content="Latest updates from ARC — Architecture, Resilience, Community">
+  <meta property="og:image" content="https://actionresearchprojects.github.io/assets/images/og-image.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .blog-header {
+      background: #111;
+      border-bottom: 1px solid #333;
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .header-nav a {
+      color: #999;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 400;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover {
+      color: #fff;
+    }
+
+    /* Main content */
+    .blog-main {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .blog-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .blog-subtitle {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 48px;
+    }
+
+    /* Post list */
+    .posts-loading {
+      text-align: center;
+      color: #666;
+      padding: 60px 0;
+      font-size: 15px;
+    }
+
+    .posts-empty {
+      text-align: center;
+      color: #666;
+      padding: 60px 0;
+      font-size: 15px;
+    }
+
+    .post-card {
+      border-bottom: 1px solid #2a2a2a;
+      padding: 32px 0;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .post-card:first-child {
+      padding-top: 0;
+    }
+
+    .post-card:hover {
+      opacity: 0.85;
+    }
+
+    .post-card-meta {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .post-card-author-img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-card-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .post-card-excerpt {
+      font-size: 15px;
+      color: #aaa;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .post-card-image {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      max-height: 360px;
+      object-fit: cover;
+    }
+
+    .post-card-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .post-tag {
+      background: #2a2a2a;
+      color: #aaa;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    /* Single post view */
+    .post-view {
+      display: none;
+    }
+
+    .post-back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 32px;
+      transition: color 0.2s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+
+    .post-back:hover {
+      color: #fff;
+    }
+
+    .post-header-meta {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .post-header-author-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-header-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 24px;
+      line-height: 1.3;
+    }
+
+    .post-header-image {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 32px;
+      max-height: 440px;
+      object-fit: cover;
+    }
+
+    .post-body {
+      font-size: 16px;
+      line-height: 1.8;
+      color: #d0d0d0;
+    }
+
+    .post-body h2 {
+      font-size: 22px;
+      font-weight: 600;
+      color: #fff;
+      margin: 32px 0 12px;
+    }
+
+    .post-body h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin: 24px 0 8px;
+    }
+
+    .post-body p {
+      margin-bottom: 16px;
+    }
+
+    .post-body a {
+      color: #6daadb;
+      text-decoration: underline;
+    }
+
+    .post-body img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin: 16px 0;
+    }
+
+    .post-body ul, .post-body ol {
+      margin: 0 0 16px 24px;
+    }
+
+    .post-body li {
+      margin-bottom: 6px;
+    }
+
+    .post-body blockquote {
+      border-left: 3px solid #444;
+      padding-left: 16px;
+      margin: 16px 0;
+      color: #999;
+      font-style: italic;
+    }
+
+    .post-images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .post-images-grid img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+      aspect-ratio: 4/3;
+    }
+
+    /* LinkedIn link */
+    .post-linkedin-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 32px;
+      padding: 10px 20px;
+      background: #0a66c2;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .post-linkedin-link:hover {
+      background: #004182;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .blog-title { font-size: 24px; }
+      .post-card-title { font-size: 18px; }
+      .post-header-title { font-size: 24px; }
+      .blog-main { padding: 32px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="blog-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="/"><img class="header-logo" src="../assets/images/arc-logo.png" alt="ARC"></a>
+        <a class="header-title" href="/blog/">ARC Blog</a>
+      </div>
+      <nav class="header-nav">
+        <a href="/">Back to site</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="blog-main">
+    <!-- List view -->
+    <div id="list-view">
+      <h1 class="blog-title">Updates</h1>
+      <p class="blog-subtitle">Latest from ARC — Architecture, Resilience, Community</p>
+      <div id="posts-container">
+        <p class="posts-loading">Loading posts...</p>
+      </div>
+    </div>
+
+    <!-- Single post view -->
+    <div id="post-view" class="post-view">
+      <button class="post-back" onclick="showList()">&#8592; All posts</button>
+      <div id="post-content"></div>
+    </div>
+  </main>
+
+  <script>
+    const POSTS_URL = 'posts.json';
+    let postsData = [];
+
+    async function loadPosts() {
+      const container = document.getElementById('posts-container');
+      try {
+        const res = await fetch(POSTS_URL + '?t=' + Date.now());
+        postsData = await res.json();
+
+        if (postsData.length === 0) {
+          container.innerHTML = '<p class="posts-empty">No posts yet. Check back soon.</p>';
+          return;
+        }
+
+        // Sort newest first
+        postsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        container.innerHTML = postsData.map((post, i) => {
+          const date = new Date(post.date).toLocaleDateString('en-GB', {
+            day: 'numeric', month: 'long', year: 'numeric'
+          });
+          const excerpt = post.excerpt || stripHtml(post.body).substring(0, 180) + '...';
+          const authorImg = post.authorImage
+            ? `<img class="post-card-author-img" src="${esc(post.authorImage)}" alt="">`
+            : '';
+          const coverImg = post.coverImage
+            ? `<img class="post-card-image" src="${esc(post.coverImage)}" alt="">`
+            : '';
+          const tags = (post.tags || []).map(t =>
+            `<span class="post-tag">${esc(t)}</span>`
+          ).join('');
+
+          return `
+            <article class="post-card" onclick="showPost(${i})">
+              ${coverImg}
+              <div class="post-card-meta">
+                ${authorImg}
+                <span>${esc(post.author || 'ARC')} &middot; ${date}</span>
+              </div>
+              <h2 class="post-card-title">${esc(post.title)}</h2>
+              <p class="post-card-excerpt">${esc(excerpt)}</p>
+              ${tags ? `<div class="post-card-tags">${tags}</div>` : ''}
+            </article>
+          `;
+        }).join('');
+
+        // Check for hash route
+        handleRoute();
+      } catch (e) {
+        container.innerHTML = '<p class="posts-empty">No posts yet. Check back soon.</p>';
+      }
+    }
+
+    function showPost(index) {
+      const post = postsData[index];
+      if (!post) return;
+
+      const slug = post.slug || index;
+      window.location.hash = slug;
+
+      const date = new Date(post.date).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+      const authorImg = post.authorImage
+        ? `<img class="post-header-author-img" src="${esc(post.authorImage)}" alt="">`
+        : '';
+      const coverImg = post.coverImage
+        ? `<img class="post-header-image" src="${esc(post.coverImage)}" alt="">`
+        : '';
+      const linkedinLink = post.linkedinUrl
+        ? `<a class="post-linkedin-link" href="${esc(post.linkedinUrl)}" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            View on LinkedIn
+          </a>`
+        : '';
+
+      // Build additional images grid
+      const additionalImages = (post.images || []).filter(img => img !== post.coverImage);
+      const imagesGrid = additionalImages.length > 0
+        ? `<div class="post-images-grid">${additionalImages.map(img =>
+            `<img src="${esc(img)}" alt="" loading="lazy">`
+          ).join('')}</div>`
+        : '';
+
+      document.getElementById('post-content').innerHTML = `
+        <div class="post-header-meta">
+          ${authorImg}
+          <span>${esc(post.author || 'ARC')} &middot; ${date}</span>
+        </div>
+        <h1 class="post-header-title">${esc(post.title)}</h1>
+        ${coverImg}
+        <div class="post-body">
+          ${post.body}
+        </div>
+        ${imagesGrid}
+        ${linkedinLink}
+      `;
+
+      document.getElementById('list-view').style.display = 'none';
+      document.getElementById('post-view').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+
+    function showList() {
+      window.location.hash = '';
+      document.getElementById('list-view').style.display = 'block';
+      document.getElementById('post-view').style.display = 'none';
+      window.scrollTo(0, 0);
+    }
+
+    function handleRoute() {
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const index = postsData.findIndex(p => p.slug === hash);
+        if (index !== -1) showPost(index);
+      }
+    }
+
+    function esc(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function stripHtml(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      return div.textContent || '';
+    }
+
+    window.addEventListener('hashchange', handleRoute);
+    loadPosts();
+  </script>
+</body>
+</html>
