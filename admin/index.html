@@ -308,29 +308,22 @@
       font-size: 18px;
     }
 
-    .author-pic-btn {
-      position: absolute;
-      bottom: -2px;
-      right: -2px;
-      width: 20px;
-      height: 20px;
-      background: #333;
-      color: #fff;
-      border: 2px solid #fff;
-      border-radius: 50%;
-      font-size: 11px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-    }
-    .author-pic-btn:hover { background: #555; }
-
     .ap-name {
       font-size: 14px;
       color: #555;
     }
+
+    .ap-change {
+      font-size: 11px;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+      margin-left: 2px;
+    }
+    .ap-change:hover { color: #666; text-decoration: underline; }
 
     #other-fields {
       display: none;
@@ -768,19 +761,125 @@
     let editingSlug = null;
     let allPosts = [];
     let pendingConfirm = null;
-    let authorPicData = null; // base64 data URL of newly selected author pic
+    let authorPicData = null;
 
     const O = 'actionresearchprojects', R = 'actionresearchprojects.github.io', B = 'main';
     const SITE = 'https://actionresearchprojects.github.io';
 
-    // Known authors — pic stored in repo at blog/authors/{key}.jpg
-    const AUTHORS = {
-      andy:   { name: 'Andy Simmonds',      picPath: 'blog/authors/andy.jpg' },
-      archie: { name: 'Archie Worthington', picPath: 'blog/authors/archie.jpg' }
+    // Built-in authors (always in dropdown)
+    const BUILTIN_AUTHORS = {
+      andy:   { name: 'Andy Simmonds' },
+      archie: { name: 'Archie Worthington' }
     };
 
+    // All known authors: { key: { name, picPath } }
+    // Populated on login from built-ins + discovered from past posts
+    let knownAuthors = {};
+
+    function authorKey(name) {
+      return name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+
     function authorPicUrl(key) {
-      return SITE + '/' + AUTHORS[key].picPath + '?t=' + Date.now();
+      const a = knownAuthors[key];
+      if (!a || !a.picPath) return '';
+      return SITE + '/' + a.picPath + '?t=' + Date.now();
+    }
+
+    // Scan repo for author pics + past posts to build knownAuthors
+    async function loadKnownAuthors() {
+      // Start with built-ins
+      knownAuthors = {};
+      for (const [k, v] of Object.entries(BUILTIN_AUTHORS)) {
+        knownAuthors[k] = { name: v.name, picPath: '' };
+      }
+
+      // Check blog/authors/ for existing pics
+      try {
+        const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/authors`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (r.ok) {
+          const files = await r.json();
+          for (const f of files) {
+            const key = f.name.replace(/\.[^.]+$/, '');
+            if (knownAuthors[key]) {
+              knownAuthors[key].picPath = f.path;
+            } else {
+              // Discovered author pic without a known name yet
+              knownAuthors[key] = { name: key, picPath: f.path };
+            }
+          }
+        }
+      } catch (e) {}
+
+      // Scan posts.json to discover "other" author names and match to pic keys
+      try {
+        const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (r.ok) {
+          const d = await r.json();
+          const posts = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, '')))));
+          for (const post of posts) {
+            if (!post.author) continue;
+            const key = authorKey(post.author);
+            const isBuiltin = Object.keys(BUILTIN_AUTHORS).includes(key);
+            if (!isBuiltin && !knownAuthors[key]) {
+              // Discover pic path from authorImage field
+              let picPath = '';
+              if (post.authorImage && post.authorImage.startsWith('/blog/authors/')) {
+                picPath = post.authorImage.substring(1); // remove leading /
+              }
+              knownAuthors[key] = { name: post.author, picPath };
+            } else if (knownAuthors[key] && !knownAuthors[key].picPath && post.authorImage) {
+              if (post.authorImage.startsWith('/blog/authors/')) {
+                knownAuthors[key].picPath = post.authorImage.substring(1);
+              }
+            }
+            // Fix up discovered names (replace slug with proper name)
+            if (knownAuthors[key] && knownAuthors[key].name === key) {
+              knownAuthors[key].name = post.author;
+            }
+          }
+        }
+      } catch (e) {}
+
+      rebuildAuthorDropdown();
+    }
+
+    function rebuildAuthorDropdown() {
+      const sel = document.getElementById('author-select');
+      const currentVal = sel.value;
+      sel.innerHTML = '';
+
+      // Built-ins first
+      for (const [k, v] of Object.entries(BUILTIN_AUTHORS)) {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = v.name;
+        sel.appendChild(opt);
+      }
+
+      // Discovered authors
+      for (const [k, v] of Object.entries(knownAuthors)) {
+        if (BUILTIN_AUTHORS[k]) continue;
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = v.name;
+        sel.appendChild(opt);
+      }
+
+      // Always add "Other..." at the end
+      const otherOpt = document.createElement('option');
+      otherOpt.value = 'other';
+      otherOpt.textContent = 'Other...';
+      sel.appendChild(otherOpt);
+
+      // Restore selection if it still exists
+      if ([...sel.options].some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+      }
     }
 
     // ── Auth ──
@@ -802,6 +901,7 @@
         document.getElementById('who-manage').textContent = u.login;
         document.getElementById('who-editor').textContent = u.login;
         document.getElementById('login').style.display = 'none';
+        await loadKnownAuthors();
         showManage();
         onAuthorChange();
       } catch (x) { e.textContent = x.message; e.style.display = 'block'; }
@@ -912,9 +1012,9 @@
         document.getElementById('body').innerHTML = post.body || '';
         document.getElementById('post-excerpt').value = post.excerpt || '';
 
-        const authorKey = Object.keys(AUTHORS).find(k => AUTHORS[k].name === post.author);
-        if (authorKey) {
-          document.getElementById('author-select').value = authorKey;
+        const aKey = Object.keys(knownAuthors).find(k => knownAuthors[k].name === post.author);
+        if (aKey) {
+          document.getElementById('author-select').value = aKey;
         } else {
           document.getElementById('author-select').value = 'other';
           document.getElementById('other-name').value = post.author || '';
@@ -1021,19 +1121,26 @@
         preview.innerHTML = `
           <div class="author-pic-wrap">
             ${picHtml}
-            <button class="author-pic-btn" onclick="pickAuthorPic('other')" title="Upload photo">&#9998;</button>
           </div>
-          <span class="ap-name">${esc(name)}</span>`;
+          <div>
+            <span class="ap-name">${esc(name)}</span><br>
+            <button class="ap-change" onclick="pickAuthorPic('other')">change photo</button>
+          </div>`;
       } else {
         otherFields.style.display = 'none';
-        const a = AUTHORS[val];
+        const a = knownAuthors[val] || { name: val };
         const picUrl = authorPicUrl(val);
+        const picHtml = picUrl
+          ? `<img class="author-pic" src="${picUrl}" alt="" onerror="this.outerHTML='<div class=\\'author-pic-placeholder\\'>?</div>'">`
+          : `<div class="author-pic-placeholder">?</div>`;
         preview.innerHTML = `
           <div class="author-pic-wrap">
-            <img class="author-pic" src="${picUrl}" alt="" onerror="this.outerHTML='<div class=\\'author-pic-placeholder\\'>?</div>'">
-            <button class="author-pic-btn" onclick="pickAuthorPic('${val}')" title="Update photo">&#9998;</button>
+            ${picHtml}
           </div>
-          <span class="ap-name">${esc(a.name)}</span>`;
+          <div>
+            <span class="ap-name">${esc(a.name)}</span><br>
+            <button class="ap-change" onclick="pickAuthorPic('${esc(val)}')">change photo</button>
+          </div>`;
       }
     }
 
@@ -1048,7 +1155,6 @@
       const reader = new FileReader();
       reader.onload = ev => {
         authorPicData = { dataUrl: ev.target.result, file: file, key: e.target.dataset.authorKey };
-        // Update preview immediately
         const preview = document.getElementById('author-preview');
         const img = preview.querySelector('.author-pic') || preview.querySelector('.author-pic-placeholder');
         if (img) {
@@ -1066,9 +1172,10 @@
       const val = document.getElementById('author-select').value;
       if (val === 'other') {
         const name = document.getElementById('other-name').value.trim() || 'ARC';
-        return { name, key: null };
+        return { name, key: authorKey(name) };
       }
-      return { name: AUTHORS[val].name, key: val };
+      const a = knownAuthors[val];
+      return { name: a ? a.name : val, key: val };
     }
 
     // ── Formatting ──
@@ -1130,7 +1237,7 @@
       let picSrc = '';
       if (authorPicData) {
         picSrc = authorPicData.dataUrl;
-      } else if (author.key) {
+      } else if (author.key && knownAuthors[author.key]?.picPath) {
         picSrc = authorPicUrl(author.key);
       }
       const pic = picSrc ? `<img src="${picSrc}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'" alt="">` : '';
@@ -1162,16 +1269,17 @@
         let authorImageUrl = '';
         if (authorPicData) {
           const ext = authorPicData.file.name.split('.').pop().toLowerCase();
-          const picKey = authorPicData.key === 'other' ? slug : authorPicData.key;
+          const picKey = author.key;
           const picPath = 'blog/authors/' + picKey + '.' + ext;
           toast('Uploading author photo...');
-          await ghPut(picPath, authorPicData.dataUrl.split(',')[1], 'Update author photo: ' + picKey);
+          await ghPut(picPath, authorPicData.dataUrl.split(',')[1], 'Update author photo: ' + author.name);
           authorImageUrl = '/' + picPath;
-        } else if (author.key) {
-          // Use existing stored pic
-          authorImageUrl = '/' + AUTHORS[author.key].picPath;
+          // Remember this author for the dropdown
+          knownAuthors[picKey] = { name: author.name, picPath: picPath };
+          rebuildAuthorDropdown();
+        } else if (author.key && knownAuthors[author.key]?.picPath) {
+          authorImageUrl = '/' + knownAuthors[author.key].picPath;
         } else if (editingSlug) {
-          // Editing with "other" — keep existing
           const existing = allPosts.find(p => p.slug === editingSlug);
           if (existing) authorImageUrl = existing.authorImage || '';
         }
