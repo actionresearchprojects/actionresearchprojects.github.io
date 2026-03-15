@@ -1,0 +1,158 @@
+name: Cross-post to LinkedIn
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'blog/posts/*.json'
+
+jobs:
+  linkedin-post:
+    runs-on: ubuntu-latest
+    # Only run if LinkedIn secrets are configured
+    if: ${{ vars.LINKEDIN_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          token: ${{ secrets.SYNC_PAT }}
+
+      - name: Find new/changed post files
+        id: posts
+        run: |
+          # Get list of added/modified post JSON files in this commit
+          CHANGED=$(git diff --name-only --diff-filter=AM HEAD~1 HEAD -- 'blog/posts/*.json' | head -1)
+          echo "file=$CHANGED" >> $GITHUB_OUTPUT
+          if [ -z "$CHANGED" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Post to LinkedIn
+        if: steps.posts.outputs.skip == 'false'
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_ORG_ID: ${{ secrets.LINKEDIN_ORG_ID }}
+          POST_FILE: ${{ steps.posts.outputs.file }}
+        run: |
+          set -e
+
+          # Read the post data
+          TITLE=$(jq -r '.title' "$POST_FILE")
+          EXCERPT=$(jq -r '.excerpt' "$POST_FILE")
+          SLUG=$(jq -r '.slug' "$POST_FILE")
+          LINKEDIN_REQUESTED=$(jq -r '.linkedinRequested // false' "$POST_FILE")
+          COVER_IMAGE=$(jq -r '.coverImage // ""' "$POST_FILE")
+
+          if [ "$LINKEDIN_REQUESTED" != "true" ]; then
+            echo "LinkedIn posting was not requested for this post. Skipping."
+            exit 0
+          fi
+
+          if [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_ORG_ID" ]; then
+            echo "LinkedIn secrets not configured. Skipping."
+            exit 0
+          fi
+
+          SITE_URL="https://actionresearchprojects.github.io"
+          POST_URL="${SITE_URL}/blog/#${SLUG}"
+
+          # Build the LinkedIn post text
+          POST_TEXT="${TITLE}
+
+          ${EXCERPT}
+
+          Read more: ${POST_URL}"
+
+          # Build the API request body
+          if [ -n "$COVER_IMAGE" ] && [ "$COVER_IMAGE" != "null" ]; then
+            # Post with article/link share (shows preview card)
+            BODY=$(jq -n \
+              --arg org "$LINKEDIN_ORG_ID" \
+              --arg text "$POST_TEXT" \
+              --arg url "$POST_URL" \
+              --arg title "$TITLE" \
+              --arg desc "$EXCERPT" \
+              '{
+                "author": ("urn:li:organization:" + $org),
+                "lifecycleState": "PUBLISHED",
+                "specificContent": {
+                  "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": { "text": $text },
+                    "shareMediaCategory": "ARTICLE",
+                    "media": [{
+                      "status": "READY",
+                      "originalUrl": $url,
+                      "title": { "text": $title },
+                      "description": { "text": $desc }
+                    }]
+                  }
+                },
+                "visibility": {
+                  "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+                }
+              }')
+          else
+            # Text-only post
+            BODY=$(jq -n \
+              --arg org "$LINKEDIN_ORG_ID" \
+              --arg text "$POST_TEXT" \
+              '{
+                "author": ("urn:li:organization:" + $org),
+                "lifecycleState": "PUBLISHED",
+                "specificContent": {
+                  "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": { "text": $text },
+                    "shareMediaCategory": "NONE"
+                  }
+                },
+                "visibility": {
+                  "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+                }
+              }')
+          fi
+
+          echo "Posting to LinkedIn..."
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "https://api.linkedin.com/v2/ugcPosts" \
+            -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "X-Restli-Protocol-Version: 2.0.0" \
+            -d "$BODY")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          RESPONSE_BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Successfully posted to LinkedIn!"
+            echo "Response: $RESPONSE_BODY"
+
+            # Extract the post URN and save it back to the post JSON
+            POST_URN=$(echo "$RESPONSE_BODY" | jq -r '.id // empty')
+            if [ -n "$POST_URN" ]; then
+              # Convert URN to LinkedIn URL
+              LINKEDIN_URL="https://www.linkedin.com/feed/update/${POST_URN}"
+              echo "LinkedIn post URL: $LINKEDIN_URL"
+
+              # Update the post JSON with the LinkedIn URL
+              jq --arg url "$LINKEDIN_URL" '. + {linkedinUrl: $url}' "$POST_FILE" > tmp.json && mv tmp.json "$POST_FILE"
+
+              # Also update posts.json manifest
+              SLUG_VAL=$(jq -r '.slug' "$POST_FILE")
+              jq --arg slug "$SLUG_VAL" --arg url "$LINKEDIN_URL" \
+                'map(if .slug == $slug then . + {linkedinUrl: $url} else . end)' \
+                blog/posts.json > tmp.json && mv tmp.json blog/posts.json
+
+              # Commit the LinkedIn URL back
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git add "$POST_FILE" blog/posts.json
+              git commit -m "Add LinkedIn URL to post: ${TITLE}" || true
+              git push || true
+            fi
+          else
+            echo "Failed to post to LinkedIn (HTTP $HTTP_CODE)"
+            echo "Response: $RESPONSE_BODY"
+            exit 1
+          fi
