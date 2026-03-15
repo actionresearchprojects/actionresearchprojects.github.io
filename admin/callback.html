@@ -165,8 +165,7 @@
         <ol style="margin:8px 0 0 20px;color:#ccc;font-size:14px;line-height:1.8;">
           <li>Go to your GitHub repo <strong>Settings</strong> &rarr; <strong>Secrets and variables</strong> &rarr; <strong>Actions</strong></li>
           <li>Add secret: <code>LINKEDIN_ACCESS_TOKEN</code> = the token above</li>
-          <li>Add secret: <code>LINKEDIN_ORG_ID</code> = your company page's numeric ID</li>
-          <li>Add variable: <code>LINKEDIN_ENABLED</code> = <code>true</code></li>
+          <li>Add variable (under Variables tab): <code>LINKEDIN_ENABLED</code> = <code>true</code></li>
         </ol>
         <p style="margin-top:12px;color:#888;font-size:13px;">Note: LinkedIn access tokens expire after 60 days. You'll need to repeat this process to refresh.</p>
       </div>
@@ -175,7 +174,7 @@
 
   <script>
     const REDIRECT_URI = window.location.origin + '/admin/callback';
-    const SCOPES = 'openid profile w_member_social w_organization_social';
+    const SCOPES = 'openid profile w_member_social';
 
     // Check if we're returning from LinkedIn with a code
     (function() {
