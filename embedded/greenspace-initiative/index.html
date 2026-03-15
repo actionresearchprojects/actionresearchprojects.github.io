@@ -1469,4 +1469,35 @@ _stq.push([ 'clickTrackerInit', '235870352', '113' ]);
 			height: 0 !important;
 			width: 0 !important;
 			overflow: hidden;
-		}</style><img src="assets/g.gif" alt="" id="wpstats"><div class="comment-likes-overlay" style="display: none;"></div><script src="assets/wp-content/mu-plugins/actionbar/actionbar.js" defer=""></script></body></html>
+		}</style><img src="assets/g.gif" alt="" id="wpstats"><div class="comment-likes-overlay" style="display: none;"></div><script src="assets/wp-content/mu-plugins/actionbar/actionbar.js" defer=""></script>
+<div id="unavailable-toast" style="display:none;position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:14px 28px;border-radius:8px;font-family:'Ubuntu',sans-serif;font-size:15px;z-index:99999;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .3s">This page is not available yet.</div>
+<script>
+(function(){
+  var defined = [
+    'actionresearchprojects.net/arc-greenspace-initiative/template',
+    'actionresearchprojects.net/arc-greenspace-initiative/gallery-of-inspiration',
+    'actionresearchprojects.net/arc-greenspace-initiative/upload-your-garden'
+  ];
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    for (var i = 0; i < defined.length; i++) {
+      if (href.indexOf(defined[i]) !== -1) {
+        e.preventDefault();
+        e.stopPropagation();
+        var toast = document.getElementById('unavailable-toast');
+        toast.style.display = 'block';
+        toast.style.opacity = '1';
+        clearTimeout(toast._t);
+        toast._t = setTimeout(function() {
+          toast.style.opacity = '0';
+          setTimeout(function() { toast.style.display = 'none'; }, 300);
+        }, 2500);
+        return;
+      }
+    }
+  }, true);
+})();
+</script>
+</body></html>
