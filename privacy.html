@@ -16,31 +16,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500&amp;display=swap" rel="stylesheet">
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+      html { height: 100%; }
       body {
         font-family: "Ubuntu", sans-serif;
-        background: #1a1a1a;
-        color: #e0e0e0;
-        line-height: 1.7;
-        min-height: 100vh;
+        background: #fff;
+        color: #222;
+        min-height: 100%;
+        -webkit-font-smoothing: antialiased;
       }
-      #main {
-        position: relative;
-        min-height: 100vh;
-      }
-      .privacy-bg {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: 0;
-      }
-      .privacy-bg img {
-        width: 100%; height: 100%;
-        object-fit: cover;
-        opacity: 0.35;
-      }
+      #main { position: relative; min-height: 100vh; }
+
       .privacy-header {
-        position: relative;
-        z-index: 1;
         text-align: center;
         padding: 50px 40px 20px;
       }
@@ -50,9 +37,7 @@
         width: auto;
       }
       .privacy-content {
-        position: relative;
-        z-index: 1;
-        max-width: 780px;
+        max-width: 740px;
         margin: 0 auto;
         padding: 20px 40px 80px;
       }
@@ -61,35 +46,37 @@
         font-weight: 500;
         text-align: center;
         margin-bottom: 10px;
-        color: #fff;
+        color: #111;
       }
       .privacy-content .last-updated {
         text-align: center;
         font-size: 14px;
-        color: rgba(255,255,255,0.4);
+        color: #999;
         margin-bottom: 40px;
       }
       .privacy-content h2 {
         font-size: 22px;
         font-weight: 500;
         margin: 36px 0 12px;
-        color: #fff;
+        color: #111;
       }
       .privacy-content p {
         font-size: 16px;
         font-weight: 300;
         margin-bottom: 14px;
-        color: rgba(255,255,255,0.8);
+        color: #333;
+        line-height: 1.7;
       }
       .privacy-content ul {
         margin: 0 0 14px 24px;
         font-size: 16px;
         font-weight: 300;
-        color: rgba(255,255,255,0.8);
+        color: #333;
+        line-height: 1.7;
       }
       .privacy-content ul li { margin-bottom: 6px; }
       .privacy-content a {
-        color: #7cb8f7;
+        color: #0a66c2;
         text-decoration: none;
       }
       .privacy-content a:hover {
@@ -99,42 +86,37 @@
         display: inline-block;
         margin-top: 40px;
         padding: 10px 24px;
-        background: rgba(255,255,255,0.1);
+        background: #f0f0f0;
         border-radius: 8px;
-        color: #fff;
+        color: #333;
         text-decoration: none;
         font-size: 15px;
         transition: background 0.2s;
       }
       .back-link:hover {
-        background: rgba(255,255,255,0.2);
+        background: #e0e0e0;
         text-decoration: none;
       }
     </style>
     <link rel="stylesheet" href="fluid-scaling.css"><link rel="stylesheet" href="orientation-lock.css">
 <style id="site-footer-style">
 #site-footer {
-  position: relative;
+  position: fixed;
+  bottom: 6px;
+  right: 10px;
   z-index: 10;
-  text-align: center;
-  padding: 14px 20px;
   font-family: "Ubuntu", sans-serif;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 300;
-  color: rgba(255,255,255,0.45);
-  background: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.3);
+  pointer-events: auto;
 }
 #site-footer a {
-  color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.3);
   text-decoration: none;
-  transition: color 0.2s;
 }
 #site-footer a:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-#site-footer .footer-sep {
-  margin: 0 10px;
+  color: rgba(255,255,255,0.6);
 }
 </style></head>
 <body>
@@ -145,9 +127,6 @@
     </div>
   </div>
   <div id="main">
-    <div class="privacy-bg">
-      <img src="assets/images/support-page-background.webp" alt="" loading="lazy" decoding="async">
-    </div>
     <div class="privacy-header">
       <a href="/"><img src="assets/images/arc-logo.png" alt="ARC logo" decoding="auto"></a>
     </div>
@@ -167,9 +146,9 @@
       <h2>Third-party services</h2>
       <p>This site uses the following third-party services, each of which has its own privacy policy:</p>
       <ul>
-        <li><strong>GitHub Pages</strong> — hosts this website. GitHub may collect technical information such as IP addresses in server logs. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub’s privacy statement</a>.</li>
-        <li><strong>Google Fonts</strong> — fonts are loaded from Google’s servers. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google’s privacy policy</a>.</li>
-        <li><strong>Mapbox</strong> — used on the project map page. See <a href="https://www.mapbox.com/legal/privacy" target="_blank" rel="noopener">Mapbox’s privacy policy</a>.</li>
+        <li><strong>GitHub Pages</strong> hosts this website. GitHub may collect technical information such as IP addresses in server logs. See <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub's privacy statement</a>.</li>
+        <li><strong>Google Fonts</strong> are loaded from Google's servers. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>.</li>
+        <li><strong>Mapbox</strong> is used on the project map page. See <a href="https://www.mapbox.com/legal/privacy" target="_blank" rel="noopener">Mapbox's privacy policy</a>.</li>
       </ul>
 
       <h2>External links</h2>
@@ -180,8 +159,8 @@
 
       <a href="/" class="back-link">← Back to home</a>
     </div>
-  <div id="site-footer">© 2026 ARC, a programme of Simmonds Mills. All rights reserved.<span class="footer-sep">|</span><a href="/privacy">Privacy Policy</a></div></div>
+  </div>
   <div id="overlay"></div>
   <script src="fluid-scaling.js"></script>
 
-</body></html>
+<div id="site-footer">© 2026 ARC, a programme of Simmonds Mills. All rights reserved. · <a href="/privacy">Privacy</a></div></body></html>
