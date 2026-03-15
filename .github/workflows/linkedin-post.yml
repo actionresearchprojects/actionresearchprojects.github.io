@@ -33,7 +33,7 @@ jobs:
         if: steps.posts.outputs.skip == 'false'
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-          LINKEDIN_PERSON_ID: ${{ vars.LINKEDIN_PERSON_ID }}
+          LINKEDIN_ORG_ID: ${{ vars.LINKEDIN_ORG_ID }}
           POST_FILE: ${{ steps.posts.outputs.file }}
         run: |
           set -e
@@ -55,36 +55,13 @@ jobs:
             exit 0
           fi
 
-          # Get the authenticated member's URN
-          # Use /v2/userinfo (requires openid scope from "Sign In with LinkedIn" product)
-          # The sub field is an opaque string — use urn:li:person:{sub} format
-          AUTHOR_URN=""
-
-          USERINFO=$(curl -s -w "\n%{http_code}" \
-            -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
-            "https://api.linkedin.com/v2/userinfo")
-          UI_CODE=$(echo "$USERINFO" | tail -1)
-          UI_BODY=$(echo "$USERINFO" | sed '$d')
-
-          if [ "$UI_CODE" -ge 200 ] && [ "$UI_CODE" -lt 300 ]; then
-            MEMBER_SUB=$(echo "$UI_BODY" | jq -r '.sub // empty')
-            if [ -n "$MEMBER_SUB" ]; then
-              AUTHOR_URN="urn:li:person:$MEMBER_SUB"
-            fi
-          fi
-
-          if [ -z "$AUTHOR_URN" ] && [ -n "$LINKEDIN_PERSON_ID" ]; then
-            # Fall back to repo variable (assumes urn:li:person: format)
-            AUTHOR_URN="urn:li:person:$LINKEDIN_PERSON_ID"
-          fi
-
-          if [ -z "$AUTHOR_URN" ]; then
-            echo "Could not determine LinkedIn member ID."
-            echo "Add 'Sign In with LinkedIn using OpenID Connect' to your LinkedIn app,"
-            echo "or set LINKEDIN_PERSON_ID repo variable to your OpenID sub value."
+          # Post as the ARC organization page
+          if [ -z "$LINKEDIN_ORG_ID" ]; then
+            echo "LINKEDIN_ORG_ID repo variable not set. Skipping."
             exit 1
           fi
 
+          AUTHOR_URN="urn:li:organization:$LINKEDIN_ORG_ID"
           echo "Posting as: $AUTHOR_URN"
 
           SITE_URL="https://actionresearchprojects.github.io"
