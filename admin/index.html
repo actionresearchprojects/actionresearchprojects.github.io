@@ -730,14 +730,16 @@
 
     // Known authors with LinkedIn usernames
     const AUTHORS = {
-      andy:   { name: 'Andy Simmonds',      linkedin: 'andy-simmonds-arc' },
+      andy:   { name: 'Andy Simmonds',      linkedin: 'andrew-simmonds-69799a1b' },
       archie: { name: 'Archie Worthington', linkedin: 'archie-worthington' }
     };
 
     // Get LinkedIn profile image via unavatar.io
-    function linkedinPic(username) {
+    // displayUrl: adds cache-bust for live preview; storeUrl: clean for saving in JSON
+    function linkedinPic(username, forDisplay) {
       if (!username) return '';
-      return 'https://unavatar.io/linkedin/' + encodeURIComponent(username);
+      const base = 'https://unavatar.io/linkedin/' + encodeURIComponent(username);
+      return forDisplay ? base + '?ttl=0&t=' + Date.now() : base;
     }
 
     // ── Auth ──
@@ -997,7 +999,7 @@
       } else {
         otherFields.style.display = 'none';
         const a = AUTHORS[val];
-        const pic = linkedinPic(a.linkedin);
+        const pic = linkedinPic(a.linkedin, true);
         preview.innerHTML = `<img src="${pic}" alt="" onerror="this.style.display='none'"><span class="ap-name">${esc(a.name)}</span>`;
       }
     }
@@ -1010,7 +1012,7 @@
         preview.innerHTML = '';
         return;
       }
-      const pic = li ? linkedinPic(li) : '';
+      const pic = li ? linkedinPic(li, true) : '';
       preview.innerHTML = `${pic ? `<img src="${pic}" alt="" onerror="this.style.display='none'">` : ''}<span class="ap-name">${esc(name || 'Unknown')}</span>`;
     }
 
