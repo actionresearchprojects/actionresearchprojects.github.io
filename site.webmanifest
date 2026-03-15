@@ -1,0 +1,16 @@
+{
+  "name": "ARC — Architecture for Resilient Communities",
+  "short_name": "ARC",
+  "description": "Developing high-performance strategies for energy-efficient, climate-adaptable buildings in climate-vulnerable regions.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#ffffff",
+  "theme_color": "#333333",
+  "icons": [
+    {
+      "src": "assets/images/favicon.png",
+      "sizes": "720x720",
+      "type": "image/png"
+    }
+  ]
+}

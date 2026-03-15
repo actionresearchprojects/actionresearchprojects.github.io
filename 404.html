@@ -1,8 +1,8 @@
-<!DOCTYPE html><html lang="en-GB"><head>
+<!DOCTYPE html><html lang="en-GB"><head><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 	<meta charset="utf-8"><meta name="viewport" content="width=1440"><title>Page Not Found — ARC</title>
     <link rel="icon" type="image/png" sizes="any" href="assets/images/favicon.png"><link href="assets/images/favicon.png" rel="icon" media="(prefers-color-scheme: light)">
     <link href="assets/images/favicon.png" rel="icon" media="(prefers-color-scheme: dark)">
-    <link rel="apple-touch-icon" href="assets/images/favicon.png">
+    <link rel="apple-touch-icon" href="assets/images/favicon.png"><link rel="manifest" href="/site.webmanifest"><meta name="theme-color" content="#333333">
 
 	<style>
 @font-face {
@@ -113,8 +113,8 @@ html body { background: none; }
   border-radius: 10px;
 }
 	</style>
-</head>
-<body><div id="main">
+<link rel="stylesheet" href="fluid-scaling.css"><link rel="stylesheet" href="orientation-lock.css"></head>
+<body><div id="orientation-overlay" class="force-landscape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32zm-6.25-.77c-.59-.59-1.54-.59-2.12 0L3.52 6.34c-.59.59-.59 1.54 0 2.12l10.02 10.02c.59.59 1.54.59 2.12 0l4.59-4.59c.59-.59.59-1.54 0-2.12L10.23 1.75zm3.06 9.89l-4.59 4.59-6.96-6.96 4.59-4.59 6.96 6.96zM7.52 21.48C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.38 1.32z"></path></svg><p>Please rotate your device to landscape mode</p></div><div id="main">
   <div class="bg"><img decoding="async" width="3507" height="4960" src="assets/images/support-page-background.webp" alt="" loading="lazy"></div>
   <div class="content">
     <h1>404</h1>
@@ -122,4 +122,5 @@ html body { background: none; }
     <p>The page you're looking for doesn't exist or has been moved.</p>
     <a href="/">Back to home</a>
   </div>
-</div></body></html>
+</div>
+<script src="fluid-scaling.js"></script></body></html>
