@@ -113,7 +113,31 @@ html body { background: none; }
   border-radius: 10px;
 }
 	</style>
-<link rel="stylesheet" href="/fluid-scaling.css"><link rel="stylesheet" href="/orientation-lock.css"></head>
+<link rel="stylesheet" href="/fluid-scaling.css"><link rel="stylesheet" href="/orientation-lock.css"><style id="site-footer-style">
+#site-footer {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 14px 20px;
+  font-family: "Ubuntu", sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.45);
+  background: rgba(0,0,0,0.35);
+}
+#site-footer a {
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+#site-footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+#site-footer .footer-sep {
+  margin: 0 10px;
+}
+</style></head>
 <body><div id="orientation-overlay" class="force-landscape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32zm-6.25-.77c-.59-.59-1.54-.59-2.12 0L3.52 6.34c-.59.59-.59 1.54 0 2.12l10.02 10.02c.59.59 1.54.59 2.12 0l4.59-4.59c.59-.59.59-1.54 0-2.12L10.23 1.75zm3.06 9.89l-4.59 4.59-6.96-6.96 4.59-4.59 6.96 6.96zM7.52 21.48C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.38 1.32z"></path></svg><p>Please rotate your device to landscape mode</p></div><div id="main">
   <div class="bg"><img decoding="async" width="3507" height="4960" src="/assets/images/support-page-background.webp" alt="" loading="lazy"></div>
   <div class="content">
@@ -122,5 +146,5 @@ html body { background: none; }
     <p>The page you're looking for doesn't exist or has been moved.</p>
     <a href="/">Back to home</a>
   </div>
-</div>
+<div id="site-footer">© 2026 ARC, a programme of Simmonds Mills. All rights reserved.<span class="footer-sep">|</span><a href="/privacy">Privacy Policy</a></div></div>
 <script src="/fluid-scaling.js"></script></body></html>
