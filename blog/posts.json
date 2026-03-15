@@ -4,13 +4,11 @@
     "title": "Test",
     "author": "actionresearchprojects",
     "authorImage": "https://avatars.githubusercontent.com/u/218239187?v=4",
-    "date": "2026-03-15T08:14:15.947Z",
-    "body": "Test post",
-    "excerpt": "Test post",
-    "coverImage": "/blog/images/test-1.jpg",
-    "images": [
-      "/blog/images/test-1.jpg"
-    ],
+    "date": "2026-03-15T08:14:34.556Z",
+    "body": "Test",
+    "excerpt": "Test",
+    "coverImage": "",
+    "images": [],
     "tags": [],
     "linkedinRequested": false
   }
