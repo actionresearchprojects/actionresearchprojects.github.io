@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://actionresearchprojects.github.io/sitemap.xml
