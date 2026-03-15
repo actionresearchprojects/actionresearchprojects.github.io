@@ -42,7 +42,7 @@
      */
     var overlay = document.getElementById('orientation-overlay');
     if (overlay) {
-      var isSmall = Math.min(window.innerWidth, window.innerHeight) <= 1024;
+      var isSmall = Math.min(screen.width, screen.height) <= 1024;
       var isPortrait = window.innerHeight > window.innerWidth;
       if (isSmall && isPortrait) {
         overlay.style.display = 'flex';
