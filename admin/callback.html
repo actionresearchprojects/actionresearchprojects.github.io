@@ -271,13 +271,9 @@
       const el = document.getElementById('manual-exchange');
       el.style.display = 'block';
 
-      const cmd = `curl -s -X POST "https://www.linkedin.com/oauth/v2/accessToken" \\
-  -H "Content-Type: application/x-www-form-urlencoded" \\
-  -d "grant_type=authorization_code" \\
-  -d "code=${code}" \\
-  -d "redirect_uri=${encodeURIComponent(REDIRECT_URI)}" \\
-  -d "client_id=${clientId || 'YOUR_CLIENT_ID'}" \\
-  -d "client_secret=${clientSecret || 'YOUR_CLIENT_SECRET'}"`;
+      const encodedRedirect = encodeURIComponent(REDIRECT_URI);
+      const cmd = `curl -s -X POST "https://www.linkedin.com/oauth/v2/accessToken" -H "Content-Type: application/x-www-form-urlencoded" -d "grant_type=authorization_code&code=${code}&redirect_uri=${encodedRedirect}&client_id=${clientId || 'YOUR_CLIENT_ID'}&client_secret=${encodeURIComponent(clientSecret || 'YOUR_CLIENT_SECRET')}"`;
+
 
       const cmdEl = document.getElementById('curl-command');
       cmdEl.insertBefore(document.createTextNode(cmd), cmdEl.firstChild);
