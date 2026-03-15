@@ -1,0 +1,42 @@
+name: Sync embedded sub-projects
+
+on:
+  repository_dispatch:
+    types: [sync-embedded]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main site
+        uses: actions/checkout@v4
+
+      - name: Sync arc_tz_temp_humid
+        if: github.event.client_payload.source_repo == 'arc_tz_temp_humid'
+        run: |
+          # Clone the source repo (shallow, just the latest)
+          git clone --depth 1 https://github.com/actionresearchprojects/arc_tz_temp_humid.git /tmp/arc_tz_temp_humid
+
+          # Clear the existing embedded folder and copy fresh output
+          rm -rf embedded/arc_tz_temp_humid
+          mkdir -p embedded/arc_tz_temp_humid
+
+          cp /tmp/arc_tz_temp_humid/index.html embedded/arc_tz_temp_humid/
+          cp /tmp/arc_tz_temp_humid/config.html embedded/arc_tz_temp_humid/
+          cp -r /tmp/arc_tz_temp_humid/logo embedded/arc_tz_temp_humid/
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          git add embedded/
+          if git diff --cached --quiet; then
+            echo "No changes to sync"
+          else
+            SOURCE="${{ github.event.client_payload.source_repo }}"
+            git commit -m "sync embedded/${SOURCE} from source repo"
+            git push
+          fi
