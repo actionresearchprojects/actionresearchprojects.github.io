@@ -30,12 +30,15 @@
      * On mobile (zoom === 1, small screen), viewport width=1440 makes 100vh
      * much taller than the design height, creating a blank gap at the bottom.
      * We clear min-height so the CSS height class rule takes control instead.
+     * Only do this when the orientation overlay exists (pages that block
+     * portrait); pages without it (e.g. support.html) need min-height:100vh
+     * so the background fills the viewport in portrait.
      */
     var root = document.querySelector('[data-site-root]');
     if (root) {
       if (zoom < 1) {
         root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
-      } else if (isSmall) {
+      } else if (isSmall && overlay) {
         root.style.minHeight = '';
       }
     }
