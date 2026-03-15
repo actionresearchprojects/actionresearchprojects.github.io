@@ -15,6 +15,19 @@
       background: #111;
       color: #e0e0e0;
       min-height: 100vh;
+      position: relative;
+    }
+
+    /* Full-page background image */
+    .page-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      object-fit: cover;
+      object-position: center;
     }
 
     /* Login screen */
@@ -25,11 +38,15 @@
       justify-content: center;
       min-height: 100vh;
       padding: 24px;
+      position: relative;
+      z-index: 1;
     }
 
     .login-box {
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
       padding: 40px;
       max-width: 440px;
@@ -67,8 +84,8 @@
     .login-box input[type="password"] {
       width: 100%;
       padding: 10px 14px;
-      background: #222;
-      border: 1px solid #444;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 8px;
       color: #fff;
       font-family: monospace;
@@ -162,9 +179,17 @@
       display: none;
     }
 
+    /* Editor screen */
+    .editor-screen {
+      position: relative;
+      z-index: 1;
+    }
+
     .editor-header {
-      background: #111;
-      border-bottom: 1px solid #2a2a2a;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
       padding: 12px 24px;
       position: sticky;
       top: 0;
@@ -225,8 +250,8 @@
     .field input[type="text"] {
       width: 100%;
       padding: 10px 14px;
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 8px;
       color: #fff;
       font-family: inherit;
@@ -256,8 +281,8 @@
       display: flex;
       gap: 4px;
       padding: 8px;
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
       border-bottom: none;
       border-radius: 8px 8px 0 0;
       flex-wrap: wrap;
@@ -299,8 +324,8 @@
     .editor-area {
       min-height: 300px;
       padding: 16px;
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 0 0 8px 8px;
       color: #e0e0e0;
       font-size: 16px;
@@ -339,7 +364,7 @@
     }
 
     .image-drop-zone {
-      border: 2px dashed #333;
+      border: 2px dashed rgba(255,255,255,0.15);
       border-radius: 8px;
       padding: 24px;
       text-align: center;
@@ -350,8 +375,8 @@
     }
 
     .image-drop-zone:hover, .image-drop-zone.dragover {
-      border-color: #555;
-      background: #1a1a1a;
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.3);
     }
 
     .image-drop-zone input[type="file"] {
@@ -429,8 +454,8 @@
       flex-wrap: wrap;
       gap: 6px;
       padding: 8px;
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 8px;
       min-height: 42px;
       align-items: center;
@@ -483,8 +508,10 @@
 
     /* Publishing options */
     .publish-options {
-      background: #1a1a1a;
-      border: 1px solid #333;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 8px;
       padding: 20px;
       margin-top: 32px;
@@ -531,8 +558,10 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: #222;
-      border: 1px solid #444;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
       color: #fff;
       padding: 14px 24px;
       border-radius: 8px;
@@ -568,7 +597,10 @@
     .preview-content {
       max-width: 700px;
       margin: 40px auto;
-      background: #1a1a1a;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px;
       padding: 40px;
     }
@@ -605,6 +637,7 @@
   </style>
 </head>
 <body>
+  <img class="page-bg" src="../assets/images/support-page-background.webp" alt="">
 
   <!-- LOGIN SCREEN -->
   <div id="login-screen" class="login-screen">
