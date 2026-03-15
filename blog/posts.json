@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "slug": "test-post",
+    "title": "Test Post",
+    "author": "Archie Worthington",
+    "authorImage": "/blog/authors/archie.jpeg",
+    "date": "2026-03-15T09:08:59.952Z",
+    "body": "Test Post",
+    "excerpt": "test",
+    "coverImage": "/blog/images/test-post-1.png",
+    "images": [
+      "/blog/images/test-post-1.png"
+    ],
+    "tags": [],
+    "linkedinRequested": true
+  }
+]
