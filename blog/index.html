@@ -410,7 +410,7 @@
           });
           const excerpt = post.excerpt || stripHtml(post.body).substring(0, 180) + '...';
           const authorImg = post.authorImage
-            ? `<img class="post-card-author-img" src="${esc(freshPic(post.authorImage))}" alt="">`
+            ? `<img class="post-card-author-img" src="${esc(post.authorImage)}" alt="">`
             : '';
           const coverImg = post.coverImage
             ? `<img class="post-card-image" src="${esc(post.coverImage)}" alt="">`
@@ -451,7 +451,7 @@
         day: 'numeric', month: 'long', year: 'numeric'
       });
       const authorImg = post.authorImage
-        ? `<img class="post-header-author-img" src="${esc(freshPic(post.authorImage))}" alt="">`
+        ? `<img class="post-header-author-img" src="${esc(post.authorImage)}" alt="">`
         : '';
       const coverImg = post.coverImage
         ? `<img class="post-header-image" src="${esc(post.coverImage)}" alt="">`
@@ -520,12 +520,6 @@
       return div.textContent || '';
     }
 
-    // Cache-bust unavatar URLs so we always get latest LinkedIn profile pics
-    function freshPic(url) {
-      if (!url || !url.includes('unavatar.io')) return url;
-      const sep = url.includes('?') ? '&' : '?';
-      return url + sep + 't=' + Date.now();
-    }
 
     window.addEventListener('hashchange', handleRoute);
     loadPosts();

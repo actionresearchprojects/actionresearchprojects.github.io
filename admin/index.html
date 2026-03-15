@@ -252,7 +252,9 @@
     }
 
     /* ── Author ── */
-    .author-row { display: flex; gap: 12px; margin-bottom: 28px; align-items: flex-end; }
+    .author-section { margin-bottom: 28px; }
+
+    .author-row { display: flex; gap: 12px; align-items: flex-end; }
 
     .grp { flex: 1; }
     .grp select, .grp input {
@@ -273,30 +275,67 @@
     .author-preview {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 28px;
-      min-height: 36px;
+      gap: 12px;
+      margin-top: 14px;
+      min-height: 44px;
     }
-    .author-preview img {
-      width: 36px;
-      height: 36px;
+
+    .author-pic-wrap {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+
+    .author-pic {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       object-fit: cover;
       border: 1px solid #ddd;
     }
-    .author-preview .ap-name {
+
+    .author-pic-placeholder {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #eee;
+      border: 1px dashed #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bbb;
+      font-size: 18px;
+    }
+
+    .author-pic-btn {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 20px;
+      height: 20px;
+      background: #333;
+      color: #fff;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .author-pic-btn:hover { background: #555; }
+
+    .ap-name {
       font-size: 14px;
       color: #555;
-    }
-    .author-preview .ap-loading {
-      font-size: 13px;
-      color: #aaa;
     }
 
     #other-fields {
       display: none;
       gap: 12px;
-      margin-bottom: 28px;
+      margin-top: 12px;
     }
 
     /* ── Images ── */
@@ -587,6 +626,9 @@
 <body>
   <img class="bg" src="../assets/images/support-page-background.webp" alt="">
 
+  <!-- Hidden file input for author pic -->
+  <input type="file" id="author-pic-input" accept="image/*" style="display:none" onchange="onAuthorPicSelected(event)">
+
   <div id="login">
     <div class="login-card">
       <img src="../assets/images/arc-logo.png" alt="ARC">
@@ -643,23 +685,24 @@
     <div class="main">
       <input class="title-in" type="text" id="post-title" placeholder="Post title...">
 
-      <p class="lbl">Author</p>
-      <div class="author-row">
-        <div class="grp">
-          <select id="author-select" onchange="onAuthorChange()">
-            <option value="andy">Andy Simmonds</option>
-            <option value="archie">Archie Worthington</option>
-            <option value="other">Other...</option>
-          </select>
+      <div class="author-section">
+        <p class="lbl">Author</p>
+        <div class="author-row">
+          <div class="grp">
+            <select id="author-select" onchange="onAuthorChange()">
+              <option value="andy">Andy Simmonds</option>
+              <option value="archie">Archie Worthington</option>
+              <option value="other">Other...</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div id="other-fields">
-        <div class="grp"><p class="lbl">Name</p><input type="text" id="other-name" placeholder="Full name"></div>
-        <div class="grp"><p class="lbl">LinkedIn username</p><input type="text" id="other-linkedin" placeholder="e.g. johndoe" oninput="updateOtherPreview()"></div>
-      </div>
+        <div id="other-fields">
+          <div class="grp"><p class="lbl">Name</p><input type="text" id="other-name" placeholder="Full name"></div>
+        </div>
 
-      <div class="author-preview" id="author-preview"></div>
+        <div class="author-preview" id="author-preview"></div>
+      </div>
 
       <p class="lbl">Images</p>
       <div class="drop" id="drop"><input type="file" id="fi" multiple accept="image/*">Click or drop images here</div>
@@ -721,25 +764,23 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    let token='', user='', images=[], cIdx=0, tags=[];
-    let editingSlug = null; // null = new post, string = editing existing
+    let token = '', user = '', images = [], cIdx = 0, tags = [];
+    let editingSlug = null;
     let allPosts = [];
     let pendingConfirm = null;
+    let authorPicData = null; // base64 data URL of newly selected author pic
 
-    const O='actionresearchprojects', R='actionresearchprojects.github.io', B='main';
+    const O = 'actionresearchprojects', R = 'actionresearchprojects.github.io', B = 'main';
+    const SITE = 'https://actionresearchprojects.github.io';
 
-    // Known authors with LinkedIn usernames
+    // Known authors — pic stored in repo at blog/authors/{key}.jpg
     const AUTHORS = {
-      andy:   { name: 'Andy Simmonds',      linkedin: 'andrew-simmonds-69799a1b' },
-      archie: { name: 'Archie Worthington', linkedin: 'archie-worthington' }
+      andy:   { name: 'Andy Simmonds',      picPath: 'blog/authors/andy.jpg' },
+      archie: { name: 'Archie Worthington', picPath: 'blog/authors/archie.jpg' }
     };
 
-    // Get LinkedIn profile image via unavatar.io
-    // displayUrl: adds cache-bust for live preview; storeUrl: clean for saving in JSON
-    function linkedinPic(username, forDisplay) {
-      if (!username) return '';
-      const base = 'https://unavatar.io/linkedin/' + encodeURIComponent(username);
-      return forDisplay ? base + '?t=' + Date.now() : base;
+    function authorPicUrl(key) {
+      return SITE + '/' + AUTHORS[key].picPath + '?t=' + Date.now();
     }
 
     // ── Auth ──
@@ -775,7 +816,6 @@
       document.getElementById('editor').style.display = 'none';
     }
 
-    // Auto-login
     (() => {
       const s = localStorage.getItem('arc_pat');
       if (s) { document.getElementById('pat').value = s; doLogin(); }
@@ -791,7 +831,6 @@
     function showEditor(slug) {
       document.getElementById('manage').style.display = 'none';
       document.getElementById('editor').style.display = 'block';
-
       if (slug) {
         editingSlug = slug;
         document.getElementById('editor-mode-label').textContent = 'Edit Post';
@@ -811,15 +850,14 @@
       document.getElementById('post-excerpt').value = '';
       document.getElementById('author-select').value = 'andy';
       document.getElementById('other-name').value = '';
-      document.getElementById('other-linkedin').value = '';
       document.getElementById('cb1').checked = true;
       document.getElementById('cb2').checked = true;
-      images = []; tags = []; cIdx = 0;
+      images = []; tags = []; cIdx = 0; authorPicData = null;
       dTh(); dTg();
       onAuthorChange();
     }
 
-    // ── Load posts list ──
+    // ── Post list ──
     async function loadPostList() {
       const container = document.getElementById('post-list');
       container.innerHTML = '<p class="post-list-empty">Loading...</p>';
@@ -831,16 +869,12 @@
         const d = await r.json();
         allPosts = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, '')))));
         allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
-
         if (allPosts.length === 0) {
           container.innerHTML = '<p class="post-list-empty">No posts yet. Create your first one!</p>';
           return;
         }
-
         container.innerHTML = allPosts.map(post => {
-          const date = new Date(post.date).toLocaleDateString('en-GB', {
-            day: 'numeric', month: 'short', year: 'numeric'
-          });
+          const date = new Date(post.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
           const cover = post.coverImage
             ? `<img class="post-item-cover" src="${esc(post.coverImage)}" alt="">`
             : `<div class="post-item-nocover">&#9633;</div>`;
@@ -856,8 +890,7 @@
                 <button class="btn-sm" onclick="showEditor('${esc(post.slug)}')">Edit</button>
                 <button class="btn-sm danger" onclick="confirmDelete('${esc(post.slug)}', '${esc(post.title)}')">Delete</button>
               </div>
-            </div>
-          `;
+            </div>`;
         }).join('');
       } catch (e) {
         container.innerHTML = '<p class="post-list-empty">No posts yet. Create your first one!</p>';
@@ -879,39 +912,32 @@
         document.getElementById('body').innerHTML = post.body || '';
         document.getElementById('post-excerpt').value = post.excerpt || '';
 
-        // Set author
         const authorKey = Object.keys(AUTHORS).find(k => AUTHORS[k].name === post.author);
         if (authorKey) {
           document.getElementById('author-select').value = authorKey;
         } else {
           document.getElementById('author-select').value = 'other';
           document.getElementById('other-name').value = post.author || '';
-          // Try to extract linkedin username from author image URL
-          const liMatch = (post.authorImage || '').match(/linkedin\/([^/?]+)/);
-          document.getElementById('other-linkedin').value = liMatch ? liMatch[1] : '';
         }
-        onAuthorChange();
+        authorPicData = null;
+        onAuthorChange(post.authorImage);
 
-        // Tags
         tags = post.tags || [];
         dTg();
 
-        // Images — load existing as already-uploaded
         images = [];
         cIdx = 0;
         if (post.images && post.images.length > 0) {
           post.images.forEach((imgPath, i) => {
-            const fullUrl = imgPath.startsWith('http') ? imgPath : `https://actionresearchprojects.github.io${imgPath}`;
+            const fullUrl = imgPath.startsWith('http') ? imgPath : SITE + imgPath;
             images.push({ file: null, url: fullUrl, up: true, path: imgPath.replace(/^\/blog\//, 'blog/') });
             if (post.coverImage && imgPath === post.coverImage) cIdx = i;
           });
         }
         dTh();
 
-        // Checkboxes
         document.getElementById('cb1').checked = true;
         document.getElementById('cb2').checked = !!post.linkedinRequested;
-
         toast('Post loaded');
       } catch (e) {
         toast('Error loading post: ' + e.message, 1);
@@ -922,7 +948,7 @@
     function confirmDelete(slug, title) {
       pendingConfirm = slug;
       document.getElementById('confirm-title').textContent = 'Delete post?';
-      document.getElementById('confirm-msg').textContent = `"${title}" will be permanently removed.`;
+      document.getElementById('confirm-msg').textContent = '"' + title + '" will be permanently removed.';
       document.getElementById('confirm-overlay').classList.add('show');
     }
 
@@ -936,9 +962,7 @@
       const slug = pendingConfirm;
       closeConfirm();
       toast('Deleting post...');
-
       try {
-        // Delete the individual post JSON
         const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts/${slug}.json`, {
           headers: { Authorization: 'Bearer ' + token }
         });
@@ -947,11 +971,9 @@
           await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts/${slug}.json`, {
             method: 'DELETE',
             headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: `Delete post: ${slug}`, sha: d.sha, branch: B })
+            body: JSON.stringify({ message: 'Delete post: ' + slug, sha: d.sha, branch: B })
           });
         }
-
-        // Update posts.json to remove this post
         const mr = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`, {
           headers: { Authorization: 'Bearer ' + token }
         });
@@ -959,27 +981,23 @@
           const md = await mr.json();
           let man = JSON.parse(decodeURIComponent(escape(atob(md.content.replace(/\n/g, '')))));
           man = man.filter(p => p.slug !== slug);
-          await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(man, null, 2)))), `Remove from index: ${slug}`);
+          await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(man, null, 2)))), 'Remove from index: ' + slug);
         }
-
-        // Optionally delete associated images (they have the slug prefix)
         try {
           const ir = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/images`, {
             headers: { Authorization: 'Bearer ' + token }
           });
           if (ir.ok) {
             const imgFiles = await ir.json();
-            const toDelete = imgFiles.filter(f => f.name.startsWith(slug + '-'));
-            for (const f of toDelete) {
+            for (const f of imgFiles.filter(f => f.name.startsWith(slug + '-'))) {
               await fetch(`https://api.github.com/repos/${O}/${R}/contents/${f.path}`, {
                 method: 'DELETE',
                 headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: `Delete image: ${f.name}`, sha: f.sha, branch: B })
+                body: JSON.stringify({ message: 'Delete image: ' + f.name, sha: f.sha, branch: B })
               });
             }
           }
-        } catch (e) { /* images dir may not exist */ }
-
+        } catch (e) {}
         toast('Post deleted');
         loadPostList();
       } catch (e) {
@@ -987,44 +1005,70 @@
       }
     }
 
-    // ── Author dropdown ──
-    function onAuthorChange() {
+    // ── Author ──
+    function onAuthorChange(existingPicUrl) {
       const val = document.getElementById('author-select').value;
       const otherFields = document.getElementById('other-fields');
       const preview = document.getElementById('author-preview');
+      authorPicData = null;
 
       if (val === 'other') {
         otherFields.style.display = 'flex';
-        updateOtherPreview();
+        const name = document.getElementById('other-name').value.trim() || 'Author';
+        const picHtml = existingPicUrl
+          ? `<img class="author-pic" src="${esc(existingPicUrl)}" alt="">`
+          : `<div class="author-pic-placeholder">?</div>`;
+        preview.innerHTML = `
+          <div class="author-pic-wrap">
+            ${picHtml}
+            <button class="author-pic-btn" onclick="pickAuthorPic('other')" title="Upload photo">&#9998;</button>
+          </div>
+          <span class="ap-name">${esc(name)}</span>`;
       } else {
         otherFields.style.display = 'none';
         const a = AUTHORS[val];
-        const pic = linkedinPic(a.linkedin, true);
-        preview.innerHTML = `<img src="${pic}" alt="" onerror="this.style.display='none'"><span class="ap-name">${esc(a.name)}</span>`;
+        const picUrl = authorPicUrl(val);
+        preview.innerHTML = `
+          <div class="author-pic-wrap">
+            <img class="author-pic" src="${picUrl}" alt="" onerror="this.outerHTML='<div class=\\'author-pic-placeholder\\'>?</div>'">
+            <button class="author-pic-btn" onclick="pickAuthorPic('${val}')" title="Update photo">&#9998;</button>
+          </div>
+          <span class="ap-name">${esc(a.name)}</span>`;
       }
     }
 
-    function updateOtherPreview() {
-      const name = document.getElementById('other-name').value.trim();
-      const li = document.getElementById('other-linkedin').value.trim();
-      const preview = document.getElementById('author-preview');
-      if (!name && !li) {
-        preview.innerHTML = '';
-        return;
-      }
-      const pic = li ? linkedinPic(li, true) : '';
-      preview.innerHTML = `${pic ? `<img src="${pic}" alt="" onerror="this.style.display='none'">` : ''}<span class="ap-name">${esc(name || 'Unknown')}</span>`;
+    function pickAuthorPic(key) {
+      document.getElementById('author-pic-input').dataset.authorKey = key;
+      document.getElementById('author-pic-input').click();
+    }
+
+    function onAuthorPicSelected(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        authorPicData = { dataUrl: ev.target.result, file: file, key: e.target.dataset.authorKey };
+        // Update preview immediately
+        const preview = document.getElementById('author-preview');
+        const img = preview.querySelector('.author-pic') || preview.querySelector('.author-pic-placeholder');
+        if (img) {
+          const newImg = document.createElement('img');
+          newImg.className = 'author-pic';
+          newImg.src = ev.target.result;
+          img.replaceWith(newImg);
+        }
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
     }
 
     function getAuthorInfo() {
       const val = document.getElementById('author-select').value;
       if (val === 'other') {
         const name = document.getElementById('other-name').value.trim() || 'ARC';
-        const li = document.getElementById('other-linkedin').value.trim();
-        return { name, image: li ? linkedinPic(li) : '' };
+        return { name, key: null };
       }
-      const a = AUTHORS[val];
-      return { name: a.name, image: linkedinPic(a.linkedin) };
+      return { name: AUTHORS[val].name, key: val };
     }
 
     // ── Formatting ──
@@ -1083,7 +1127,13 @@
       const b = document.getElementById('body').innerHTML;
       const c = images.length ? images[cIdx].url : '';
       const d = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-      const pic = author.image ? `<img src="${author.image}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'" alt="">` : '';
+      let picSrc = '';
+      if (authorPicData) {
+        picSrc = authorPicData.dataUrl;
+      } else if (author.key) {
+        picSrc = authorPicUrl(author.key);
+      }
+      const pic = picSrc ? `<img src="${picSrc}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'" alt="">` : '';
       document.getElementById('ovc').innerHTML =
         `<p style="color:#999;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px">${pic}${esc(author.name)} &middot; ${d}</p>` +
         `<h1 style="font-size:26px;font-weight:500;margin-bottom:20px;color:#222">${esc(t)}</h1>` +
@@ -1108,43 +1158,60 @@
         const wLI = document.getElementById('cb2').checked;
         const customExcerpt = document.getElementById('post-excerpt').value.trim();
 
-        // Upload new images
+        // Upload author pic if changed
+        let authorImageUrl = '';
+        if (authorPicData) {
+          const ext = authorPicData.file.name.split('.').pop().toLowerCase();
+          const picKey = authorPicData.key === 'other' ? slug : authorPicData.key;
+          const picPath = 'blog/authors/' + picKey + '.' + ext;
+          toast('Uploading author photo...');
+          await ghPut(picPath, authorPicData.dataUrl.split(',')[1], 'Update author photo: ' + picKey);
+          authorImageUrl = '/' + picPath;
+        } else if (author.key) {
+          // Use existing stored pic
+          authorImageUrl = '/' + AUTHORS[author.key].picPath;
+        } else if (editingSlug) {
+          // Editing with "other" — keep existing
+          const existing = allPosts.find(p => p.slug === editingSlug);
+          if (existing) authorImageUrl = existing.authorImage || '';
+        }
+
+        // Upload post images
         toast('Uploading images...');
         const paths = [];
         for (let i = 0; i < images.length; i++) {
           const m = images[i];
           if (!m.up) {
             const ext = m.file.name.split('.').pop().toLowerCase();
-            const p = `blog/images/${slug}-${i + 1}.${ext}`;
-            await ghPut(p, m.url.split(',')[1], `Add image: ${slug}-${i + 1}.${ext}`);
+            const p = 'blog/images/' + slug + '-' + (i + 1) + '.' + ext;
+            await ghPut(p, m.url.split(',')[1], 'Add image: ' + slug + '-' + (i + 1) + '.' + ext);
             m.up = true;
             m.path = p;
           }
           paths.push(m.path);
         }
 
-        const cover = paths.length ? `/blog/${paths[cIdx].replace('blog/', '')}` : '';
+        const cover = paths.length ? '/blog/' + paths[cIdx].replace('blog/', '') : '';
         const post = {
           slug, title,
           author: author.name,
-          authorImage: author.image,
+          authorImage: authorImageUrl,
           date: editingSlug ? (allPosts.find(p => p.slug === slug)?.date || new Date().toISOString()) : new Date().toISOString(),
           body,
           excerpt: customExcerpt || strip(body).substring(0, 200),
           coverImage: cover,
-          images: paths.map(p => `/blog/${p.replace('blog/', '')}`),
+          images: paths.map(p => '/blog/' + p.replace('blog/', '')),
           tags,
           linkedinRequested: wLI
         };
 
-        // Preserve linkedinUrl if editing
         if (editingSlug) {
           const existing = allPosts.find(p => p.slug === slug);
           if (existing?.linkedinUrl) post.linkedinUrl = existing.linkedinUrl;
         }
 
         toast('Saving post...');
-        await ghPut(`blog/posts/${slug}.json`, btoa(unescape(encodeURIComponent(JSON.stringify(post, null, 2)))), `${editingSlug ? 'Update' : 'Add'} post: ${title}`);
+        await ghPut('blog/posts/' + slug + '.json', btoa(unescape(encodeURIComponent(JSON.stringify(post, null, 2)))), (editingSlug ? 'Update' : 'Add') + ' post: ' + title);
 
         toast('Updating index...');
         let man = [];
@@ -1160,7 +1227,7 @@
 
         const idx = man.findIndex(p => p.slug === slug);
         if (idx !== -1) man[idx] = post; else man.unshift(post);
-        await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(man, null, 2)))), `Update index: ${title}`);
+        await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(man, null, 2)))), 'Update index: ' + title);
 
         toast(editingSlug ? 'Updated! Site updates in ~1 min.' : 'Published! Site updates in ~1 min.');
         showManage();
