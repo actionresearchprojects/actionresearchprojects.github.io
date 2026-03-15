@@ -9,17 +9,14 @@
   <meta name="robots" content="noindex, nofollow">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html, body { height: 100%; }
 
     body {
       font-family: 'Ubuntu', sans-serif;
-      color: #fff;
-      position: relative;
-      overflow-x: hidden;
+      color: #333;
+      background: #f0f0f0;
     }
 
-    /* Background — same as about/contact/support pages */
     .bg {
       position: fixed;
       top: 0; left: 0;
@@ -29,7 +26,7 @@
       z-index: -1;
     }
 
-    /* ====== LOGIN ====== */
+    /* ── Login ── */
     #login {
       min-height: 100vh;
       display: flex;
@@ -44,360 +41,254 @@
       text-align: center;
     }
 
-    .login-card img {
-      height: 44px;
-      width: auto;
-      margin-bottom: 32px;
-    }
-
-    .login-card h1 {
-      font-size: 28px;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-
-    .login-card .subtitle {
-      font-size: 15px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 36px;
-    }
+    .login-card img { height: 44px; width: auto; margin-bottom: 32px; }
+    .login-card h1 { font-size: 28px; font-weight: 500; color: #222; margin-bottom: 6px; }
+    .login-card .sub { font-size: 15px; font-weight: 300; color: #888; margin-bottom: 36px; }
 
     .login-card input {
       width: 100%;
       padding: 14px 16px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 10px;
-      color: #fff;
+      color: #333;
       font-family: monospace;
       font-size: 14px;
       outline: none;
-      transition: border-color 0.2s;
       margin-bottom: 12px;
+      transition: border-color 0.2s;
     }
-
-    .login-card input::placeholder { color: rgba(255,255,255,0.35); }
-    .login-card input:focus { border-color: rgba(255,255,255,0.5); }
+    .login-card input::placeholder { color: #bbb; }
+    .login-card input:focus { border-color: #999; }
 
     .login-card .help {
       font-size: 12px;
       font-weight: 300;
-      color: rgba(255,255,255,0.4);
+      color: #999;
       margin-bottom: 24px;
       line-height: 1.7;
       text-align: left;
     }
-
     .login-card .help a { color: #09f; text-decoration: none; }
-    .login-card .help code {
-      background: rgba(255,255,255,0.1);
-      padding: 1px 5px;
-      border-radius: 3px;
-      font-size: 11px;
-    }
+    .login-card .help code { background: #eee; padding: 1px 5px; border-radius: 3px; font-size: 11px; color: #666; }
 
-    .login-card .error-msg {
-      color: #ff6b6b;
-      font-size: 13px;
-      margin-bottom: 12px;
-      display: none;
-    }
+    .login-card .err { color: #d32f2f; font-size: 13px; margin-bottom: 12px; display: none; }
 
     .login-card button {
       width: 100%;
       padding: 13px;
-      background: #fff;
-      color: #111;
+      background: #333;
+      color: #fff;
       border: none;
       border-radius: 10px;
       font-family: inherit;
       font-size: 15px;
       font-weight: 500;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: background 0.15s;
     }
-
-    .login-card button:hover { opacity: 0.9; }
+    .login-card button:hover { background: #222; }
     .login-card button:disabled { opacity: 0.5; cursor: wait; }
 
-    /* ====== EDITOR ====== */
-    #editor {
-      display: none;
-      min-height: 100vh;
-    }
+    /* ── Editor ── */
+    #editor { display: none; min-height: 100vh; }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 28px;
+      padding: 14px 28px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e8e8e8;
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(0,0,0,0.25);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
     }
 
-    .topbar-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
     .topbar-left img { height: 22px; width: auto; }
-    .topbar-left span { font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.5); }
+    .topbar-left span { font-size: 14px; font-weight: 400; color: #999; }
 
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+    .topbar-right .who { font-size: 12px; color: #aaa; margin-right: 6px; }
 
-    .topbar-right .who {
-      font-size: 12px;
-      color: rgba(255,255,255,0.4);
-      margin-right: 6px;
-    }
-
-    .pill-btn {
+    .pill {
       padding: 7px 16px;
-      background: rgba(255,255,255,0.12);
-      border: none;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
       border-radius: 20px;
-      color: #fff;
+      color: #555;
       font-family: inherit;
       font-size: 13px;
-      font-weight: 400;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: all 0.15s;
     }
+    .pill:hover { background: #e4e4e4; color: #333; }
 
-    .pill-btn:hover { background: rgba(255,255,255,0.2); }
-
-    /* Content area */
-    .content {
+    .main {
       max-width: 640px;
       margin: 0 auto;
       padding: 48px 24px 80px;
     }
 
     /* Title */
-    .title-input {
+    .title-in {
       width: 100%;
       font-size: 32px;
       font-weight: 500;
       font-family: inherit;
       background: none;
       border: none;
-      color: #fff;
+      color: #222;
       outline: none;
       margin-bottom: 28px;
-      padding: 0;
     }
+    .title-in::placeholder { color: #ccc; }
 
-    .title-input::placeholder { color: rgba(255,255,255,0.3); }
-
-    /* Author row */
-    .author-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .author-row .input-group { flex: 1; }
-
-    .input-group label {
-      display: block;
+    /* Labels */
+    .lbl {
       font-size: 11px;
-      font-weight: 400;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 5px;
+      font-weight: 500;
+      color: #999;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      margin-bottom: 6px;
     }
 
-    .input-group input {
+    /* Author */
+    .author-row { display: flex; gap: 12px; margin-bottom: 28px; }
+    .author-row .grp { flex: 1; }
+
+    .grp input {
       width: 100%;
       padding: 10px 12px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 8px;
-      color: #fff;
+      color: #333;
       font-family: inherit;
       font-size: 14px;
       outline: none;
       transition: border-color 0.2s;
     }
+    .grp input::placeholder { color: #ccc; }
+    .grp input:focus { border-color: #999; }
 
-    .input-group input::placeholder { color: rgba(255,255,255,0.25); }
-    .input-group input:focus { border-color: rgba(255,255,255,0.35); }
-
-    /* Section labels */
-    .section-label {
-      font-size: 11px;
-      font-weight: 400;
-      color: rgba(255,255,255,0.4);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-
-    /* Image upload */
-    .drop-area {
-      border: 1px dashed rgba(255,255,255,0.2);
+    /* Images */
+    .drop {
+      border: 1px dashed #ccc;
       border-radius: 10px;
       padding: 32px;
       text-align: center;
-      color: rgba(255,255,255,0.35);
+      color: #aaa;
       font-size: 14px;
       font-weight: 300;
       cursor: pointer;
       transition: all 0.15s;
       margin-bottom: 10px;
     }
+    .drop:hover, .drop.over { border-color: #999; color: #777; background: rgba(0,0,0,0.02); }
+    .drop input { display: none; }
 
-    .drop-area:hover, .drop-area.dragover {
-      border-color: rgba(255,255,255,0.4);
-      color: rgba(255,255,255,0.6);
-      background: rgba(255,255,255,0.03);
-    }
+    .thumbs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 28px; }
 
-    .drop-area input { display: none; }
-
-    .thumbs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
-    }
-
-    .thumb {
+    .th {
       position: relative;
-      width: 88px;
-      height: 66px;
+      width: 88px; height: 66px;
       border-radius: 6px;
       overflow: hidden;
       border: 2px solid transparent;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
-
-    .thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-    .thumb .x-btn {
-      position: absolute;
-      top: 2px; right: 2px;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 18px; height: 18px;
-      font-size: 10px;
+    .th img { width: 100%; height: 100%; object-fit: cover; }
+    .th .xb {
+      position: absolute; top: 2px; right: 2px;
+      background: rgba(0,0,0,0.5); color: #fff;
+      border: none; border-radius: 50%;
+      width: 18px; height: 18px; font-size: 10px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-
-    .thumb .cover-btn {
-      position: absolute;
-      bottom: 2px; left: 2px;
-      background: rgba(0,0,0,0.65);
-      color: rgba(255,255,255,0.6);
-      border: none;
-      border-radius: 3px;
-      padding: 1px 4px;
-      font-size: 8px;
-      cursor: pointer;
-      font-family: inherit;
+    .th .cb {
+      position: absolute; bottom: 2px; left: 2px;
+      background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.7);
+      border: none; border-radius: 3px;
+      padding: 1px 4px; font-size: 8px;
+      cursor: pointer; font-family: inherit;
       text-transform: uppercase;
     }
-
-    .thumb.is-cover { border-color: #09f; }
-    .thumb.is-cover .cover-btn { color: #09f; }
+    .th.cover { border-color: #09f; }
+    .th.cover .cb { color: #09f; }
 
     /* Toolbar */
-    .toolbar {
+    .tb {
       display: flex;
       gap: 2px;
       padding: 5px 6px;
-      background: rgba(255,255,255,0.06);
+      background: #fff;
+      border: 1px solid #ddd;
+      border-bottom: none;
       border-radius: 8px 8px 0 0;
     }
 
-    .toolbar button {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.5);
+    .tb button {
+      background: none; border: none;
+      color: #888;
       width: 30px; height: 30px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 13px;
-      font-family: inherit;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 13px; font-family: inherit;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.1s;
     }
+    .tb button:hover { background: #f0f0f0; color: #333; }
+    .tb .d { width: 1px; background: #e8e8e8; margin: 4px 5px; }
 
-    .toolbar button:hover { background: rgba(255,255,255,0.1); color: #fff; }
-
-    .toolbar .div {
-      width: 1px;
-      background: rgba(255,255,255,0.1);
-      margin: 4px 5px;
-    }
-
-    /* Editor */
-    .write-area {
+    /* Write area */
+    .wa {
       min-height: 240px;
       padding: 16px;
-      background: rgba(255,255,255,0.06);
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 0 0 8px 8px;
-      color: rgba(255,255,255,0.85);
+      color: #333;
       font-size: 15px;
       line-height: 1.75;
       outline: none;
       margin-bottom: 28px;
     }
-
-    .write-area:empty::before {
-      content: attr(data-ph);
-      color: rgba(255,255,255,0.25);
-      pointer-events: none;
-    }
-
-    .write-area h2 { font-size: 20px; margin: 14px 0 6px; }
-    .write-area h3 { font-size: 17px; margin: 10px 0 4px; }
-    .write-area p { margin-bottom: 8px; }
-    .write-area a { color: #09f; }
-    .write-area img { max-width: 100%; border-radius: 6px; margin: 6px 0; }
-    .write-area blockquote {
-      border-left: 2px solid rgba(255,255,255,0.25);
-      padding-left: 12px;
-      color: rgba(255,255,255,0.55);
-      font-style: italic;
-      margin: 10px 0;
-    }
-    .write-area ul, .write-area ol { margin: 0 0 10px 18px; }
+    .wa:focus { border-color: #999; }
+    .wa:empty::before { content: attr(data-ph); color: #ccc; pointer-events: none; }
+    .wa h2 { font-size: 20px; color: #222; margin: 14px 0 6px; }
+    .wa h3 { font-size: 17px; color: #222; margin: 10px 0 4px; }
+    .wa p { margin-bottom: 8px; }
+    .wa a { color: #09f; }
+    .wa img { max-width: 100%; border-radius: 6px; margin: 6px 0; }
+    .wa blockquote { border-left: 2px solid #ddd; padding-left: 12px; color: #888; font-style: italic; margin: 10px 0; }
+    .wa ul, .wa ol { margin: 0 0 10px 18px; }
 
     /* Tags */
-    .tag-box {
+    .tbox {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       padding: 8px 10px;
-      background: rgba(255,255,255,0.06);
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 8px;
       min-height: 38px;
       align-items: center;
       cursor: text;
       margin-bottom: 32px;
+      transition: border-color 0.2s;
     }
+    .tbox:focus-within { border-color: #999; }
 
-    .tag {
-      background: rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.8);
+    .tg {
+      background: #f0f0f0;
+      color: #555;
       padding: 3px 10px;
       border-radius: 12px;
       font-size: 12px;
@@ -405,33 +296,19 @@
       align-items: center;
       gap: 5px;
     }
+    .tg button { background: none; border: none; color: #aaa; cursor: pointer; font-size: 12px; padding: 0; }
+    .tg button:hover { color: #333; }
 
-    .tag button {
-      background: none;
-      border: none;
-      color: rgba(255,255,255,0.4);
-      cursor: pointer;
-      font-size: 12px;
-      padding: 0;
+    .ti {
+      border: none; background: none;
+      color: #333; font-family: inherit;
+      font-size: 13px; outline: none;
+      flex: 1; min-width: 80px;
     }
-
-    .tag button:hover { color: #fff; }
-
-    .tag-input {
-      border: none;
-      background: none;
-      color: #fff;
-      font-family: inherit;
-      font-size: 13px;
-      outline: none;
-      flex: 1;
-      min-width: 80px;
-    }
-
-    .tag-input::placeholder { color: rgba(255,255,255,0.2); }
+    .ti::placeholder { color: #ccc; }
 
     /* Publish */
-    .publish-bar {
+    .pub {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -439,125 +316,103 @@
       gap: 16px;
     }
 
-    .publish-checks {
-      display: flex;
-      gap: 20px;
-    }
+    .checks { display: flex; gap: 20px; }
 
-    .publish-checks label {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 14px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.7);
-      cursor: pointer;
+    .checks label {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 14px; font-weight: 400; color: #666; cursor: pointer;
     }
+    .checks input[type="checkbox"] { accent-color: #09f; width: 16px; height: 16px; }
 
-    .publish-checks input[type="checkbox"] {
-      accent-color: #09f;
-      width: 16px;
-      height: 16px;
-    }
-
-    .publish-btn {
+    .pub-btn {
       padding: 12px 36px;
-      background: #fff;
-      color: #111;
+      background: #333;
+      color: #fff;
       border: none;
       border-radius: 24px;
       font-family: inherit;
       font-size: 15px;
       font-weight: 500;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: background 0.15s;
     }
-
-    .publish-btn:hover { opacity: 0.9; }
-    .publish-btn:disabled { opacity: 0.4; cursor: wait; }
+    .pub-btn:hover { background: #222; }
+    .pub-btn:disabled { opacity: 0.4; cursor: wait; }
 
     /* Toast */
     .toast {
       position: fixed;
-      bottom: 24px;
-      left: 50%;
+      bottom: 24px; left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(10px);
+      background: #333;
       color: #fff;
       padding: 12px 24px;
       border-radius: 24px;
       font-size: 14px;
-      font-weight: 400;
       z-index: 999;
       display: none;
       white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+    .toast.error { background: #d32f2f; }
 
-    .toast.error { color: #ff6b6b; }
-
-    /* Preview overlay */
-    .overlay {
+    /* Preview */
+    .ov {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.75);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
       z-index: 200;
       overflow-y: auto;
     }
 
-    .overlay-card {
+    .ov-card {
       max-width: 640px;
       margin: 60px auto;
-      background: #1a1a1a;
+      background: #fff;
       border-radius: 12px;
       padding: 40px;
+      color: #333;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
     }
 
-    .overlay-close {
-      position: fixed;
-      top: 20px; right: 20px;
-      background: rgba(255,255,255,0.15);
-      border: none;
-      color: #fff;
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      font-size: 18px;
-      cursor: pointer;
-      z-index: 201;
+    .ov-close {
+      position: fixed; top: 20px; right: 20px;
+      background: rgba(0,0,0,0.4); border: none;
+      color: #fff; width: 36px; height: 36px;
+      border-radius: 50%; font-size: 18px;
+      cursor: pointer; z-index: 201;
     }
 
     @media (max-width: 600px) {
-      .title-input { font-size: 24px; }
+      .title-in { font-size: 24px; }
       .author-row { flex-direction: column; }
-      .content { padding: 32px 16px 60px; }
-      .publish-bar { flex-direction: column; align-items: stretch; }
-      .publish-btn { width: 100%; }
+      .main { padding: 32px 16px 60px; }
+      .pub { flex-direction: column; align-items: stretch; }
+      .pub-btn { width: 100%; text-align: center; }
     }
   </style>
 </head>
 <body>
   <img class="bg" src="../assets/images/support-page-background.webp" alt="">
 
-  <!-- LOGIN -->
   <div id="login">
     <div class="login-card">
       <img src="../assets/images/arc-logo.png" alt="ARC">
       <h1>Admin</h1>
-      <p class="subtitle">Sign in to create posts</p>
+      <p class="sub">Sign in to create posts</p>
       <input type="password" id="pat" placeholder="GitHub Personal Access Token">
       <div class="help">
         Create at <a href="https://github.com/settings/tokens?type=beta" target="_blank">github.com/settings/tokens</a><br>
         Repo: <code>actionresearchprojects.github.io</code> &rarr; Contents: Read &amp; write
       </div>
-      <p class="error-msg" id="err"></p>
-      <button id="login-btn" onclick="doLogin()">Sign in</button>
+      <p class="err" id="err"></p>
+      <button id="lbtn" onclick="doLogin()">Sign in</button>
     </div>
   </div>
 
-  <!-- EDITOR -->
   <div id="editor">
     <div class="topbar">
       <div class="topbar-left">
@@ -566,245 +421,146 @@
       </div>
       <div class="topbar-right">
         <span class="who" id="who"></span>
-        <button class="pill-btn" onclick="preview()">Preview</button>
-        <button class="pill-btn" onclick="doLogout()">Log out</button>
+        <button class="pill" onclick="preview()">Preview</button>
+        <button class="pill" onclick="doLogout()">Log out</button>
       </div>
     </div>
-
-    <div class="content">
-      <input class="title-input" type="text" id="post-title" placeholder="Post title...">
+    <div class="main">
+      <input class="title-in" type="text" id="post-title" placeholder="Post title...">
 
       <div class="author-row">
-        <div class="input-group">
-          <label>Author</label>
-          <input type="text" id="post-author" placeholder="ARC Team">
-        </div>
-        <div class="input-group">
-          <label>Author image</label>
-          <input type="text" id="post-author-img" placeholder="https://...">
-        </div>
+        <div class="grp"><p class="lbl">Author</p><input type="text" id="post-author" placeholder="ARC Team"></div>
+        <div class="grp"><p class="lbl">Author image</p><input type="text" id="post-author-img" placeholder="https://..."></div>
       </div>
 
-      <p class="section-label">Images</p>
-      <div class="drop-area" id="drop">
-        <input type="file" id="file-in" multiple accept="image/*">
-        Click or drop images here
-      </div>
+      <p class="lbl">Images</p>
+      <div class="drop" id="drop"><input type="file" id="fi" multiple accept="image/*">Click or drop images here</div>
       <div class="thumbs" id="thumbs"></div>
 
-      <p class="section-label">Content</p>
-      <div class="toolbar">
-        <button onclick="fmt('bold')" title="Bold"><b>B</b></button>
-        <button onclick="fmt('italic')" title="Italic"><i>I</i></button>
-        <button onclick="fmt('underline')" title="Underline"><u>U</u></button>
-        <div class="div"></div>
+      <p class="lbl">Content</p>
+      <div class="tb">
+        <button onclick="fmt('bold')"><b>B</b></button>
+        <button onclick="fmt('italic')"><i>I</i></button>
+        <button onclick="fmt('underline')"><u>U</u></button>
+        <div class="d"></div>
         <button onclick="blk('h2')">H2</button>
         <button onclick="blk('h3')">H3</button>
         <button onclick="blk('p')">P</button>
-        <div class="div"></div>
+        <div class="d"></div>
         <button onclick="fmt('insertUnorderedList')">&#8226;</button>
         <button onclick="fmt('insertOrderedList')">1.</button>
         <button onclick="fmt('formatBlock','blockquote')">&ldquo;</button>
-        <div class="div"></div>
-        <button onclick="addLink()">&#128279;</button>
-        <button onclick="addImg()">&#128247;</button>
+        <div class="d"></div>
+        <button onclick="aLink()">&#128279;</button>
+        <button onclick="aImg()">&#128247;</button>
       </div>
-      <div class="write-area" id="body" contenteditable="true" data-ph="Write your post..."></div>
+      <div class="wa" id="body" contenteditable="true" data-ph="Write your post..."></div>
 
-      <p class="section-label">Tags</p>
-      <div class="tag-box" id="tag-box" onclick="document.getElementById('tag-in').focus()">
-        <input class="tag-input" type="text" id="tag-in" placeholder="Type and press Enter" onkeydown="tagKey(event)">
+      <p class="lbl">Tags</p>
+      <div class="tbox" id="tbox" onclick="document.getElementById('ti').focus()">
+        <input class="ti" type="text" id="ti" placeholder="Type and press Enter" onkeydown="tagKey(event)">
       </div>
 
-      <div class="publish-bar">
-        <div class="publish-checks">
-          <label><input type="checkbox" id="cb-blog" checked> Blog</label>
-          <label><input type="checkbox" id="cb-li" checked> LinkedIn</label>
+      <div class="pub">
+        <div class="checks">
+          <label><input type="checkbox" id="cb1" checked> Blog</label>
+          <label><input type="checkbox" id="cb2" checked> LinkedIn</label>
         </div>
-        <button class="publish-btn" id="pub-btn" onclick="publish()">Publish</button>
+        <button class="pub-btn" id="pbtn" onclick="publish()">Publish</button>
       </div>
     </div>
   </div>
 
-  <!-- Preview -->
-  <div class="overlay" id="overlay">
-    <button class="overlay-close" onclick="closePreview()">&times;</button>
-    <div class="overlay-card" id="overlay-card"></div>
+  <div class="ov" id="ov">
+    <button class="ov-close" onclick="closeP()">&times;</button>
+    <div class="ov-card" id="ovc"></div>
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    let token = '', user = '', images = [], coverIdx = 0, tags = [];
-    const OWNER = 'actionresearchprojects', REPO = 'actionresearchprojects.github.io', BR = 'main';
+    let token='',user='',images=[],cIdx=0,tags=[];
+    const O='actionresearchprojects',R='actionresearchprojects.github.io',B='main';
 
-    async function doLogin() {
-      const pat = document.getElementById('pat').value.trim();
-      if (!pat) return;
-      const btn = document.getElementById('login-btn');
-      const err = document.getElementById('err');
-      btn.disabled = true; btn.textContent = 'Signing in...'; err.style.display = 'none';
-      try {
-        const r = await fetch('https://api.github.com/user', { headers: { Authorization: 'Bearer ' + pat } });
-        if (!r.ok) throw new Error('Invalid token');
-        const u = await r.json();
-        const rr = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}`, { headers: { Authorization: 'Bearer ' + pat } });
-        if (!rr.ok) throw new Error('Cannot access repo');
-        const repo = await rr.json();
-        if (!repo.permissions?.push) throw new Error('No write access');
-        token = pat; user = u.login;
-        localStorage.setItem('arc_pat', pat);
-        document.getElementById('who').textContent = u.login;
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('editor').style.display = 'block';
-        document.getElementById('post-author').value = u.name || u.login;
-        document.getElementById('post-author-img').value = u.avatar_url || '';
-      } catch (e) { err.textContent = e.message; err.style.display = 'block'; }
-      finally { btn.disabled = false; btn.textContent = 'Sign in'; }
+    async function doLogin(){
+      const p=document.getElementById('pat').value.trim();if(!p)return;
+      const b=document.getElementById('lbtn'),e=document.getElementById('err');
+      b.disabled=true;b.textContent='Signing in...';e.style.display='none';
+      try{
+        const r=await fetch('https://api.github.com/user',{headers:{Authorization:'Bearer '+p}});
+        if(!r.ok)throw new Error('Invalid token');const u=await r.json();
+        const rr=await fetch(`https://api.github.com/repos/${O}/${R}`,{headers:{Authorization:'Bearer '+p}});
+        if(!rr.ok)throw new Error('Cannot access repo');const repo=await rr.json();
+        if(!repo.permissions?.push)throw new Error('No write access');
+        token=p;user=u.login;localStorage.setItem('arc_pat',p);
+        document.getElementById('who').textContent=u.login;
+        document.getElementById('login').style.display='none';
+        document.getElementById('editor').style.display='block';
+        document.getElementById('post-author').value=u.name||u.login;
+        document.getElementById('post-author-img').value=u.avatar_url||'';
+      }catch(x){e.textContent=x.message;e.style.display='block';}
+      finally{b.disabled=false;b.textContent='Sign in';}
     }
 
-    function doLogout() {
-      token = ''; user = '';
-      localStorage.removeItem('arc_pat');
-      document.getElementById('login').style.display = 'flex';
-      document.getElementById('editor').style.display = 'none';
+    function doLogout(){token='';user='';localStorage.removeItem('arc_pat');document.getElementById('login').style.display='flex';document.getElementById('editor').style.display='none';}
+    (()=>{const s=localStorage.getItem('arc_pat');if(s){document.getElementById('pat').value=s;doLogin();}})();
+
+    function fmt(c,v){document.execCommand(c,false,v||null);document.getElementById('body').focus();}
+    function blk(t){document.execCommand('formatBlock',false,'<'+t+'>');document.getElementById('body').focus();}
+    function aLink(){const u=prompt('URL:');if(u)document.execCommand('createLink',false,u);}
+    function aImg(){const u=prompt('Image URL:');if(u)document.execCommand('insertImage',false,u);}
+
+    const dr=document.getElementById('drop'),fi=document.getElementById('fi');
+    dr.addEventListener('click',()=>fi.click());
+    dr.addEventListener('dragover',e=>{e.preventDefault();dr.classList.add('over');});
+    dr.addEventListener('dragleave',()=>dr.classList.remove('over'));
+    dr.addEventListener('drop',e=>{e.preventDefault();dr.classList.remove('over');addF(e.dataTransfer.files);});
+    fi.addEventListener('change',e=>addF(e.target.files));
+
+    function addF(fs){Array.from(fs).forEach(f=>{if(!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=e=>{images.push({file:f,url:e.target.result,up:false,path:''});dTh();};r.readAsDataURL(f);});}
+
+    function dTh(){document.getElementById('thumbs').innerHTML=images.map((m,i)=>`<div class="th ${i===cIdx?'cover':''}"><img src="${m.url}"><button class="xb" onclick="rmI(${i})">&times;</button><button class="cb" onclick="cIdx=${i};dTh()">${i===cIdx?'cover':'set cover'}</button></div>`).join('');}
+    function rmI(i){images.splice(i,1);if(cIdx>=images.length)cIdx=Math.max(0,images.length-1);dTh();}
+
+    function tagKey(e){if(e.key==='Enter'||e.key===','){e.preventDefault();const t=e.target.value.trim().replace(/,/g,'');if(t&&!tags.includes(t)){tags.push(t);dTg();}e.target.value='';}else if(e.key==='Backspace'&&!e.target.value&&tags.length){tags.pop();dTg();}}
+    function dTg(){const b=document.getElementById('tbox'),i=document.getElementById('ti');b.innerHTML=tags.map((t,j)=>`<span class="tg">${esc(t)}<button onclick="tags.splice(${j},1);dTg()">&times;</button></span>`).join('');b.appendChild(i);}
+
+    function preview(){
+      const t=document.getElementById('post-title').value||'Untitled',a=document.getElementById('post-author').value||'ARC',b=document.getElementById('body').innerHTML,c=images.length?images[cIdx].url:'',d=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+      document.getElementById('ovc').innerHTML=`<p style="color:#999;font-size:14px;margin-bottom:6px">${esc(a)} &middot; ${d}</p><h1 style="font-size:26px;font-weight:500;margin-bottom:20px;color:#222">${esc(t)}</h1>${c?`<img src="${c}" style="width:100%;border-radius:8px;margin-bottom:20px;max-height:380px;object-fit:cover">`:''}<div style="font-size:15px;line-height:1.8;color:#444">${b}</div>`;
+      document.getElementById('ov').style.display='block';
     }
+    function closeP(){document.getElementById('ov').style.display='none';}
 
-    (() => { const s = localStorage.getItem('arc_pat'); if (s) { document.getElementById('pat').value = s; doLogin(); } })();
-
-    function fmt(c, v) { document.execCommand(c, false, v || null); document.getElementById('body').focus(); }
-    function blk(t) { document.execCommand('formatBlock', false, '<' + t + '>'); document.getElementById('body').focus(); }
-    function addLink() { const u = prompt('URL:'); if (u) document.execCommand('createLink', false, u); }
-    function addImg() { const u = prompt('Image URL:'); if (u) document.execCommand('insertImage', false, u); }
-
-    const drop = document.getElementById('drop'), fileIn = document.getElementById('file-in');
-    drop.addEventListener('click', () => fileIn.click());
-    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
-    drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
-    drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
-    fileIn.addEventListener('change', e => addFiles(e.target.files));
-
-    function addFiles(files) {
-      Array.from(files).forEach(f => {
-        if (!f.type.startsWith('image/')) return;
-        const r = new FileReader();
-        r.onload = e => { images.push({ file: f, url: e.target.result, up: false, path: '' }); drawThumbs(); };
-        r.readAsDataURL(f);
-      });
-    }
-
-    function drawThumbs() {
-      document.getElementById('thumbs').innerHTML = images.map((m, i) => `
-        <div class="thumb ${i === coverIdx ? 'is-cover' : ''}">
-          <img src="${m.url}">
-          <button class="x-btn" onclick="rmImg(${i})">&times;</button>
-          <button class="cover-btn" onclick="coverIdx=${i};drawThumbs()">${i === coverIdx ? 'cover' : 'set cover'}</button>
-        </div>`).join('');
-    }
-
-    function rmImg(i) { images.splice(i, 1); if (coverIdx >= images.length) coverIdx = Math.max(0, images.length - 1); drawThumbs(); }
-
-    function tagKey(e) {
-      if (e.key === 'Enter' || e.key === ',') {
-        e.preventDefault();
-        const t = e.target.value.trim().replace(/,/g, '');
-        if (t && !tags.includes(t)) { tags.push(t); drawTags(); }
-        e.target.value = '';
-      } else if (e.key === 'Backspace' && !e.target.value && tags.length) { tags.pop(); drawTags(); }
-    }
-
-    function drawTags() {
-      const box = document.getElementById('tag-box'), inp = document.getElementById('tag-in');
-      box.innerHTML = tags.map((t, i) => `<span class="tag">${esc(t)}<button onclick="tags.splice(${i},1);drawTags()">&times;</button></span>`).join('');
-      box.appendChild(inp);
-    }
-
-    function preview() {
-      const title = document.getElementById('post-title').value || 'Untitled';
-      const author = document.getElementById('post-author').value || 'ARC';
-      const body = document.getElementById('body').innerHTML;
-      const cover = images.length ? images[coverIdx].url : '';
-      const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-      document.getElementById('overlay-card').innerHTML = `
-        <p style="color:#999;font-size:14px;margin-bottom:6px;">${esc(author)} &middot; ${date}</p>
-        <h1 style="color:#fff;font-size:26px;font-weight:500;margin-bottom:20px">${esc(title)}</h1>
-        ${cover ? `<img src="${cover}" style="width:100%;border-radius:8px;margin-bottom:20px;max-height:380px;object-fit:cover">` : ''}
-        <div style="color:#ccc;font-size:15px;line-height:1.8">${body}</div>`;
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closePreview() { document.getElementById('overlay').style.display = 'none'; }
-
-    async function publish() {
-      const title = document.getElementById('post-title').value.trim();
-      if (!title) { toast('Enter a title', true); return; }
-      const body = document.getElementById('body').innerHTML.trim();
-      if (!body) { toast('Write some content', true); return; }
-      const btn = document.getElementById('pub-btn');
-      btn.disabled = true; btn.textContent = 'Publishing...';
-      try {
-        const slug = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 60);
-        const author = document.getElementById('post-author').value || 'ARC';
-        const authorImage = document.getElementById('post-author-img').value || '';
-        const wantLI = document.getElementById('cb-li').checked;
-
-        toast('Uploading images...');
-        const paths = [];
-        for (let i = 0; i < images.length; i++) {
-          const m = images[i];
-          if (!m.up) {
-            const ext = m.file.name.split('.').pop().toLowerCase();
-            const p = `blog/images/${slug}-${i + 1}.${ext}`;
-            await ghPut(p, m.url.split(',')[1], `Add image: ${slug}-${i + 1}.${ext}`);
-            m.up = true; m.path = p;
-          }
-          paths.push(m.path);
-        }
-
-        const cover = paths.length ? `/blog/${paths[coverIdx].replace('blog/', '')}` : '';
-        const post = {
-          slug, title, author, authorImage, date: new Date().toISOString(), body,
-          excerpt: strip(body).substring(0, 200),
-          coverImage: cover,
-          images: paths.map(p => `/blog/${p.replace('blog/', '')}`),
-          tags, linkedinRequested: wantLI
-        };
-
-        toast('Saving post...');
-        await ghPut(`blog/posts/${slug}.json`, btoa(unescape(encodeURIComponent(JSON.stringify(post, null, 2)))), `Add post: ${title}`);
-
-        toast('Updating index...');
-        let manifest = [];
-        try {
-          const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/blog/posts.json`, { headers: { Authorization: 'Bearer ' + token } });
-          if (r.ok) { const d = await r.json(); manifest = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, ''))))); }
-        } catch (e) {}
-        const idx = manifest.findIndex(p => p.slug === slug);
-        if (idx !== -1) manifest[idx] = post; else manifest.unshift(post);
-        await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(manifest, null, 2)))), `Update index: ${title}`);
-
+    async function publish(){
+      const title=document.getElementById('post-title').value.trim();if(!title){toast('Enter a title',1);return;}
+      const body=document.getElementById('body').innerHTML.trim();if(!body){toast('Write some content',1);return;}
+      const btn=document.getElementById('pbtn');btn.disabled=true;btn.textContent='Publishing...';
+      try{
+        const slug=title.toLowerCase().replace(/[^\w\s-]/g,'').replace(/[\s_]+/g,'-').replace(/^-+|-+$/g,'').substring(0,60);
+        const author=document.getElementById('post-author').value||'ARC',aImg=document.getElementById('post-author-img').value||'',wLI=document.getElementById('cb2').checked;
+        toast('Uploading images...');const paths=[];
+        for(let i=0;i<images.length;i++){const m=images[i];if(!m.up){const ext=m.file.name.split('.').pop().toLowerCase(),p=`blog/images/${slug}-${i+1}.${ext}`;await ghPut(p,m.url.split(',')[1],`Add image: ${slug}-${i+1}.${ext}`);m.up=true;m.path=p;}paths.push(m.path);}
+        const cover=paths.length?`/blog/${paths[cIdx].replace('blog/','')}`:''
+        const post={slug,title,author,authorImage:aImg,date:new Date().toISOString(),body,excerpt:strip(body).substring(0,200),coverImage:cover,images:paths.map(p=>`/blog/${p.replace('blog/','')}`),tags,linkedinRequested:wLI};
+        toast('Saving post...');await ghPut(`blog/posts/${slug}.json`,btoa(unescape(encodeURIComponent(JSON.stringify(post,null,2)))),`Add post: ${title}`);
+        toast('Updating index...');let man=[];
+        try{const r=await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`,{headers:{Authorization:'Bearer '+token}});if(r.ok){const d=await r.json();man=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));}}catch(e){}
+        const idx=man.findIndex(p=>p.slug===slug);if(idx!==-1)man[idx]=post;else man.unshift(post);
+        await ghPut('blog/posts.json',btoa(unescape(encodeURIComponent(JSON.stringify(man,null,2)))),`Update index: ${title}`);
         toast('Published! Site updates in ~1 min.');
-        document.getElementById('post-title').value = '';
-        document.getElementById('body').innerHTML = '';
-        images = []; tags = []; coverIdx = 0; drawThumbs(); drawTags();
-      } catch (e) { toast('Error: ' + e.message, true); console.error(e); }
-      finally { btn.disabled = false; btn.textContent = 'Publish'; }
+        document.getElementById('post-title').value='';document.getElementById('body').innerHTML='';images=[];tags=[];cIdx=0;dTh();dTg();
+      }catch(e){toast('Error: '+e.message,1);console.error(e);}
+      finally{btn.disabled=false;btn.textContent='Publish';}
     }
 
-    async function ghPut(path, b64, msg) {
-      let sha;
-      try { const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, { headers: { Authorization: 'Bearer ' + token } }); if (r.ok) sha = (await r.json()).sha; } catch (e) {}
-      const body = { message: msg, content: b64, branch: BR }; if (sha) body.sha = sha;
-      const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, { method: 'PUT', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-      if (!r.ok) throw new Error((await r.json()).message);
-    }
+    async function ghPut(path,b64,msg){let sha;try{const r=await fetch(`https://api.github.com/repos/${O}/${R}/contents/${path}`,{headers:{Authorization:'Bearer '+token}});if(r.ok)sha=(await r.json()).sha;}catch(e){}const body={message:msg,content:b64,branch:B};if(sha)body.sha=sha;const r=await fetch(`https://api.github.com/repos/${O}/${R}/contents/${path}`,{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error((await r.json()).message);}
 
-    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-    function strip(h) { const d = document.createElement('div'); d.innerHTML = h; return d.textContent || ''; }
-    function toast(m, err) { const t = document.getElementById('toast'); t.textContent = m; t.className = 'toast' + (err ? ' error' : ''); t.style.display = 'block'; clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', err ? 5000 : 3000); }
-
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
-    document.getElementById('pat').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+    function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||'';}
+    function toast(m,e){const t=document.getElementById('toast');t.textContent=m;t.className='toast'+(e?' error':'');t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',e?5000:3000);}
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeP();});
+    document.getElementById('pat').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
   </script>
 </body>
 </html>
