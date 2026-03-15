@@ -14,6 +14,7 @@
   function update() {
     var vw = document.documentElement.clientWidth;
     var zoom = vw / DESIGN_WIDTH;
+    var isSmall = Math.min(screen.width, screen.height) <= 1024;
     document.body.style.zoom = zoom;
 
     /*
@@ -24,10 +25,18 @@
      * below. We override min-height with the compensated pixel value so the
      * background fills the full viewport. Since framer-sxt1tt is centred
      * inside via top:calc(50% - 335px), this also centres the content block.
+     *
+     * On mobile (zoom === 1, small screen), viewport width=1440 makes 100vh
+     * much taller than the design height, creating a blank gap at the bottom.
+     * We clear min-height so the CSS height class rule takes control instead.
      */
-    if (zoom < 1) {
-      var root = document.querySelector('[data-site-root]');
-      if (root) root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
+    var root = document.querySelector('[data-site-root]');
+    if (root) {
+      if (zoom < 1) {
+        root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
+      } else if (isSmall) {
+        root.style.minHeight = '';
+      }
     }
 
     /*
@@ -42,7 +51,6 @@
      */
     var overlay = document.getElementById('orientation-overlay');
     if (overlay) {
-      var isSmall = Math.min(screen.width, screen.height) <= 1024;
       var isPortrait = window.innerHeight > window.innerWidth;
       if (isSmall && isPortrait) {
         overlay.style.display = 'flex';
