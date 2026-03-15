@@ -616,5 +616,9 @@ a[data-nav-button="support"]:hover { background-color: #d93e3e !important; }
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') overlay.classList.remove('open');
   });
+
+  window.addEventListener('resize', function() {
+    if (overlay.classList.contains('open')) positionOverlay();
+  });
 })();
 </script></body></html>

@@ -18,8 +18,11 @@
     document.body.style.zoom = zoom;
     document.body.classList.toggle('fluid-zoom-active', zoom < 1);
 
+    var root = document.querySelector('[data-site-root]');
+    var overlay = document.getElementById('orientation-overlay');
+
     /*
-     * Vertical centering at small viewport widths.
+     * Vertical sizing.
      *
      * The Framer root has min-height:100vh. With body zoom < 1, that 100vh
      * value renders visually smaller than the viewport, leaving blank space
@@ -34,12 +37,33 @@
      * portrait); pages without it (e.g. support.html) need min-height:100vh
      * so the background fills the viewport in portrait.
      */
-    var root = document.querySelector('[data-site-root]');
     if (root) {
       if (zoom < 1) {
         root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
       } else if (isSmall && overlay) {
         root.style.minHeight = '';
+      }
+    }
+
+    /*
+     * Portrait content centering for pages without orientation lock
+     * (e.g. support.html). In portrait on mobile, viewport width=1440
+     * makes 100vh much taller than the design height. The content fills
+     * only ~75% of the screen, leaving a gap at the bottom. We vertically
+     * centre the content container so the gap splits evenly top and bottom.
+     */
+    if (root && isSmall && !overlay) {
+      var isPortraitNoOverlay = window.innerHeight > window.innerWidth;
+      var contentEl = root.querySelector('.framer-1qy8bnr');
+      if (contentEl) {
+        if (isPortraitNoOverlay) {
+          var gap = root.offsetHeight - contentEl.offsetHeight;
+          if (gap > 0) {
+            contentEl.style.top = Math.floor(gap / 2) + 'px';
+          }
+        } else {
+          contentEl.style.top = '';
+        }
       }
     }
 
@@ -53,7 +77,6 @@
      * When body zoom != 1 (desktop), position:fixed is in the zoomed
      * coordinate system so we compensate the overlay size with explicit px.
      */
-    var overlay = document.getElementById('orientation-overlay');
     if (overlay) {
       var isPortrait = window.innerHeight > window.innerWidth;
       if (isSmall && isPortrait) {
