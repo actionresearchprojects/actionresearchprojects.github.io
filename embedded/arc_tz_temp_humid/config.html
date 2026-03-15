@@ -1,10 +1,12 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Config — ARC Tanzania</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="assets/css2" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Ubuntu', sans-serif; font-size: 13px; background: #f8f9fa; color: #333; }
@@ -77,7 +79,7 @@ td input[type=checkbox] { cursor: pointer; width: 15px; height: 15px; }
         <span class="hint">
           Needs <b>Contents: Read &amp; Write</b> on the <code>arc_tz_temp_humid</code> repo.
           Held in memory only — never stored.
-          <a href="https://github.com/settings/tokens/new?scopes=repo&amp;description=arc_tz_config" target="_blank">Generate token →</a>
+          <a href="https://github.com/settings/tokens/new?scopes=repo&description=arc_tz_config" target="_blank">Generate token →</a>
         </span>
       </div>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -91,7 +93,7 @@ td input[type=checkbox] { cursor: pointer; width: 15px; height: 15px; }
   <div id="config-area" style="display:none">
     <div id="datasets-container"></div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
-      <button id="save-btn" class="primary" disabled="">Save changes</button>
+      <button id="save-btn" class="primary" disabled>Save changes</button>
       <button id="reset-btn" class="danger">Reset all to defaults</button>
       <span id="change-count" style="font-size:12px;color:#888"></span>
     </div>
@@ -447,6 +449,5 @@ document.getElementById('reset-btn').addEventListener('click', async () => {
   }
 });
 </script>
-
-
-</body></html>
+</body>
+</html>
