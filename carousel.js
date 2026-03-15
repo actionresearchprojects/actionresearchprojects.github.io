@@ -71,6 +71,29 @@
       }
     }
 
+    function addPressEffect(btn) {
+      if (!btn) return;
+      btn.style.transition = 'transform 0.1s ease';
+      btn.addEventListener('mousedown', function () {
+        btn.style.transform = 'scale(0.85)';
+      });
+      btn.addEventListener('mouseup', function () {
+        btn.style.transform = 'none';
+      });
+      btn.addEventListener('mouseleave', function () {
+        btn.style.transform = 'none';
+      });
+      btn.addEventListener('touchstart', function () {
+        btn.style.transform = 'scale(0.85)';
+      });
+      btn.addEventListener('touchend', function () {
+        btn.style.transform = 'none';
+      });
+    }
+
+    addPressEffect(prevBtn);
+    addPressEffect(nextBtn);
+
     if (prevBtn) {
       prevBtn.addEventListener('click', function () {
         var idx = getCurrentIndex();
