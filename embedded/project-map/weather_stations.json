@@ -2,7 +2,7 @@
 {
   "id": "tanzania_kisemvule",
   "title": "Kisemvule Weather Station",
-  "link": "https://actionresearchprojects.net/weather-stations/tanzania-kisemvule",
+  "link": "/graphs/arc-tz-weather",
   "address": "Tanzania, Kisemvule, altitude 81.6m",
   "zones": [
     {

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LinkedIn Auth — ARC Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" sizes="any" href="../assets/images/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      background: #111;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+    .page-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0; object-fit: cover; object-position: center;
+    }
+    .card {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+    h1 { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 16px; }
+    p { font-size: 14px; color: #aaa; margin-bottom: 16px; line-height: 1.6; }
+    .step { margin-bottom: 24px; }
+    .step h2 { font-size: 16px; font-weight: 500; color: #fff; margin-bottom: 8px; }
+    code, .code-block {
+      background: rgba(255,255,255,0.08);
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    code { padding: 2px 6px; }
+    .code-block {
+      display: block;
+      padding: 14px;
+      margin: 8px 0;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: #ccc;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #aaa;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+    .success { color: #4caf50; }
+    .error { color: #e74c3c; }
+    .warning { color: #ff9800; }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 8px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 14px;
+      margin: 8px 0;
+      outline: none;
+    }
+    input:focus { border-color: rgba(255,255,255,0.3); }
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #111;
+      background: #fff;
+      margin-top: 8px;
+    }
+    .btn:hover { background: #e0e0e0; }
+    label { font-size: 13px; color: #888; display: block; margin-top: 12px; }
+    .token-result {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <img class="page-bg" src="../assets/images/support-page-background.webp" alt="">
+
+  <div class="card">
+    <div id="phase-start">
+      <h1>LinkedIn Access Token Setup</h1>
+      <p>This helper walks you through getting a LinkedIn access token for your ARC app.</p>
+
+      <div class="step">
+        <h2>Your LinkedIn App credentials</h2>
+        <label>Client ID</label>
+        <input type="text" id="client-id" placeholder="e.g. 86abc1234def56">
+        <label>Client Secret</label>
+        <input type="password" id="client-secret" placeholder="e.g. WPL...">
+      </div>
+
+      <div class="step">
+        <h2>Required scopes</h2>
+        <p>Make sure your LinkedIn app has the <code>Share on LinkedIn</code> product enabled. This grants the <code>w_member_social</code> scope. If posting as your company page, you also need <code>w_organization_social</code>.</p>
+      </div>
+
+      <button class="btn" onclick="startAuth()">Start Authorization</button>
+      <p id="start-error" class="error" style="margin-top:12px;display:none;"></p>
+    </div>
+
+    <div id="phase-callback" style="display:none;">
+      <h1 class="success">Authorization code received</h1>
+      <p>Code: <code id="auth-code-display"></code></p>
+      <p>Now exchanging this for an access token...</p>
+      <p id="exchange-status">Exchanging...</p>
+
+      <div id="manual-exchange" style="display:none;">
+        <h2 style="color:#fff;font-size:16px;margin:16px 0 8px;">Run this in your terminal</h2>
+        <p>The browser can't call LinkedIn's token endpoint directly (CORS). Copy and run this command:</p>
+        <div class="code-block" id="curl-command">
+          <button class="copy-btn" onclick="copyCommand()">Copy</button>
+        </div>
+        <p style="margin-top:12px;">Then paste the <code>access_token</code> value from the response below:</p>
+        <input type="text" id="manual-token" placeholder="Paste access_token here">
+        <button class="btn" onclick="saveManualToken()">Save Token</button>
+      </div>
+
+      <div class="token-result" id="token-result">
+        <h2 class="success" style="font-size:16px;margin-bottom:12px;">Access token obtained</h2>
+        <p style="color:#ccc;">Your access token:</p>
+        <div class="code-block" id="token-display" style="font-size:12px;">
+          <button class="copy-btn" onclick="copyToken()">Copy</button>
+        </div>
+        <p style="margin-top:16px;color:#ccc;"><strong>Next steps:</strong></p>
+        <ol style="margin:8px 0 0 20px;color:#ccc;font-size:14px;line-height:1.8;">
+          <li>Go to your GitHub repo <strong>Settings</strong> &rarr; <strong>Secrets and variables</strong> &rarr; <strong>Actions</strong></li>
+          <li>Add secret: <code>LINKEDIN_ACCESS_TOKEN</code> = the token above</li>
+          <li>Add secret: <code>LINKEDIN_ORG_ID</code> = your company page's numeric ID</li>
+          <li>Add variable: <code>LINKEDIN_ENABLED</code> = <code>true</code></li>
+        </ol>
+        <p style="margin-top:12px;color:#888;font-size:13px;">Note: LinkedIn access tokens expire after 60 days. You'll need to repeat this process to refresh.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const REDIRECT_URI = window.location.origin + '/admin/callback';
+    const SCOPES = 'openid profile w_member_social w_organization_social';
+
+    // Check if we're returning from LinkedIn with a code
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const error = params.get('error');
+
+      if (error) {
+        document.getElementById('phase-start').innerHTML = `
+          <h1 class="error">Authorization failed</h1>
+          <p>LinkedIn returned an error: <code>${error}</code></p>
+          <p>${params.get('error_description') || ''}</p>
+          <p><a href="/admin/callback" style="color:#6daadb;">Try again</a></p>
+        `;
+        return;
+      }
+
+      if (code) {
+        document.getElementById('phase-start').style.display = 'none';
+        document.getElementById('phase-callback').style.display = 'block';
+        document.getElementById('auth-code-display').textContent = code.substring(0, 20) + '...';
+
+        // Retrieve saved credentials
+        const clientId = sessionStorage.getItem('li_client_id') || '';
+        const clientSecret = sessionStorage.getItem('li_client_secret') || '';
+
+        if (!clientId || !clientSecret) {
+          document.getElementById('exchange-status').innerHTML =
+            '<span class="warning">Client credentials not found in session. Please enter them below and use the curl command.</span>';
+          showManualExchange(code, '', '');
+          return;
+        }
+
+        // Try the exchange (will likely fail due to CORS, that's OK)
+        exchangeToken(code, clientId, clientSecret);
+      }
+    })();
+
+    function startAuth() {
+      const clientId = document.getElementById('client-id').value.trim();
+      const clientSecret = document.getElementById('client-secret').value.trim();
+      const errEl = document.getElementById('start-error');
+
+      if (!clientId || !clientSecret) {
+        errEl.textContent = 'Please enter both Client ID and Client Secret.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // Save credentials temporarily for when we return
+      sessionStorage.setItem('li_client_id', clientId);
+      sessionStorage.setItem('li_client_secret', clientSecret);
+
+      // Redirect to LinkedIn authorization
+      const authUrl = 'https://www.linkedin.com/oauth/v2/authorization'
+        + '?response_type=code'
+        + '&client_id=' + encodeURIComponent(clientId)
+        + '&redirect_uri=' + encodeURIComponent(REDIRECT_URI)
+        + '&scope=' + encodeURIComponent(SCOPES);
+
+      window.location.href = authUrl;
+    }
+
+    async function exchangeToken(code, clientId, clientSecret) {
+      try {
+        const res = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            grant_type: 'authorization_code',
+            code: code,
+            redirect_uri: REDIRECT_URI,
+            client_id: clientId,
+            client_secret: clientSecret
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          showToken(data.access_token);
+          return;
+        }
+      } catch (e) {
+        // CORS error expected
+      }
+
+      // Fall back to manual curl
+      document.getElementById('exchange-status').innerHTML =
+        '<span class="warning">Browser can\'t call LinkedIn directly (CORS). Use the curl command below instead — takes 10 seconds.</span>';
+      showManualExchange(code, clientId, clientSecret);
+    }
+
+    function showManualExchange(code, clientId, clientSecret) {
+      const el = document.getElementById('manual-exchange');
+      el.style.display = 'block';
+
+      const cmd = `curl -s -X POST "https://www.linkedin.com/oauth/v2/accessToken" \\
+  -H "Content-Type: application/x-www-form-urlencoded" \\
+  -d "grant_type=authorization_code" \\
+  -d "code=${code}" \\
+  -d "redirect_uri=${encodeURIComponent(REDIRECT_URI)}" \\
+  -d "client_id=${clientId || 'YOUR_CLIENT_ID'}" \\
+  -d "client_secret=${clientSecret || 'YOUR_CLIENT_SECRET'}"`;
+
+      const cmdEl = document.getElementById('curl-command');
+      cmdEl.insertBefore(document.createTextNode(cmd), cmdEl.firstChild);
+    }
+
+    function saveManualToken() {
+      const token = document.getElementById('manual-token').value.trim();
+      if (token) showToken(token);
+    }
+
+    function showToken(token) {
+      const el = document.getElementById('token-result');
+      el.style.display = 'block';
+      const display = document.getElementById('token-display');
+      display.insertBefore(document.createTextNode(token), display.firstChild);
+
+      // Clean up session storage
+      sessionStorage.removeItem('li_client_id');
+      sessionStorage.removeItem('li_client_secret');
+    }
+
+    function copyCommand() {
+      const text = document.getElementById('curl-command').textContent.replace('Copy', '').trim();
+      navigator.clipboard.writeText(text);
+      document.querySelector('#curl-command .copy-btn').textContent = 'Copied!';
+      setTimeout(() => document.querySelector('#curl-command .copy-btn').textContent = 'Copy', 2000);
+    }
+
+    function copyToken() {
+      const text = document.getElementById('token-display').textContent.replace('Copy', '').trim();
+      navigator.clipboard.writeText(text);
+      document.querySelector('#token-display .copy-btn').textContent = 'Copied!';
+      setTimeout(() => document.querySelector('#token-display .copy-btn').textContent = 'Copy', 2000);
+    }
+  </script>
+</body>
+</html>
