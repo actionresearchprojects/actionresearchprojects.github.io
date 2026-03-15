@@ -88,7 +88,7 @@ jobs:
             exit 1
           fi
 
-          AUTHOR_URN="urn:li:person:$MEMBER_SUB"
+          AUTHOR_URN="urn:li:member:$MEMBER_SUB"
           echo "Posting as: $AUTHOR_URN"
 
           SITE_URL="https://actionresearchprojects.github.io"
