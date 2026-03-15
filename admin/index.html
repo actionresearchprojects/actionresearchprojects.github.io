@@ -739,7 +739,7 @@
     function linkedinPic(username, forDisplay) {
       if (!username) return '';
       const base = 'https://unavatar.io/linkedin/' + encodeURIComponent(username);
-      return forDisplay ? base + '?ttl=0&t=' + Date.now() : base;
+      return forDisplay ? base + '?t=' + Date.now() : base;
     }
 
     // ── Auth ──
