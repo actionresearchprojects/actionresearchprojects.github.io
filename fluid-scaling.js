@@ -46,23 +46,31 @@
     }
 
     /*
-     * Portrait content centering for pages without orientation lock
+     * Portrait content scaling for pages without orientation lock
      * (e.g. support.html). In portrait on mobile, viewport width=1440
-     * makes 100vh much taller than the design height. The content fills
-     * only ~75% of the screen, leaving a gap at the bottom. We vertically
-     * centre the content container so the gap splits evenly top and bottom.
+     * makes 100vh much taller than the design height (~3100px vs 2375px),
+     * leaving ~25% empty space at the bottom. We scale the content
+     * container up to fill the viewport height using transform: scale()
+     * with center-top origin so text and centred elements stay visible.
+     * The far-left and far-right edges clip symmetrically via
+     * overflow:hidden on the root.
      */
     if (root && isSmall && !overlay) {
       var isPortraitNoOverlay = window.innerHeight > window.innerWidth;
       var contentEl = root.querySelector('.framer-1qy8bnr');
       if (contentEl) {
         if (isPortraitNoOverlay) {
-          var gap = root.offsetHeight - contentEl.offsetHeight;
-          if (gap > 0) {
-            contentEl.style.top = Math.floor(gap / 2) + 'px';
+          var scale = root.offsetHeight / contentEl.offsetHeight;
+          if (scale > 1.01) {
+            contentEl.style.transformOrigin = '50% 0';
+            contentEl.style.transform = 'scale(' + scale.toFixed(6) + ')';
+            root.style.setProperty('overflow', 'hidden', 'important');
           }
         } else {
+          contentEl.style.transform = '';
+          contentEl.style.transformOrigin = '';
           contentEl.style.top = '';
+          root.style.removeProperty('overflow');
         }
       }
     }
