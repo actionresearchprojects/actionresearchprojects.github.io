@@ -524,7 +524,7 @@
     function freshPic(url) {
       if (!url || !url.includes('unavatar.io')) return url;
       const sep = url.includes('?') ? '&' : '?';
-      return url + sep + 'ttl=0&t=' + Date.now();
+      return url + sep + 't=' + Date.now();
     }
 
     window.addEventListener('hashchange', handleRoute);
