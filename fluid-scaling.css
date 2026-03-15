@@ -8,9 +8,14 @@ html {
   overflow-x: hidden;
 }
 
-/* Let the page container expand naturally when zoomed */
+/* Always allow overflow so nothing clips */
 [data-site-root] > div {
   overflow: visible !important;
+}
+
+/* Only expand height when desktop zoom is active — on mobile, viewport width=1440
+ * makes 100vh far taller than the design height, creating a blank gap at the bottom. */
+body.fluid-zoom-active [data-site-root] > div {
   height: auto !important;
   min-height: 100vh !important;
 }

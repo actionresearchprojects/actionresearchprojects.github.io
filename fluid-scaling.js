@@ -16,6 +16,7 @@
     var zoom = vw / DESIGN_WIDTH;
     var isSmall = Math.min(screen.width, screen.height) <= 1024;
     document.body.style.zoom = zoom;
+    document.body.classList.toggle('fluid-zoom-active', zoom < 1);
 
     /*
      * Vertical centering at small viewport widths.
