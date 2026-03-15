@@ -10,35 +10,52 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    env:
+      SOURCE_REPO: ${{ github.event.client_payload.source_repo }}
     steps:
       - name: Checkout main site
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.SYNC_PAT }}
 
-      - name: Sync arc_tz_temp_humid
-        if: github.event.client_payload.source_repo == 'arc_tz_temp_humid'
+      - name: Resolve embedded folder name
+        id: resolve
         run: |
+          # Map repo names to embedded folder names where they differ
+          case "$SOURCE_REPO" in
+            reflections-grid) FOLDER="reflections" ;;
+            *)                FOLDER="$SOURCE_REPO" ;;
+          esac
+          echo "folder=$FOLDER" >> $GITHUB_OUTPUT
+
+      - name: Clone source repo and sync
+        run: |
+          FOLDER="${{ steps.resolve.outputs.folder }}"
+
           # Clone the source repo (shallow, just the latest)
-          git clone --depth 1 https://github.com/actionresearchprojects/arc_tz_temp_humid.git /tmp/arc_tz_temp_humid
+          git clone --depth 1 "https://github.com/actionresearchprojects/${SOURCE_REPO}.git" /tmp/source
+
+          # Remove build/config files that shouldn't be in embedded
+          cd /tmp/source
+          rm -rf .git .github .gitignore __pycache__ \
+                 *.py *.md *.txt data/ .aider* .claude .DS_Store
+          cd -
 
           # Clear the existing embedded folder and copy fresh output
-          rm -rf embedded/arc_tz_temp_humid
-          mkdir -p embedded/arc_tz_temp_humid
-
-          cp /tmp/arc_tz_temp_humid/index.html embedded/arc_tz_temp_humid/
-          cp /tmp/arc_tz_temp_humid/config.html embedded/arc_tz_temp_humid/
-          cp -r /tmp/arc_tz_temp_humid/logo embedded/arc_tz_temp_humid/
+          rm -rf "embedded/${FOLDER}"
+          mkdir -p "embedded/${FOLDER}"
+          cp -r /tmp/source/* "embedded/${FOLDER}/" 2>/dev/null || true
+          cp -r /tmp/source/.* "embedded/${FOLDER}/" 2>/dev/null || true
 
       - name: Commit and push if changed
         run: |
+          FOLDER="${{ steps.resolve.outputs.folder }}"
           git config user.name "actionresearchprojects"
           git config user.email "actionresearchprojects@users.noreply.github.com"
-          git add embedded/
+          git add "embedded/${FOLDER}/"
           if git diff --cached --quiet; then
             echo "No changes to sync"
           else
-            SOURCE="${{ github.event.client_payload.source_repo }}"
-            git commit -m "sync embedded/${SOURCE} from source repo"
+            git commit -m "sync embedded/${FOLDER} from ${SOURCE_REPO}"
             git push
           fi
