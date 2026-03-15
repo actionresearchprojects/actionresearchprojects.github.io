@@ -56,8 +56,9 @@ jobs:
           fi
 
           # Get the authenticated member's URN
-          # Try /v2/userinfo first (requires openid scope), then fall back to repo variable
-          MEMBER_SUB=""
+          # Use /v2/userinfo (requires openid scope from "Sign In with LinkedIn" product)
+          # The sub field is an opaque string — use urn:li:person:{sub} format
+          AUTHOR_URN=""
 
           USERINFO=$(curl -s -w "\n%{http_code}" \
             -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
@@ -67,28 +68,23 @@ jobs:
 
           if [ "$UI_CODE" -ge 200 ] && [ "$UI_CODE" -lt 300 ]; then
             MEMBER_SUB=$(echo "$UI_BODY" | jq -r '.sub // empty')
+            if [ -n "$MEMBER_SUB" ]; then
+              AUTHOR_URN="urn:li:person:$MEMBER_SUB"
+            fi
           fi
 
-          if [ -z "$MEMBER_SUB" ]; then
-            # Try legacy /v2/me endpoint
-            ME_INFO=$(curl -s \
-              -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
-              "https://api.linkedin.com/v2/me")
-            MEMBER_SUB=$(echo "$ME_INFO" | jq -r '.id // empty')
+          if [ -z "$AUTHOR_URN" ] && [ -n "$LINKEDIN_PERSON_ID" ]; then
+            # Fall back to repo variable (assumes urn:li:person: format)
+            AUTHOR_URN="urn:li:person:$LINKEDIN_PERSON_ID"
           fi
 
-          if [ -z "$MEMBER_SUB" ]; then
-            # Fall back to repo variable
-            MEMBER_SUB="${LINKEDIN_PERSON_ID}"
-          fi
-
-          if [ -z "$MEMBER_SUB" ]; then
+          if [ -z "$AUTHOR_URN" ]; then
             echo "Could not determine LinkedIn member ID."
-            echo "Set the LINKEDIN_PERSON_ID repo variable, or add 'Sign In with LinkedIn using OpenID Connect' to your LinkedIn app."
+            echo "Add 'Sign In with LinkedIn using OpenID Connect' to your LinkedIn app,"
+            echo "or set LINKEDIN_PERSON_ID repo variable to your OpenID sub value."
             exit 1
           fi
 
-          AUTHOR_URN="urn:li:member:$MEMBER_SUB"
           echo "Posting as: $AUTHOR_URN"
 
           SITE_URL="https://actionresearchprojects.github.io"
