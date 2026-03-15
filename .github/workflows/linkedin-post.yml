@@ -33,7 +33,6 @@ jobs:
         if: steps.posts.outputs.skip == 'false'
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-          LINKEDIN_ORG_ID: ${{ secrets.LINKEDIN_ORG_ID }}
           POST_FILE: ${{ steps.posts.outputs.file }}
         run: |
           set -e
@@ -50,10 +49,25 @@ jobs:
             exit 0
           fi
 
-          if [ -z "$LINKEDIN_ACCESS_TOKEN" ] || [ -z "$LINKEDIN_ORG_ID" ]; then
-            echo "LinkedIn secrets not configured. Skipping."
+          if [ -z "$LINKEDIN_ACCESS_TOKEN" ]; then
+            echo "LinkedIn access token not configured. Skipping."
             exit 0
           fi
+
+          # Get the authenticated member's URN
+          MEMBER_INFO=$(curl -s \
+            -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
+            "https://api.linkedin.com/v2/userinfo")
+          MEMBER_SUB=$(echo "$MEMBER_INFO" | jq -r '.sub // empty')
+
+          if [ -z "$MEMBER_SUB" ]; then
+            echo "Failed to get LinkedIn member info. Token may be expired."
+            echo "Response: $MEMBER_INFO"
+            exit 1
+          fi
+
+          AUTHOR_URN="urn:li:person:$MEMBER_SUB"
+          echo "Posting as: $AUTHOR_URN"
 
           SITE_URL="https://actionresearchprojects.github.io"
           POST_URL="${SITE_URL}/blog/#${SLUG}"
@@ -69,13 +83,13 @@ jobs:
           if [ -n "$COVER_IMAGE" ] && [ "$COVER_IMAGE" != "null" ]; then
             # Post with article/link share (shows preview card)
             BODY=$(jq -n \
-              --arg org "$LINKEDIN_ORG_ID" \
+              --arg author "$AUTHOR_URN" \
               --arg text "$POST_TEXT" \
               --arg url "$POST_URL" \
               --arg title "$TITLE" \
               --arg desc "$EXCERPT" \
               '{
-                "author": ("urn:li:organization:" + $org),
+                "author": $author,
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                   "com.linkedin.ugc.ShareContent": {
@@ -96,10 +110,10 @@ jobs:
           else
             # Text-only post
             BODY=$(jq -n \
-              --arg org "$LINKEDIN_ORG_ID" \
+              --arg author "$AUTHOR_URN" \
               --arg text "$POST_TEXT" \
               '{
-                "author": ("urn:li:organization:" + $org),
+                "author": $author,
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                   "com.linkedin.ugc.ShareContent": {
