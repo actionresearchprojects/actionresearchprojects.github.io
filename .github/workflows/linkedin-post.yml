@@ -33,6 +33,7 @@ jobs:
         if: steps.posts.outputs.skip == 'false'
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_ID: ${{ vars.LINKEDIN_PERSON_ID }}
           POST_FILE: ${{ steps.posts.outputs.file }}
         run: |
           set -e
@@ -55,14 +56,35 @@ jobs:
           fi
 
           # Get the authenticated member's URN
-          MEMBER_INFO=$(curl -s \
+          # Try /v2/userinfo first (requires openid scope), then fall back to repo variable
+          MEMBER_SUB=""
+
+          USERINFO=$(curl -s -w "\n%{http_code}" \
             -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
-            "https://api.linkedin.com/v2/me")
-          MEMBER_SUB=$(echo "$MEMBER_INFO" | jq -r '.id // empty')
+            "https://api.linkedin.com/v2/userinfo")
+          UI_CODE=$(echo "$USERINFO" | tail -1)
+          UI_BODY=$(echo "$USERINFO" | sed '$d')
+
+          if [ "$UI_CODE" -ge 200 ] && [ "$UI_CODE" -lt 300 ]; then
+            MEMBER_SUB=$(echo "$UI_BODY" | jq -r '.sub // empty')
+          fi
 
           if [ -z "$MEMBER_SUB" ]; then
-            echo "Failed to get LinkedIn member info. Token may be expired."
-            echo "Response: $MEMBER_INFO"
+            # Try legacy /v2/me endpoint
+            ME_INFO=$(curl -s \
+              -H "Authorization: Bearer $LINKEDIN_ACCESS_TOKEN" \
+              "https://api.linkedin.com/v2/me")
+            MEMBER_SUB=$(echo "$ME_INFO" | jq -r '.id // empty')
+          fi
+
+          if [ -z "$MEMBER_SUB" ]; then
+            # Fall back to repo variable
+            MEMBER_SUB="${LINKEDIN_PERSON_ID}"
+          fi
+
+          if [ -z "$MEMBER_SUB" ]; then
+            echo "Could not determine LinkedIn member ID."
+            echo "Set the LINKEDIN_PERSON_ID repo variable, or add 'Sign In with LinkedIn using OpenID Connect' to your LinkedIn app."
             exit 1
           fi
 
