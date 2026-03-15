@@ -90,9 +90,7 @@
     .login-card button:hover { background: #222; }
     .login-card button:disabled { opacity: 0.5; cursor: wait; }
 
-    /* ── Editor ── */
-    #editor { display: none; min-height: 100vh; }
-
+    /* ── Topbar ── */
     .topbar {
       display: flex;
       align-items: center;
@@ -126,14 +124,110 @@
       transition: all 0.15s;
     }
     .pill:hover { background: #e4e4e4; color: #333; }
+    .pill.active { background: #333; color: #fff; border-color: #333; }
 
+    /* ── Main content area ── */
     .main {
       max-width: 640px;
       margin: 0 auto;
       padding: 48px 24px 80px;
     }
 
-    /* Title */
+    /* ── Manage Posts view ── */
+    #manage { display: none; min-height: 100vh; }
+    #editor { display: none; min-height: 100vh; }
+
+    .manage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .manage-header h1 {
+      font-size: 26px;
+      font-weight: 500;
+      color: #222;
+    }
+
+    .post-list-empty {
+      text-align: center;
+      color: #999;
+      padding: 60px 0;
+      font-size: 15px;
+    }
+
+    .post-item {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: background 0.15s;
+    }
+    .post-item:hover { background: rgba(255,255,255,0.95); }
+
+    .post-item-cover {
+      width: 64px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .post-item-nocover {
+      width: 64px;
+      height: 48px;
+      border-radius: 6px;
+      background: #eee;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+      font-size: 18px;
+    }
+
+    .post-item-info { flex: 1; min-width: 0; }
+    .post-item-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: #222;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .post-item-meta {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    .post-item-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      color: #555;
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sm:hover { background: #f0f0f0; color: #333; }
+    .btn-sm.danger { color: #d32f2f; border-color: #f0c0c0; }
+    .btn-sm.danger:hover { background: #fef0f0; color: #b71c1c; }
+
+    /* ── Title input ── */
     .title-in {
       width: 100%;
       font-size: 32px;
@@ -147,7 +241,7 @@
     }
     .title-in::placeholder { color: #ccc; }
 
-    /* Labels */
+    /* ── Labels ── */
     .lbl {
       font-size: 11px;
       font-weight: 500;
@@ -157,11 +251,11 @@
       margin-bottom: 6px;
     }
 
-    /* Author */
-    .author-row { display: flex; gap: 12px; margin-bottom: 28px; }
-    .author-row .grp { flex: 1; }
+    /* ── Author ── */
+    .author-row { display: flex; gap: 12px; margin-bottom: 28px; align-items: flex-end; }
 
-    .grp input {
+    .grp { flex: 1; }
+    .grp select, .grp input {
       width: 100%;
       padding: 10px 12px;
       background: #fff;
@@ -173,10 +267,39 @@
       outline: none;
       transition: border-color 0.2s;
     }
+    .grp select:focus, .grp input:focus { border-color: #999; }
     .grp input::placeholder { color: #ccc; }
-    .grp input:focus { border-color: #999; }
 
-    /* Images */
+    .author-preview {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      min-height: 36px;
+    }
+    .author-preview img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+    .author-preview .ap-name {
+      font-size: 14px;
+      color: #555;
+    }
+    .author-preview .ap-loading {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    #other-fields {
+      display: none;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Images ── */
     .drop {
       border: 1px dashed #ccc;
       border-radius: 10px;
@@ -222,7 +345,7 @@
     .th.cover { border-color: #09f; }
     .th.cover .cb { color: #09f; }
 
-    /* Toolbar */
+    /* ── Toolbar ── */
     .tb {
       display: flex;
       gap: 2px;
@@ -246,7 +369,7 @@
     .tb button:hover { background: #f0f0f0; color: #333; }
     .tb .d { width: 1px; background: #e8e8e8; margin: 4px 5px; }
 
-    /* Write area */
+    /* ── Write area ── */
     .wa {
       min-height: 240px;
       padding: 16px;
@@ -269,7 +392,7 @@
     .wa blockquote { border-left: 2px solid #ddd; padding-left: 12px; color: #888; font-style: italic; margin: 10px 0; }
     .wa ul, .wa ol { margin: 0 0 10px 18px; }
 
-    /* Tags */
+    /* ── Tags ── */
     .tbox {
       display: flex;
       flex-wrap: wrap;
@@ -307,7 +430,26 @@
     }
     .ti::placeholder { color: #ccc; }
 
-    /* Publish */
+    /* ── Excerpt ── */
+    .excerpt-in {
+      width: 100%;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      color: #333;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+      margin-bottom: 28px;
+      transition: border-color 0.2s;
+    }
+    .excerpt-in:focus { border-color: #999; }
+    .excerpt-in::placeholder { color: #ccc; }
+
+    /* ── Publish ── */
     .pub {
       display: flex;
       align-items: center;
@@ -339,7 +481,7 @@
     .pub-btn:hover { background: #222; }
     .pub-btn:disabled { opacity: 0.4; cursor: wait; }
 
-    /* Toast */
+    /* ── Toast ── */
     .toast {
       position: fixed;
       bottom: 24px; left: 50%;
@@ -356,7 +498,7 @@
     }
     .toast.error { background: #d32f2f; }
 
-    /* Preview */
+    /* ── Preview overlay ── */
     .ov {
       display: none;
       position: fixed;
@@ -386,12 +528,59 @@
       cursor: pointer; z-index: 201;
     }
 
+    /* ── Confirm dialog ── */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+    .confirm-overlay.show { display: flex; }
+
+    .confirm-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .confirm-box h3 { font-size: 18px; font-weight: 500; color: #222; margin-bottom: 8px; }
+    .confirm-box p { font-size: 14px; color: #777; margin-bottom: 24px; }
+    .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+    .confirm-btns button {
+      padding: 9px 24px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #555;
+      transition: all 0.15s;
+    }
+    .confirm-btns button:hover { background: #f5f5f5; }
+    .confirm-btns .confirm-del {
+      background: #d32f2f;
+      color: #fff;
+      border-color: #d32f2f;
+    }
+    .confirm-btns .confirm-del:hover { background: #b71c1c; }
+
     @media (max-width: 600px) {
       .title-in { font-size: 24px; }
       .author-row { flex-direction: column; }
       .main { padding: 32px 16px 60px; }
       .pub { flex-direction: column; align-items: stretch; }
       .pub-btn { width: 100%; text-align: center; }
+      .post-item { flex-direction: column; align-items: stretch; gap: 10px; }
+      .post-item-actions { justify-content: flex-end; }
     }
   </style>
 </head>
@@ -413,14 +602,40 @@
     </div>
   </div>
 
+  <!-- ── Manage Posts view ── -->
+  <div id="manage">
+    <div class="topbar">
+      <div class="topbar-left">
+        <img src="../assets/images/arc-logo.png" alt="ARC">
+        <span>Manage Posts</span>
+      </div>
+      <div class="topbar-right">
+        <span class="who" id="who-manage"></span>
+        <button class="pill active" onclick="showManage()">Posts</button>
+        <button class="pill" onclick="showEditor()">New Post</button>
+        <button class="pill" onclick="doLogout()">Log out</button>
+      </div>
+    </div>
+    <div class="main">
+      <div class="manage-header">
+        <h1>Posts</h1>
+      </div>
+      <div id="post-list">
+        <p class="post-list-empty">Loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Editor view ── -->
   <div id="editor">
     <div class="topbar">
       <div class="topbar-left">
         <img src="../assets/images/arc-logo.png" alt="ARC">
-        <span>New Post</span>
+        <span id="editor-mode-label">New Post</span>
       </div>
       <div class="topbar-right">
-        <span class="who" id="who"></span>
+        <span class="who" id="who-editor"></span>
+        <button class="pill" onclick="showManage()">Posts</button>
         <button class="pill" onclick="preview()">Preview</button>
         <button class="pill" onclick="doLogout()">Log out</button>
       </div>
@@ -428,10 +643,23 @@
     <div class="main">
       <input class="title-in" type="text" id="post-title" placeholder="Post title...">
 
+      <p class="lbl">Author</p>
       <div class="author-row">
-        <div class="grp"><p class="lbl">Author</p><input type="text" id="post-author" placeholder="ARC Team"></div>
-        <div class="grp"><p class="lbl">Author image</p><input type="text" id="post-author-img" placeholder="https://..."></div>
+        <div class="grp">
+          <select id="author-select" onchange="onAuthorChange()">
+            <option value="andy">Andy Simmonds</option>
+            <option value="archie">Archie Worthington</option>
+            <option value="other">Other...</option>
+          </select>
+        </div>
       </div>
+
+      <div id="other-fields">
+        <div class="grp"><p class="lbl">Name</p><input type="text" id="other-name" placeholder="Full name"></div>
+        <div class="grp"><p class="lbl">LinkedIn username</p><input type="text" id="other-linkedin" placeholder="e.g. johndoe" oninput="updateOtherPreview()"></div>
+      </div>
+
+      <div class="author-preview" id="author-preview"></div>
 
       <p class="lbl">Images</p>
       <div class="drop" id="drop"><input type="file" id="fi" multiple accept="image/*">Click or drop images here</div>
@@ -456,6 +684,9 @@
       </div>
       <div class="wa" id="body" contenteditable="true" data-ph="Write your post..."></div>
 
+      <p class="lbl">Excerpt (optional — auto-generated if blank)</p>
+      <textarea class="excerpt-in" id="post-excerpt" placeholder="Short summary for the blog list..."></textarea>
+
       <p class="lbl">Tags</p>
       <div class="tbox" id="tbox" onclick="document.getElementById('ti').focus()">
         <input class="ti" type="text" id="ti" placeholder="Type and press Enter" onkeydown="tagKey(event)">
@@ -476,91 +707,502 @@
     <div class="ov-card" id="ovc"></div>
   </div>
 
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-box">
+      <h3 id="confirm-title">Delete post?</h3>
+      <p id="confirm-msg">This cannot be undone.</p>
+      <div class="confirm-btns">
+        <button onclick="closeConfirm()">Cancel</button>
+        <button class="confirm-del" id="confirm-action" onclick="confirmAction()">Delete</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
-    let token='',user='',images=[],cIdx=0,tags=[];
-    const O='actionresearchprojects',R='actionresearchprojects.github.io',B='main';
+    let token='', user='', images=[], cIdx=0, tags=[];
+    let editingSlug = null; // null = new post, string = editing existing
+    let allPosts = [];
+    let pendingConfirm = null;
 
-    async function doLogin(){
-      const p=document.getElementById('pat').value.trim();if(!p)return;
-      const b=document.getElementById('lbtn'),e=document.getElementById('err');
-      b.disabled=true;b.textContent='Signing in...';e.style.display='none';
-      try{
-        const r=await fetch('https://api.github.com/user',{headers:{Authorization:'Bearer '+p}});
-        if(!r.ok)throw new Error('Invalid token');const u=await r.json();
-        const rr=await fetch(`https://api.github.com/repos/${O}/${R}`,{headers:{Authorization:'Bearer '+p}});
-        if(!rr.ok)throw new Error('Cannot access repo');const repo=await rr.json();
-        if(!repo.permissions?.push)throw new Error('No write access');
-        token=p;user=u.login;localStorage.setItem('arc_pat',p);
-        document.getElementById('who').textContent=u.login;
-        document.getElementById('login').style.display='none';
-        document.getElementById('editor').style.display='block';
-        document.getElementById('post-author').value=u.name||u.login;
-        document.getElementById('post-author-img').value=u.avatar_url||'';
-      }catch(x){e.textContent=x.message;e.style.display='block';}
-      finally{b.disabled=false;b.textContent='Sign in';}
+    const O='actionresearchprojects', R='actionresearchprojects.github.io', B='main';
+
+    // Known authors with LinkedIn usernames
+    const AUTHORS = {
+      andy:   { name: 'Andy Simmonds',      linkedin: 'andy-simmonds-arc' },
+      archie: { name: 'Archie Worthington', linkedin: 'archie-worthington' }
+    };
+
+    // Get LinkedIn profile image via unavatar.io
+    function linkedinPic(username) {
+      if (!username) return '';
+      return 'https://unavatar.io/linkedin/' + encodeURIComponent(username);
     }
 
-    function doLogout(){token='';user='';localStorage.removeItem('arc_pat');document.getElementById('login').style.display='flex';document.getElementById('editor').style.display='none';}
-    (()=>{const s=localStorage.getItem('arc_pat');if(s){document.getElementById('pat').value=s;doLogin();}})();
-
-    function fmt(c,v){document.execCommand(c,false,v||null);document.getElementById('body').focus();}
-    function blk(t){document.execCommand('formatBlock',false,'<'+t+'>');document.getElementById('body').focus();}
-    function aLink(){const u=prompt('URL:');if(u)document.execCommand('createLink',false,u);}
-    function aImg(){const u=prompt('Image URL:');if(u)document.execCommand('insertImage',false,u);}
-
-    const dr=document.getElementById('drop'),fi=document.getElementById('fi');
-    dr.addEventListener('click',()=>fi.click());
-    dr.addEventListener('dragover',e=>{e.preventDefault();dr.classList.add('over');});
-    dr.addEventListener('dragleave',()=>dr.classList.remove('over'));
-    dr.addEventListener('drop',e=>{e.preventDefault();dr.classList.remove('over');addF(e.dataTransfer.files);});
-    fi.addEventListener('change',e=>addF(e.target.files));
-
-    function addF(fs){Array.from(fs).forEach(f=>{if(!f.type.startsWith('image/'))return;const r=new FileReader();r.onload=e=>{images.push({file:f,url:e.target.result,up:false,path:''});dTh();};r.readAsDataURL(f);});}
-
-    function dTh(){document.getElementById('thumbs').innerHTML=images.map((m,i)=>`<div class="th ${i===cIdx?'cover':''}"><img src="${m.url}"><button class="xb" onclick="rmI(${i})">&times;</button><button class="cb" onclick="cIdx=${i};dTh()">${i===cIdx?'cover':'set cover'}</button></div>`).join('');}
-    function rmI(i){images.splice(i,1);if(cIdx>=images.length)cIdx=Math.max(0,images.length-1);dTh();}
-
-    function tagKey(e){if(e.key==='Enter'||e.key===','){e.preventDefault();const t=e.target.value.trim().replace(/,/g,'');if(t&&!tags.includes(t)){tags.push(t);dTg();}e.target.value='';}else if(e.key==='Backspace'&&!e.target.value&&tags.length){tags.pop();dTg();}}
-    function dTg(){const b=document.getElementById('tbox'),i=document.getElementById('ti');b.innerHTML=tags.map((t,j)=>`<span class="tg">${esc(t)}<button onclick="tags.splice(${j},1);dTg()">&times;</button></span>`).join('');b.appendChild(i);}
-
-    function preview(){
-      const t=document.getElementById('post-title').value||'Untitled',a=document.getElementById('post-author').value||'ARC',b=document.getElementById('body').innerHTML,c=images.length?images[cIdx].url:'',d=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-      document.getElementById('ovc').innerHTML=`<p style="color:#999;font-size:14px;margin-bottom:6px">${esc(a)} &middot; ${d}</p><h1 style="font-size:26px;font-weight:500;margin-bottom:20px;color:#222">${esc(t)}</h1>${c?`<img src="${c}" style="width:100%;border-radius:8px;margin-bottom:20px;max-height:380px;object-fit:cover">`:''}<div style="font-size:15px;line-height:1.8;color:#444">${b}</div>`;
-      document.getElementById('ov').style.display='block';
-    }
-    function closeP(){document.getElementById('ov').style.display='none';}
-
-    async function publish(){
-      const title=document.getElementById('post-title').value.trim();if(!title){toast('Enter a title',1);return;}
-      const body=document.getElementById('body').innerHTML.trim();if(!body){toast('Write some content',1);return;}
-      const btn=document.getElementById('pbtn');btn.disabled=true;btn.textContent='Publishing...';
-      try{
-        const slug=title.toLowerCase().replace(/[^\w\s-]/g,'').replace(/[\s_]+/g,'-').replace(/^-+|-+$/g,'').substring(0,60);
-        const author=document.getElementById('post-author').value||'ARC',aImg=document.getElementById('post-author-img').value||'',wLI=document.getElementById('cb2').checked;
-        toast('Uploading images...');const paths=[];
-        for(let i=0;i<images.length;i++){const m=images[i];if(!m.up){const ext=m.file.name.split('.').pop().toLowerCase(),p=`blog/images/${slug}-${i+1}.${ext}`;await ghPut(p,m.url.split(',')[1],`Add image: ${slug}-${i+1}.${ext}`);m.up=true;m.path=p;}paths.push(m.path);}
-        const cover=paths.length?`/blog/${paths[cIdx].replace('blog/','')}`:''
-        const post={slug,title,author,authorImage:aImg,date:new Date().toISOString(),body,excerpt:strip(body).substring(0,200),coverImage:cover,images:paths.map(p=>`/blog/${p.replace('blog/','')}`),tags,linkedinRequested:wLI};
-        toast('Saving post...');await ghPut(`blog/posts/${slug}.json`,btoa(unescape(encodeURIComponent(JSON.stringify(post,null,2)))),`Add post: ${title}`);
-        toast('Updating index...');let man=[];
-        try{const r=await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`,{headers:{Authorization:'Bearer '+token}});if(r.ok){const d=await r.json();man=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));}}catch(e){}
-        const idx=man.findIndex(p=>p.slug===slug);if(idx!==-1)man[idx]=post;else man.unshift(post);
-        await ghPut('blog/posts.json',btoa(unescape(encodeURIComponent(JSON.stringify(man,null,2)))),`Update index: ${title}`);
-        toast('Published! Site updates in ~1 min.');
-        document.getElementById('post-title').value='';document.getElementById('body').innerHTML='';images=[];tags=[];cIdx=0;dTh();dTg();
-      }catch(e){toast('Error: '+e.message,1);console.error(e);}
-      finally{btn.disabled=false;btn.textContent='Publish';}
+    // ── Auth ──
+    async function doLogin() {
+      const p = document.getElementById('pat').value.trim();
+      if (!p) return;
+      const b = document.getElementById('lbtn'), e = document.getElementById('err');
+      b.disabled = true; b.textContent = 'Signing in...'; e.style.display = 'none';
+      try {
+        const r = await fetch('https://api.github.com/user', { headers: { Authorization: 'Bearer ' + p }});
+        if (!r.ok) throw new Error('Invalid token');
+        const u = await r.json();
+        const rr = await fetch(`https://api.github.com/repos/${O}/${R}`, { headers: { Authorization: 'Bearer ' + p }});
+        if (!rr.ok) throw new Error('Cannot access repo');
+        const repo = await rr.json();
+        if (!repo.permissions?.push) throw new Error('No write access');
+        token = p; user = u.login;
+        localStorage.setItem('arc_pat', p);
+        document.getElementById('who-manage').textContent = u.login;
+        document.getElementById('who-editor').textContent = u.login;
+        document.getElementById('login').style.display = 'none';
+        showManage();
+        onAuthorChange();
+      } catch (x) { e.textContent = x.message; e.style.display = 'block'; }
+      finally { b.disabled = false; b.textContent = 'Sign in'; }
     }
 
-    async function ghPut(path,b64,msg){let sha;try{const r=await fetch(`https://api.github.com/repos/${O}/${R}/contents/${path}`,{headers:{Authorization:'Bearer '+token}});if(r.ok)sha=(await r.json()).sha;}catch(e){}const body={message:msg,content:b64,branch:B};if(sha)body.sha=sha;const r=await fetch(`https://api.github.com/repos/${O}/${R}/contents/${path}`,{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error((await r.json()).message);}
+    function doLogout() {
+      token = ''; user = '';
+      localStorage.removeItem('arc_pat');
+      document.getElementById('login').style.display = 'flex';
+      document.getElementById('manage').style.display = 'none';
+      document.getElementById('editor').style.display = 'none';
+    }
 
-    function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-    function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||'';}
-    function toast(m,e){const t=document.getElementById('toast');t.textContent=m;t.className='toast'+(e?' error':'');t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',e?5000:3000);}
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeP();});
-    document.getElementById('pat').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+    // Auto-login
+    (() => {
+      const s = localStorage.getItem('arc_pat');
+      if (s) { document.getElementById('pat').value = s; doLogin(); }
+    })();
+
+    // ── View switching ──
+    function showManage() {
+      document.getElementById('manage').style.display = 'block';
+      document.getElementById('editor').style.display = 'none';
+      loadPostList();
+    }
+
+    function showEditor(slug) {
+      document.getElementById('manage').style.display = 'none';
+      document.getElementById('editor').style.display = 'block';
+
+      if (slug) {
+        editingSlug = slug;
+        document.getElementById('editor-mode-label').textContent = 'Edit Post';
+        document.getElementById('pbtn').textContent = 'Update';
+        loadPostForEdit(slug);
+      } else {
+        editingSlug = null;
+        document.getElementById('editor-mode-label').textContent = 'New Post';
+        document.getElementById('pbtn').textContent = 'Publish';
+        clearEditor();
+      }
+    }
+
+    function clearEditor() {
+      document.getElementById('post-title').value = '';
+      document.getElementById('body').innerHTML = '';
+      document.getElementById('post-excerpt').value = '';
+      document.getElementById('author-select').value = 'andy';
+      document.getElementById('other-name').value = '';
+      document.getElementById('other-linkedin').value = '';
+      document.getElementById('cb1').checked = true;
+      document.getElementById('cb2').checked = true;
+      images = []; tags = []; cIdx = 0;
+      dTh(); dTg();
+      onAuthorChange();
+    }
+
+    // ── Load posts list ──
+    async function loadPostList() {
+      const container = document.getElementById('post-list');
+      container.innerHTML = '<p class="post-list-empty">Loading...</p>';
+      try {
+        const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!r.ok) throw new Error('No posts yet');
+        const d = await r.json();
+        allPosts = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, '')))));
+        allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (allPosts.length === 0) {
+          container.innerHTML = '<p class="post-list-empty">No posts yet. Create your first one!</p>';
+          return;
+        }
+
+        container.innerHTML = allPosts.map(post => {
+          const date = new Date(post.date).toLocaleDateString('en-GB', {
+            day: 'numeric', month: 'short', year: 'numeric'
+          });
+          const cover = post.coverImage
+            ? `<img class="post-item-cover" src="${esc(post.coverImage)}" alt="">`
+            : `<div class="post-item-nocover">&#9633;</div>`;
+          const li = post.linkedinUrl ? ' &middot; LinkedIn' : '';
+          return `
+            <div class="post-item">
+              ${cover}
+              <div class="post-item-info">
+                <div class="post-item-title">${esc(post.title)}</div>
+                <div class="post-item-meta">${esc(post.author || 'ARC')} &middot; ${date}${li}</div>
+              </div>
+              <div class="post-item-actions">
+                <button class="btn-sm" onclick="showEditor('${esc(post.slug)}')">Edit</button>
+                <button class="btn-sm danger" onclick="confirmDelete('${esc(post.slug)}', '${esc(post.title)}')">Delete</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (e) {
+        container.innerHTML = '<p class="post-list-empty">No posts yet. Create your first one!</p>';
+      }
+    }
+
+    // ── Load post for editing ──
+    async function loadPostForEdit(slug) {
+      toast('Loading post...');
+      try {
+        const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts/${slug}.json`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!r.ok) throw new Error('Post not found');
+        const d = await r.json();
+        const post = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, '')))));
+
+        document.getElementById('post-title').value = post.title || '';
+        document.getElementById('body').innerHTML = post.body || '';
+        document.getElementById('post-excerpt').value = post.excerpt || '';
+
+        // Set author
+        const authorKey = Object.keys(AUTHORS).find(k => AUTHORS[k].name === post.author);
+        if (authorKey) {
+          document.getElementById('author-select').value = authorKey;
+        } else {
+          document.getElementById('author-select').value = 'other';
+          document.getElementById('other-name').value = post.author || '';
+          // Try to extract linkedin username from author image URL
+          const liMatch = (post.authorImage || '').match(/linkedin\/([^/?]+)/);
+          document.getElementById('other-linkedin').value = liMatch ? liMatch[1] : '';
+        }
+        onAuthorChange();
+
+        // Tags
+        tags = post.tags || [];
+        dTg();
+
+        // Images — load existing as already-uploaded
+        images = [];
+        cIdx = 0;
+        if (post.images && post.images.length > 0) {
+          post.images.forEach((imgPath, i) => {
+            const fullUrl = imgPath.startsWith('http') ? imgPath : `https://actionresearchprojects.github.io${imgPath}`;
+            images.push({ file: null, url: fullUrl, up: true, path: imgPath.replace(/^\/blog\//, 'blog/') });
+            if (post.coverImage && imgPath === post.coverImage) cIdx = i;
+          });
+        }
+        dTh();
+
+        // Checkboxes
+        document.getElementById('cb1').checked = true;
+        document.getElementById('cb2').checked = !!post.linkedinRequested;
+
+        toast('Post loaded');
+      } catch (e) {
+        toast('Error loading post: ' + e.message, 1);
+      }
+    }
+
+    // ── Delete ──
+    function confirmDelete(slug, title) {
+      pendingConfirm = slug;
+      document.getElementById('confirm-title').textContent = 'Delete post?';
+      document.getElementById('confirm-msg').textContent = `"${title}" will be permanently removed.`;
+      document.getElementById('confirm-overlay').classList.add('show');
+    }
+
+    function closeConfirm() {
+      pendingConfirm = null;
+      document.getElementById('confirm-overlay').classList.remove('show');
+    }
+
+    async function confirmAction() {
+      if (!pendingConfirm) return;
+      const slug = pendingConfirm;
+      closeConfirm();
+      toast('Deleting post...');
+
+      try {
+        // Delete the individual post JSON
+        const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts/${slug}.json`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (r.ok) {
+          const d = await r.json();
+          await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts/${slug}.json`, {
+            method: 'DELETE',
+            headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: `Delete post: ${slug}`, sha: d.sha, branch: B })
+          });
+        }
+
+        // Update posts.json to remove this post
+        const mr = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (mr.ok) {
+          const md = await mr.json();
+          let man = JSON.parse(decodeURIComponent(escape(atob(md.content.replace(/\n/g, '')))));
+          man = man.filter(p => p.slug !== slug);
+          await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(man, null, 2)))), `Remove from index: ${slug}`);
+        }
+
+        // Optionally delete associated images (they have the slug prefix)
+        try {
+          const ir = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/images`, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          if (ir.ok) {
+            const imgFiles = await ir.json();
+            const toDelete = imgFiles.filter(f => f.name.startsWith(slug + '-'));
+            for (const f of toDelete) {
+              await fetch(`https://api.github.com/repos/${O}/${R}/contents/${f.path}`, {
+                method: 'DELETE',
+                headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Delete image: ${f.name}`, sha: f.sha, branch: B })
+              });
+            }
+          }
+        } catch (e) { /* images dir may not exist */ }
+
+        toast('Post deleted');
+        loadPostList();
+      } catch (e) {
+        toast('Error deleting: ' + e.message, 1);
+      }
+    }
+
+    // ── Author dropdown ──
+    function onAuthorChange() {
+      const val = document.getElementById('author-select').value;
+      const otherFields = document.getElementById('other-fields');
+      const preview = document.getElementById('author-preview');
+
+      if (val === 'other') {
+        otherFields.style.display = 'flex';
+        updateOtherPreview();
+      } else {
+        otherFields.style.display = 'none';
+        const a = AUTHORS[val];
+        const pic = linkedinPic(a.linkedin);
+        preview.innerHTML = `<img src="${pic}" alt="" onerror="this.style.display='none'"><span class="ap-name">${esc(a.name)}</span>`;
+      }
+    }
+
+    function updateOtherPreview() {
+      const name = document.getElementById('other-name').value.trim();
+      const li = document.getElementById('other-linkedin').value.trim();
+      const preview = document.getElementById('author-preview');
+      if (!name && !li) {
+        preview.innerHTML = '';
+        return;
+      }
+      const pic = li ? linkedinPic(li) : '';
+      preview.innerHTML = `${pic ? `<img src="${pic}" alt="" onerror="this.style.display='none'">` : ''}<span class="ap-name">${esc(name || 'Unknown')}</span>`;
+    }
+
+    function getAuthorInfo() {
+      const val = document.getElementById('author-select').value;
+      if (val === 'other') {
+        const name = document.getElementById('other-name').value.trim() || 'ARC';
+        const li = document.getElementById('other-linkedin').value.trim();
+        return { name, image: li ? linkedinPic(li) : '' };
+      }
+      const a = AUTHORS[val];
+      return { name: a.name, image: linkedinPic(a.linkedin) };
+    }
+
+    // ── Formatting ──
+    function fmt(c, v) { document.execCommand(c, false, v || null); document.getElementById('body').focus(); }
+    function blk(t) { document.execCommand('formatBlock', false, '<' + t + '>'); document.getElementById('body').focus(); }
+    function aLink() { const u = prompt('URL:'); if (u) document.execCommand('createLink', false, u); }
+    function aImg() { const u = prompt('Image URL:'); if (u) document.execCommand('insertImage', false, u); }
+
+    // ── Image upload ──
+    const dr = document.getElementById('drop'), fi = document.getElementById('fi');
+    dr.addEventListener('click', () => fi.click());
+    dr.addEventListener('dragover', e => { e.preventDefault(); dr.classList.add('over'); });
+    dr.addEventListener('dragleave', () => dr.classList.remove('over'));
+    dr.addEventListener('drop', e => { e.preventDefault(); dr.classList.remove('over'); addF(e.dataTransfer.files); });
+    fi.addEventListener('change', e => addF(e.target.files));
+
+    function addF(fs) {
+      Array.from(fs).forEach(f => {
+        if (!f.type.startsWith('image/')) return;
+        const r = new FileReader();
+        r.onload = e => { images.push({ file: f, url: e.target.result, up: false, path: '' }); dTh(); };
+        r.readAsDataURL(f);
+      });
+    }
+
+    function dTh() {
+      document.getElementById('thumbs').innerHTML = images.map((m, i) =>
+        `<div class="th ${i === cIdx ? 'cover' : ''}"><img src="${m.url}"><button class="xb" onclick="rmI(${i})">&times;</button><button class="cb" onclick="cIdx=${i};dTh()">${i === cIdx ? 'cover' : 'set cover'}</button></div>`
+      ).join('');
+    }
+    function rmI(i) { images.splice(i, 1); if (cIdx >= images.length) cIdx = Math.max(0, images.length - 1); dTh(); }
+
+    // ── Tags ──
+    function tagKey(e) {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const t = e.target.value.trim().replace(/,/g, '');
+        if (t && !tags.includes(t)) { tags.push(t); dTg(); }
+        e.target.value = '';
+      } else if (e.key === 'Backspace' && !e.target.value && tags.length) {
+        tags.pop(); dTg();
+      }
+    }
+    function dTg() {
+      const b = document.getElementById('tbox'), i = document.getElementById('ti');
+      b.innerHTML = tags.map((t, j) =>
+        `<span class="tg">${esc(t)}<button onclick="tags.splice(${j},1);dTg()">&times;</button></span>`
+      ).join('');
+      b.appendChild(i);
+    }
+
+    // ── Preview ──
+    function preview() {
+      const t = document.getElementById('post-title').value || 'Untitled';
+      const author = getAuthorInfo();
+      const b = document.getElementById('body').innerHTML;
+      const c = images.length ? images[cIdx].url : '';
+      const d = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const pic = author.image ? `<img src="${author.image}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'" alt="">` : '';
+      document.getElementById('ovc').innerHTML =
+        `<p style="color:#999;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:8px">${pic}${esc(author.name)} &middot; ${d}</p>` +
+        `<h1 style="font-size:26px;font-weight:500;margin-bottom:20px;color:#222">${esc(t)}</h1>` +
+        (c ? `<img src="${c}" style="width:100%;border-radius:8px;margin-bottom:20px;max-height:380px;object-fit:cover">` : '') +
+        `<div style="font-size:15px;line-height:1.8;color:#444">${b}</div>`;
+      document.getElementById('ov').style.display = 'block';
+    }
+    function closeP() { document.getElementById('ov').style.display = 'none'; }
+
+    // ── Publish / Update ──
+    async function publish() {
+      const title = document.getElementById('post-title').value.trim();
+      if (!title) { toast('Enter a title', 1); return; }
+      const body = document.getElementById('body').innerHTML.trim();
+      if (!body) { toast('Write some content', 1); return; }
+      const btn = document.getElementById('pbtn');
+      btn.disabled = true; btn.textContent = editingSlug ? 'Updating...' : 'Publishing...';
+
+      try {
+        const slug = editingSlug || title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 60);
+        const author = getAuthorInfo();
+        const wLI = document.getElementById('cb2').checked;
+        const customExcerpt = document.getElementById('post-excerpt').value.trim();
+
+        // Upload new images
+        toast('Uploading images...');
+        const paths = [];
+        for (let i = 0; i < images.length; i++) {
+          const m = images[i];
+          if (!m.up) {
+            const ext = m.file.name.split('.').pop().toLowerCase();
+            const p = `blog/images/${slug}-${i + 1}.${ext}`;
+            await ghPut(p, m.url.split(',')[1], `Add image: ${slug}-${i + 1}.${ext}`);
+            m.up = true;
+            m.path = p;
+          }
+          paths.push(m.path);
+        }
+
+        const cover = paths.length ? `/blog/${paths[cIdx].replace('blog/', '')}` : '';
+        const post = {
+          slug, title,
+          author: author.name,
+          authorImage: author.image,
+          date: editingSlug ? (allPosts.find(p => p.slug === slug)?.date || new Date().toISOString()) : new Date().toISOString(),
+          body,
+          excerpt: customExcerpt || strip(body).substring(0, 200),
+          coverImage: cover,
+          images: paths.map(p => `/blog/${p.replace('blog/', '')}`),
+          tags,
+          linkedinRequested: wLI
+        };
+
+        // Preserve linkedinUrl if editing
+        if (editingSlug) {
+          const existing = allPosts.find(p => p.slug === slug);
+          if (existing?.linkedinUrl) post.linkedinUrl = existing.linkedinUrl;
+        }
+
+        toast('Saving post...');
+        await ghPut(`blog/posts/${slug}.json`, btoa(unescape(encodeURIComponent(JSON.stringify(post, null, 2)))), `${editingSlug ? 'Update' : 'Add'} post: ${title}`);
+
+        toast('Updating index...');
+        let man = [];
+        try {
+          const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/blog/posts.json`, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          if (r.ok) {
+            const d = await r.json();
+            man = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g, '')))));
+          }
+        } catch (e) {}
+
+        const idx = man.findIndex(p => p.slug === slug);
+        if (idx !== -1) man[idx] = post; else man.unshift(post);
+        await ghPut('blog/posts.json', btoa(unescape(encodeURIComponent(JSON.stringify(man, null, 2)))), `Update index: ${title}`);
+
+        toast(editingSlug ? 'Updated! Site updates in ~1 min.' : 'Published! Site updates in ~1 min.');
+        showManage();
+      } catch (e) {
+        toast('Error: ' + e.message, 1);
+        console.error(e);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = editingSlug ? 'Update' : 'Publish';
+      }
+    }
+
+    // ── GitHub API ──
+    async function ghPut(path, b64, msg) {
+      let sha;
+      try {
+        const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/${path}`, {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (r.ok) sha = (await r.json()).sha;
+      } catch (e) {}
+      const body = { message: msg, content: b64, branch: B };
+      if (sha) body.sha = sha;
+      const r = await fetch(`https://api.github.com/repos/${O}/${R}/contents/${path}`, {
+        method: 'PUT',
+        headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!r.ok) throw new Error((await r.json()).message);
+    }
+
+    // ── Helpers ──
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function strip(h) { const d = document.createElement('div'); d.innerHTML = h; return d.textContent || ''; }
+    function toast(m, e) {
+      const t = document.getElementById('toast');
+      t.textContent = m; t.className = 'toast' + (e ? ' error' : '');
+      t.style.display = 'block';
+      clearTimeout(t._t);
+      t._t = setTimeout(() => t.style.display = 'none', e ? 5000 : 3000);
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeP(); closeConfirm(); }});
+    document.getElementById('pat').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   </script>
 </body>
 </html>
