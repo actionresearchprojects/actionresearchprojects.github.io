@@ -44,6 +44,7 @@
       height: calc(100% - (var(--vertical-gap) * 2));
     }
     .carousel-track::-webkit-scrollbar { display: none; }
+    .carousel-track:not(.ready) { visibility: hidden; }
 
     .carousel-image {
       position: relative;
@@ -174,7 +175,7 @@
     <button class="arrow left" id="prevBtn" aria-label="Previous image" style="display: none;">
       <img src="assets/arc-people/arrows/backward-arrow.png" alt="Previous">
     </button>
-    <div class="carousel-track" id="track" tabindex="0" role="list"><div class="carousel-image" role="listitem" data-idx="0"><img src="assets/arc-people/biogs/portrait/portrait1.webp" alt="Andrew Simmonds" loading="eager" fetchpriority="high"></div><div class="carousel-image" role="listitem" data-idx="1"><img src="assets/arc-people/biogs/portrait/portrait2.webp" alt="Huda Elsherif" loading="eager" fetchpriority="high"></div><div class="carousel-image" role="listitem" data-idx="2"><img src="assets/arc-people/biogs/portrait/portrait3.webp" alt="Archie Worthington" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="3"><img src="assets/arc-people/biogs/portrait/portrait4.webp" alt="Kamran Fazil" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="4"><img src="assets/arc-people/biogs/portrait/portrait5.webp" alt="Ben Roberts" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="5"><img src="assets/arc-people/biogs/portrait/portrait6.webp" alt="Toby Cambray" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="6"><img src="assets/arc-people/biogs/portrait/portrait7.webp" alt="Suleiman Dauda" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="7"><img src="assets/arc-people/biogs/portrait/portrait8.webp" alt="Marwa Mohabe" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="8"><img src="assets/arc-people/biogs/portrait/portrait9.webp" alt="Shely Begum" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="9"><img src="assets/arc-people/biogs/portrait/portrait10.webp" alt="Eric Rirsch" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="10"><img src="assets/arc-people/biogs/portrait/portrait11.webp" alt="Hudson Lambert" loading="lazy"></div><div class="carousel-image" role="listitem" data-idx="11"><img src="assets/arc-people/biogs/portrait/portrait12.webp" alt="Adele Mills" loading="lazy"></div></div>
+    <div class="carousel-track" id="track" tabindex="0" role="list"></div>
     <button class="arrow right" id="nextBtn" aria-label="Next image" style="display: block;">
       <img src="assets/arc-people/arrows/forward-arrow.png" alt="Next">
     </button>
@@ -376,6 +377,7 @@
       });
 
       setupPopupPreload();
+      track.classList.add('ready');
       requestAnimationFrame(updateControls);
     }
 
