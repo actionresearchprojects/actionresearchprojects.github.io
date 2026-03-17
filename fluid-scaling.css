@@ -17,5 +17,5 @@ html {
  * makes 100vh far taller than the design height, creating a blank gap at the bottom. */
 body.fluid-zoom-active [data-site-root] > div {
   height: auto !important;
-  min-height: 100vh !important;
+  min-height: var(--fluid-vh, 100vh) !important;
 }

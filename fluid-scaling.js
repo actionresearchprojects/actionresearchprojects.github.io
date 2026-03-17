@@ -16,7 +16,8 @@
     var zoom = vw / DESIGN_WIDTH;
     var isSmall = Math.min(screen.width, screen.height) <= 1024;
     document.body.style.zoom = zoom;
-    document.body.classList.toggle('fluid-zoom-active', zoom < 1);
+    document.body.classList.toggle('fluid-zoom-active', zoom !== 1);
+    document.documentElement.style.setProperty('--fluid-vh', Math.ceil(window.innerHeight / zoom) + 'px');
 
     var root = document.querySelector('[data-site-root]');
     var overlay = document.getElementById('orientation-overlay');
@@ -38,7 +39,7 @@
      * so the background fills the viewport in portrait.
      */
     if (root) {
-      if (zoom < 1) {
+      if (!isSmall && zoom !== 1) {
         root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
       } else if (isSmall && overlay) {
         root.style.minHeight = '';
