@@ -14,8 +14,8 @@ body { font-family: 'Ubuntu', sans-serif; font-size: 13px; background: #f8f9fa; 
 #header h1 { font-size: 15px; font-weight: 600; }
 #header a { font-size: 12px; color: #4a90d9; text-decoration: none; }
 #header a:hover { text-decoration: underline; }
-#main { max-width: 1100px; margin: 24px auto; padding: 0 16px 40px; }
-.card { background: white; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; }
+#main { max-width: 1300px; margin: 24px auto; padding: 0 16px 40px; }
+.card { background: white; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 20px; overflow-x: auto; }
 .card-header { padding: 12px 16px; border-bottom: 1px solid #eee; }
 .card-header h2 { font-size: 13px; font-weight: 600; color: #444; }
 .card-body { padding: 16px; }
@@ -35,16 +35,16 @@ button.primary:hover { background: #218838; }
 button.primary:disabled { opacity: 0.55; cursor: default; }
 button.danger { background: white; color: #c0392b; border-color: #c0392b; }
 button.danger:hover { background: #fdf0ee; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { text-align: left; padding: 6px 8px; font-weight: 600; color: #666; border-bottom: 2px solid #eee; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; background: #fafafa; white-space: nowrap; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: auto; }
+th { text-align: left; padding: 5px 6px; font-weight: 600; color: #666; border-bottom: 2px solid #eee; font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; background: #fafafa; white-space: nowrap; }
 th.center { text-align: center; }
-td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+td { padding: 4px 6px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; white-space: nowrap; }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: #f7f9ff; }
 td.center { text-align: center; }
-td input[type=text] { width: 100%; min-width: 130px; }
-td select { font-size: 12px; padding: 3px 5px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; }
-td input[type=checkbox] { cursor: pointer; width: 15px; height: 15px; }
+td input[type=text] { width: 100%; min-width: 100px; }
+td select { font-size: 11px; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; background: white; cursor: pointer; }
+td input[type=checkbox] { cursor: pointer; width: 14px; height: 14px; }
 .source-badge { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
 .source-TinyTag  { background: #e8f4fd; color: #1a6ea8; }
 .source-Omnisense { background: #e8fdf0; color: #1a7a40; }
@@ -58,6 +58,10 @@ td input[type=checkbox] { cursor: pointer; width: 15px; height: 15px; }
 .unsaved-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f0a500; margin-right: 5px; vertical-align: middle; }
 .ds-section { margin-bottom: 28px; }
 .ds-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #333; }
+@media (max-width: 900px) {
+  #main { max-width: 100%; padding: 0 8px 40px; }
+  td input[type=text] { min-width: 80px; }
+}
 </style>
 </head>
 <body>
@@ -92,6 +96,9 @@ td input[type=checkbox] { cursor: pointer; width: 15px; height: 15px; }
   <!-- Logger tables, populated after load -->
   <div id="config-area" style="display:none">
     <div id="datasets-container"></div>
+    <div style="margin-top:12px;padding:10px 12px;background:#f0f6ff;border:1px solid #d0dff0;border-radius:5px;font-size:11px;color:#555;line-height:1.5;">
+      <b>Adaptive Source note:</b> The running mean for adaptive comfort uses the chosen external source where data is available. Any days without data from the chosen source are automatically filled with Open-Meteo historical data. If the chosen source has no data at all, Open-Meteo is used for the entire period. Changes to Adaptive Source and Granularity take effect on the next build (automated or manual).
+    </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
       <button id="save-btn" class="primary" disabled>Save changes</button>
       <button id="reset-btn" class="danger">Reset all to defaults</button>
@@ -244,7 +251,8 @@ function buildUI() {
       <th class="center">AdaptiveComf</th>
       <th class="center">Histogram</th>
       <th class="center">AvgProfile</th>
-      <th>Adaptive Source</th>
+      <th>Granularity</th>
+      <th>Adaptive Source <span class="hint" style="display:block;text-transform:none;letter-spacing:0;font-weight:400">Gaps filled with Open-Meteo</span></th>
     </tr>`;
     table.appendChild(thead);
 
@@ -322,6 +330,34 @@ function buildUI() {
         tr.appendChild(td);
       }
 
+      // Granularity Dropdown
+      const tdGran = document.createElement('td');
+      {
+        const sel = document.createElement('select');
+        const defaultGranularity = '1h';
+        const currentGranularity = getOverride(dsKey, logger.id, 'granularity', defaultGranularity);
+        [
+          ['5min', '5 min'],
+          ['10min', '10 min'],
+          ['15min', '15 min'],
+          ['30min', '30 min'],
+          ['1h', '1 hour'],
+          ['2h', '2 hours'],
+          ['3h', '3 hours'],
+          ['6h', '6 hours'],
+          ['12h', '12 hours'],
+          ['1d', '1 day'],
+        ].forEach(([v, l]) => {
+          const opt = document.createElement('option');
+          opt.value = v; opt.textContent = l;
+          if (v === currentGranularity) opt.selected = true;
+          sel.appendChild(opt);
+        });
+        sel.addEventListener('change', e => setOverride(dsKey, logger.id, 'granularity', e.target.value, defaultGranularity));
+        tdGran.appendChild(sel);
+      }
+      tr.appendChild(tdGran);
+
       // Adaptive Source Dropdown
       const tdAdapt = document.createElement('td');
       if (isExt) {
@@ -357,29 +393,32 @@ function buildUI() {
   updateChangeCount();
 }
 
-function countChanges() {
+function countOverrides() {
   let n = 0;
   for (const ds of Object.values(pending)) {
-    // Dataset-level settings
     for (const [k, v] of Object.entries(ds)) {
       if (k !== 'loggers') n++;
     }
-    // Logger-level settings
     for (const ov of Object.values(ds.loggers || {})) n += Object.keys(ov).length;
   }
   return n;
 }
 
+function hasUnsavedChanges() {
+  return JSON.stringify(pending) !== JSON.stringify(savedConfig);
+}
+
 function updateChangeCount() {
-  const n = countChanges();
+  const dirty = hasUnsavedChanges();
+  const n = countOverrides();
   const el = document.getElementById('change-count');
   const saveBtn = document.getElementById('save-btn');
   if (!el || !saveBtn) return;
-  if (n === 0) {
-    el.textContent = 'No unsaved changes';
+  if (!dirty) {
+    el.textContent = n > 0 ? `${n} override${n !== 1 ? 's' : ''} (saved)` : 'No overrides';
     saveBtn.disabled = true;
   } else {
-    el.innerHTML = `<span class="unsaved-dot"></span>${n} unsaved change${n !== 1 ? 's' : ''}`;
+    el.innerHTML = `<span class="unsaved-dot"></span>${n} unsaved override${n !== 1 ? 's' : ''}`;
     saveBtn.disabled = false;
   }
 }
