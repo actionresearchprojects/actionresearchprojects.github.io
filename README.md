@@ -1,4 +1,4 @@
-# ARC — Architecture for Resilient Communities
+# ARC - Architecture for Resilient Communities
 
 **Developing climate-adaptive architecture in warming climates through collaboration, practice and monitoring.**
 
@@ -13,18 +13,18 @@ ARC is an international programme that brings together design practitioners and 
 
 The programme addresses the pressing challenge of achieving thermal comfort in hot and humid climates. It focuses on developing, testing, and disseminating innovative passive cooling solutions that are affordable, sustainable, and adaptable to local needs.
 
-ARC is a team of volunteers led by Andrew Simmonds of **Simmonds Mills**, a UK-based architectural R&D firm, in partnership with the **Al-Mizan Children's Ecovillage** in Tanzania — the first of several ARC-initiated field-testing R&D sites in Africa and Asia.
+ARC is a team of volunteers led by Andrew Simmonds of **Simmonds Mills**, a UK-based architectural R&D firm, in partnership with the **Al-Mizan Children's Ecovillage** in Tanzania - the first of several ARC-initiated field-testing R&D sites in Africa and Asia.
 
 ### Who we serve
 
 The programme targets two key markets:
 
-- **Lower-income self-builders** — affordable, accessible solutions to improve housing quality
-- **Higher-income managed self-builders** — passive cooling innovations that integrate with modern building standards
+- **Lower-income self-builders** - affordable, accessible solutions to improve housing quality
+- **Higher-income managed self-builders** - passive cooling innovations that integrate with modern building standards
 
 ### Our approach
 
-ARC integrates robust R&D with community engagement to support innovative, scalable pathways for improving thermal comfort in buildings — addressing both immediate needs and long-term sustainability goals for people living in environmentally and socio-economically challenging regions. ARC solutions aim to create cool, comfortable indoor environments without the immediate need for mechanical cooling and dehumidification equipment.
+ARC integrates robust R&D with community engagement to support innovative, scalable pathways for improving thermal comfort in buildings - addressing both immediate needs and long-term sustainability goals for people living in environmentally and socio-economically challenging regions. ARC solutions aim to create cool, comfortable indoor environments without the immediate need for mechanical cooling and dehumidification equipment.
 
 ---
 
@@ -143,7 +143,7 @@ ARC collects environmental data from monitoring equipment at field sites. Two da
 
 The temperature & humidity dashboard auto-builds twice daily via scheduled GitHub Actions in its source repository, pulling fresh sensor data each cycle.
 
-Dashboard access is password-protected — the `deploy.yml` workflow injects a SHA-256 hash of the `ARC_GRAPHS_PASSWORD` secret at deploy time.
+Dashboard access is password-protected - the `deploy.yml` workflow injects a SHA-256 hash of the `ARC_GRAPHS_PASSWORD` secret at deploy time.
 
 ---
 
@@ -175,8 +175,8 @@ Dashboard access is password-protected — the `deploy.yml` workflow injects a S
 
 ### SEO & metadata
 
-- `sitemap.xml` — 54 indexed URLs
-- `robots.txt` — blocks `/admin/` and `/embedded/` from crawlers
+- `sitemap.xml` - 54 indexed URLs
+- `robots.txt` - blocks `/admin/` and `/embedded/` from crawlers
 - Open Graph and Twitter Card meta tags on all pages
 - Canonical URLs set per page
 
