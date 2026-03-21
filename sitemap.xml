@@ -1,35 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://actionresearchprojects.net/</loc></url>
-  <url><loc>https://actionresearchprojects.net/about</loc></url>
-  <url><loc>https://actionresearchprojects.net/arc-greenspace-initiative</loc></url>
-  <url><loc>https://actionresearchprojects.net/arc-standard</loc></url>
-  <url><loc>https://actionresearchprojects.net/contact</loc></url>
-  <url><loc>https://actionresearchprojects.net/map</loc></url>
-  <url><loc>https://actionresearchprojects.net/people</loc></url>
-  <url><loc>https://actionresearchprojects.net/projects</loc></url>
-  <url><loc>https://actionresearchprojects.net/projects/project-1</loc></url>
-  <url><loc>https://actionresearchprojects.net/reflections</loc></url>
-  <url><loc>https://actionresearchprojects.net/reflections/expert-advisor-huda-elsherif</loc></url>
-  <url><loc>https://actionresearchprojects.net/reflections/house-5-php</loc></url>
-  <url><loc>https://actionresearchprojects.net/reflections/shely-begum-desh-houses</loc></url>
-  <url><loc>https://actionresearchprojects.net/reflections/simmonds-mills-tz-ecovillage</loc></url>
-  <url><loc>https://actionresearchprojects.net/science</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/1-arc-standard</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/2-physical-factors</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/3-keeping-cool</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/4-three-zone-concept</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/5-resources</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/6-insect-protection</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/7-citizen-science</loc></url>
-  <url><loc>https://actionresearchprojects.net/support</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/air-movement</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/avoiding-heat</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/cooling-the-air</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/drying-the-air</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/environmental-performance</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/keeping-heat-out</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/practical-constraints</loc></url>
-  <url><loc>https://actionresearchprojects.net/cool-buildings-guide/thermal-mass</loc></url>
+  <!-- Main pages -->
+  <url><loc>https://actionresearchprojects.github.io/</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/about</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/arc-standard</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/contact</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/map</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/people</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/support</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/privacy</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/arc-greenspace-initiative</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/pin-generator</loc></url>
+
+  <!-- Blog -->
+  <url><loc>https://actionresearchprojects.github.io/blog/</loc></url>
+
+  <!-- Projects -->
+  <url><loc>https://actionresearchprojects.github.io/projects</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/projects/project-1</loc></url>
+
+  <!-- Reflections -->
+  <url><loc>https://actionresearchprojects.github.io/reflections</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/reflections/expert-advisor-huda-elsherif</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/reflections/house-5-php</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/reflections/shely-begum-desh-houses</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/reflections/simmonds-mills-tz-ecovillage</loc></url>
+
+  <!-- Science -->
+  <url><loc>https://actionresearchprojects.github.io/science</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/1-arc-standard</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/2-physical-factors</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/3-keeping-cool</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/4-three-zone-concept</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/5-resources</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/6-insect-protection</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/science/7-citizen-science</loc></url>
+
+  <!-- Cool Buildings Guide -->
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/air-movement</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/avoiding-heat</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/cooling-the-air</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/drying-the-air</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/environmental-performance</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/keeping-heat-out</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/practical-constraints</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/cool-buildings-guide/thermal-mass</loc></url>
+
+  <!-- Graphs -->
+  <url><loc>https://actionresearchprojects.github.io/graphs/arc-tz-temp-humid/</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/graphs/arc-tz-temp-humid/config</loc></url>
+  <url><loc>https://actionresearchprojects.github.io/graphs/arc-tz-weather</loc></url>
 </urlset>

@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin/
+Disallow: /embedded/
+
 Sitemap: https://actionresearchprojects.github.io/sitemap.xml
