@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://actionresearchprojects.github.io/sitemap.xml
+Sitemap: https://actionresearchprojects.net/sitemap.xml
