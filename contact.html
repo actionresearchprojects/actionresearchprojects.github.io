@@ -233,6 +233,7 @@
       }
     </style>
     <link rel="stylesheet" href="fluid-scaling.css"><link rel="stylesheet" href="orientation-lock.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <style id="site-footer-style">
 #site-footer {
   position: fixed;
@@ -296,6 +297,8 @@
         <h2>Send a Message</h2>
         <form id="arc-form" onsubmit="return submitArcForm(event)">
           <input type="hidden" name="access_key" value="29DE75">
+          <input type="hidden" name="_source" value="Contact Page">
+          <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true"><input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></div>
           <div class="form-group">
             <label for="contact-name">Name</label>
             <input type="text" id="contact-name" name="name" required="" placeholder="Your full name">
@@ -312,6 +315,7 @@
             <label for="contact-message">Message</label>
             <textarea id="contact-message" name="message" required="" rows="5" placeholder="Your message"></textarea>
           </div>
+          <div class="form-group"><div class="g-recaptcha" data-sitekey="6LcTJJMsAAAAAMjPJ8taLwB9z4yTTp1FrddDtnp6"></div></div>
           <button type="submit" id="arc-submit-btn" class="form-submit">Send Message</button>
           <div id="arc-form-status"></div>
         </form>
@@ -320,7 +324,7 @@
   </div>
   <div id="overlay"></div>
   <script>
-function submitArcForm(e){e.preventDefault();var form=document.getElementById("arc-form");var btn=document.getElementById("arc-submit-btn");var status=document.getElementById("arc-form-status");var data=new FormData(form);btn.disabled=true;btn.textContent="Sending...";status.style.display="none";fetch("https://codefreeform.com/api/contact-api/",{method:"POST",body:data}).then(function(r){if(r.ok){status.style.display="block";status.style.background="rgba(0,150,0,0.1)";status.style.color="#006600";status.textContent="Message sent successfully. Thank you!";form.reset();}else{return r.json().then(function(d){throw d});}}).catch(function(err){status.style.display="block";status.style.background="rgba(200,0,0,0.1)";status.style.color="#660000";status.textContent="Something went wrong. Please try again or email us directly.";}).finally(function(){btn.disabled=false;btn.textContent="Send Message";});return false;}
+function submitArcForm(e){e.preventDefault();var form=document.getElementById("arc-form");var btn=document.getElementById("arc-submit-btn");var status=document.getElementById("arc-form-status");var response=grecaptcha.getResponse();if(!response){status.style.display="block";status.style.background="rgba(200,150,0,0.15)";status.style.color="#665500";status.textContent="Please complete the CAPTCHA before submitting.";return false;}var data=new FormData(form);btn.disabled=true;btn.textContent="Sending...";status.style.display="none";fetch("https://codefreeform.com/api/contact-api/",{method:"POST",body:data}).then(function(r){if(r.ok){status.style.display="block";status.style.background="rgba(0,150,0,0.1)";status.style.color="#006600";status.textContent="Message sent successfully. Thank you!";form.reset();grecaptcha.reset();}else{return r.json().then(function(d){throw d});}}).catch(function(err){status.style.display="block";status.style.background="rgba(200,0,0,0.1)";status.style.color="#660000";status.textContent="Something went wrong. Please try again or email us directly.";}).finally(function(){btn.disabled=false;btn.textContent="Send Message";});return false;}
   </script>
   <script src="fluid-scaling.js"></script>
 
