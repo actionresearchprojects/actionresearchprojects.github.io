@@ -24,7 +24,7 @@ jobs:
           # Map repo names to embedded folder names where they differ
           case "$SOURCE_REPO" in
             reflections-grid) FOLDER="reflections" ;;
-*)                FOLDER="$SOURCE_REPO" ;;
+            *)                FOLDER="$SOURCE_REPO" ;;
           esac
           echo "folder=$FOLDER" >> $GITHUB_OUTPUT
 
