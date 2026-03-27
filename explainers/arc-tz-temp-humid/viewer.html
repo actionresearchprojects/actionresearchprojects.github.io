@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PDF Viewer</title>
+
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #f5f5f5;
+    font-family: system-ui, sans-serif;
+  }
+
+  #loading {
+    padding: 1rem;
+    text-align: center;
+    color: #555;
+  }
+
+  #pdf {
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .page {
+    position: relative;
+    margin: 0 auto 1.5rem auto;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    max-width: 100%;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .annotationLayer {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto;
+  }
+
+  .annotationLayer a {
+    position: absolute;
+    display: block;
+  }
+</style>
+</head>
+
+<body>
+<div id="loading">Loading document...</div>
+<div id="pdf"></div>
+
+<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+  const PDF_URL = "ARC-Tz-Temp-Humid.pdf";
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+
+  const container = document.getElementById("pdf");
+  const loading = document.getElementById("loading");
+  const DPR = Math.max(1, window.devicePixelRatio || 1);
+
+  let pdfDoc = null;
+  let renderQueue = Promise.resolve();
+
+  function renderPage(num) {
+    renderQueue = renderQueue.then(async () => {
+      const page = await pdfDoc.getPage(num);
+
+      const base = page.getViewport({ scale: 1 });
+      const width = container.clientWidth || window.innerWidth;
+      const scale = width / base.width;
+      const vp = page.getViewport({ scale });
+
+      const wrap = document.createElement("div");
+      wrap.className = "page";
+      wrap.style.width = vp.width + "px";
+      wrap.style.height = vp.height + "px";
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.floor(vp.width * DPR);
+      canvas.height = Math.floor(vp.height * DPR);
+      canvas.style.width = "100%";
+      canvas.style.height = "auto";
+
+      const ctx = canvas.getContext("2d", { alpha: false });
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+      wrap.appendChild(canvas);
+      container.appendChild(wrap);
+
+      await page.render({ canvasContext: ctx, viewport: vp }).promise;
+
+      const annLayer = document.createElement("div");
+      annLayer.className = "annotationLayer";
+      annLayer.style.width = vp.width + "px";
+      annLayer.style.height = vp.height + "px";
+      wrap.appendChild(annLayer);
+
+      const annotations = await page.getAnnotations({ intent: "display" });
+      for (const ann of annotations) {
+        if (ann.subtype !== "Link") continue;
+
+        const [x1, y1, x2, y2] =
+          pdfjsLib.Util.normalizeRect(vp.convertToViewportRectangle(ann.rect));
+
+        const a = document.createElement("a");
+        a.style.left = x1 + "px";
+        a.style.top = y1 + "px";
+        a.style.width = (x2 - x1) + "px";
+        a.style.height = (y2 - y1) + "px";
+
+        if (ann.url || ann.unsafeUrl) {
+          a.href = ann.url || ann.unsafeUrl;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        }
+
+        annLayer.appendChild(a);
+      }
+    });
+  }
+
+  (async () => {
+    try {
+      pdfDoc = await pdfjsLib.getDocument({
+        url: PDF_URL,
+        disableStream: true,
+        disableRange: true
+      }).promise;
+
+      loading.remove();
+
+      await renderPage(1);
+
+      for (let i = 2; i <= pdfDoc.numPages; i++) {
+        renderPage(i);
+      }
+
+    } catch (e) {
+      console.error(e);
+      loading.textContent = "Failed to load document.";
+    }
+  })();
+</script>
+
+<script type="module">
+  let height = 0;
+
+  function sendEmbedHeight() {
+    window.parent.postMessage({ embedHeight: height }, "*");
+  }
+
+  const observer = new ResizeObserver((entries) => {
+    if (entries.length !== 1) return;
+    const entry = entries[0];
+    if (entry.target !== document.body) return;
+    height = entry.contentRect.height;
+    sendEmbedHeight();
+  });
+
+  observer.observe(document.body);
+
+  window.addEventListener("message", (event) => {
+    if (event.source !== window.parent) return;
+    if (event.data !== "getEmbedHeight") return;
+    sendEmbedHeight();
+  });
+</script>
+</body>
+</html>
