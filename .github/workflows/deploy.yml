@@ -33,6 +33,9 @@ jobs:
           sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-weather.html
           sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-temp-humid/index.html
           sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-temp-humid/config.html
+          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" explainers/arc-tz-temp-humid/index.html
+          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" explainers/data-flow/index.html
+          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" explainers/running-mean/index.html
 
       - uses: actions/configure-pages@v5
 
