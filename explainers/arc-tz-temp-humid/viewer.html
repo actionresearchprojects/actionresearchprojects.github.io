@@ -1,178 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PDF Viewer</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Tanzania Temperature & Humidity</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  html, body {
-    margin: 0;
-    height: 100%;
-    background: #f5f5f5;
-    font-family: "Ubuntu", system-ui, sans-serif;
-  }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  #loading {
-    padding: 1rem;
-    text-align: center;
-    color: #555;
-  }
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
 
-  #pdf {
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+/* Paragraphs */
+p { margin: 0 0 16px; }
 
-  .page {
-    position: relative;
-    margin: 0 auto 1.5rem auto;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    max-width: 100%;
-  }
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-  canvas {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
 
-  .annotationLayer {
-    position: absolute;
-    inset: 0;
-    pointer-events: auto;
-  }
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
 
-  .annotationLayer a {
-    position: absolute;
-    display: block;
-  }
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
 </style>
 </head>
-
 <body>
-<div id="loading">Loading document...</div>
-<div id="pdf"></div>
-
-<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script>
-  const PDF_URL = "ARC-Tz-Temp-Humid.pdf";
-
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
-
-  const container = document.getElementById("pdf");
-  const loading = document.getElementById("loading");
-  const DPR = Math.max(1, window.devicePixelRatio || 1);
-
-  let pdfDoc = null;
-  let renderQueue = Promise.resolve();
-
-  function renderPage(num) {
-    renderQueue = renderQueue.then(async () => {
-      const page = await pdfDoc.getPage(num);
-
-      const base = page.getViewport({ scale: 1 });
-      const width = container.clientWidth || window.innerWidth;
-      const scale = width / base.width;
-      const vp = page.getViewport({ scale });
-
-      const wrap = document.createElement("div");
-      wrap.className = "page";
-      wrap.style.width = vp.width + "px";
-      wrap.style.height = vp.height + "px";
-
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.floor(vp.width * DPR);
-      canvas.height = Math.floor(vp.height * DPR);
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
-
-      const ctx = canvas.getContext("2d", { alpha: false });
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-      wrap.appendChild(canvas);
-      container.appendChild(wrap);
-
-      await page.render({ canvasContext: ctx, viewport: vp }).promise;
-
-      const annLayer = document.createElement("div");
-      annLayer.className = "annotationLayer";
-      annLayer.style.width = vp.width + "px";
-      annLayer.style.height = vp.height + "px";
-      wrap.appendChild(annLayer);
-
-      const annotations = await page.getAnnotations({ intent: "display" });
-      for (const ann of annotations) {
-        if (ann.subtype !== "Link") continue;
-
-        const [x1, y1, x2, y2] =
-          pdfjsLib.Util.normalizeRect(vp.convertToViewportRectangle(ann.rect));
-
-        const a = document.createElement("a");
-        a.style.left = x1 + "px";
-        a.style.top = y1 + "px";
-        a.style.width = (x2 - x1) + "px";
-        a.style.height = (y2 - y1) + "px";
-
-        if (ann.url || ann.unsafeUrl) {
-          a.href = ann.url || ann.unsafeUrl;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-        }
-
-        annLayer.appendChild(a);
-      }
-    });
-  }
-
-  (async () => {
-    try {
-      pdfDoc = await pdfjsLib.getDocument({
-        url: PDF_URL,
-        disableStream: true,
-        disableRange: true
-      }).promise;
-
-      loading.remove();
-
-      await renderPage(1);
-
-      for (let i = 2; i <= pdfDoc.numPages; i++) {
-        renderPage(i);
-      }
-
-    } catch (e) {
-      console.error(e);
-      loading.textContent = "Failed to load document.";
-    }
-  })();
-</script>
-
-<script type="module">
-  let height = 0;
-
-  function sendEmbedHeight() {
-    window.parent.postMessage({ embedHeight: height }, "*");
-  }
-
-  const observer = new ResizeObserver((entries) => {
-    if (entries.length !== 1) return;
-    const entry = entries[0];
-    if (entry.target !== document.body) return;
-    height = entry.contentRect.height;
-    sendEmbedHeight();
-  });
-
-  observer.observe(document.body);
-
-  window.addEventListener("message", (event) => {
-    if (event.source !== window.parent) return;
-    if (event.data !== "getEmbedHeight") return;
-    sendEmbedHeight();
-  });
-</script>
+<h1>ARC Ecovillage Temperature &amp; Humidity Dashboard</h1>
+<p>Interactive environmental monitoring dashboard for the <strong>Architecture for Resilient Communities (ARC) Cool Buildings Programme</strong>. Tracks temperature and humidity inside buildings at the Al-Mizan Children's Ecovillage (CEV) near Mkuranga, Tanzania.</p>
+<p>The dashboard is a self-contained HTML page that updates automatically and works offline once loaded.</p>
+<p><strong>Live dashboard:</strong> <a href="https://actionresearchprojects.net/graphs/arc-tz-temp-humid">actionresearchprojects.net/graphs/arc-tz-temp-humid</a></p>
+<hr />
+<h2>What This Project Does</h2>
+<p>This project collects temperature and humidity data from sensors placed inside and around two buildings at the ecovillage. It combines that data with external weather information and climate patterns, then builds an interactive dashboard where you can explore it all visually.</p>
+<p>The main goals are:</p>
+<ul>
+<li><strong>Monitor indoor conditions</strong> in House 5 and the Schoolteacher's House over time</li>
+<li><strong>Assess thermal comfort</strong> using the EN16798-1 adaptive comfort standard for naturally ventilated buildings</li>
+<li><strong>Compare indoor vs outdoor temperatures</strong> to understand how building design affects conditions inside</li>
+<li><strong>Track climate patterns</strong> like El Nino, the Indian Ocean Dipole, and the Madden-Julian Oscillation that influence local weather</li>
+<li><strong>Share findings</strong> through a public, interactive web dashboard that anyone can explore</li>
+</ul>
+<hr />
+<h2>Data Sources</h2>
+<p>The dashboard pulls data from four different sources:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>What It Measures</th>
+<th>How It Gets Updated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TinyTag loggers</strong></td>
+<td>Indoor temperature and humidity at 24+ locations (rooms, ceilings, exterior walls)</td>
+<td>Manually downloaded as Excel files from physical sensors</td>
+</tr>
+<tr>
+<td><strong>Omnisense sensors</strong></td>
+<td>Indoor temperature and humidity from 10 wireless IoT sensors</td>
+<td>Automatically fetched twice daily by GitHub Actions</td>
+</tr>
+<tr>
+<td><strong>Open-Meteo API</strong></td>
+<td>Outdoor temperature and humidity (historical + 7-day forecast)</td>
+<td>Automatically fetched twice daily by GitHub Actions</td>
+</tr>
+<tr>
+<td><strong>Climate indices</strong></td>
+<td>ENSO (El Nino/La Nina), IOD (Indian Ocean Dipole), MJO (Madden-Julian Oscillation)</td>
+<td>Automatically fetched weekly by GitHub Actions</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>How It Works</h2>
+<h3>Build Process</h3>
+<p>A Python script (<code>build.py</code>) does all the heavy lifting:</p>
+<ol>
+<li>Reads sensor data from all sources</li>
+<li>Aligns timestamps to East African Time (UTC+3)</li>
+<li>Calculates adaptive comfort using the EN16798-1 exponential running mean</li>
+<li>Processes climate cycle data into phase indicators</li>
+<li>Packages everything into a single <code>index.html</code> file with embedded data and interactive Plotly.js charts</li>
+</ol>
+<p>The output is a completely self-contained HTML file. No database, no backend, no API calls at runtime (except loading a small config file for custom logger names).</p>
+<h3>Automation</h3>
+<p>Three GitHub Actions workflows keep the dashboard current without any manual work:</p>
+<ul>
+<li><strong>Dashboard data update</strong> (runs at 04:00 and 16:00 UTC daily) - fetches fresh Omnisense and Open-Meteo data, rebuilds the dashboard, and pushes changes</li>
+<li><strong>Climate cycle update</strong> (runs every Monday at 06:30 UTC) - fetches the latest ENSO, IOD, and MJO data</li>
+<li><strong>Main site notification</strong> (runs on any push) - tells the main ARC website to pull the updated dashboard</li>
+</ul>
+<hr />
+<h2>Dashboard Features</h2>
+<ul>
+<li><strong>Interactive line graphs</strong> for temperature and humidity over time</li>
+<li><strong>Adaptive comfort scatter plot</strong> showing indoor temperature vs the EN16798-1 running mean, with comfort band overlays</li>
+<li><strong>Density heatmap</strong> showing how indoor temperatures are distributed</li>
+<li><strong>32C thermal threshold marker</strong> for quick visual reference</li>
+<li><strong>Climate cycle overlays</strong> showing ENSO, IOD, and MJO phases alongside the data</li>
+<li><strong>Time range selection</strong> to zoom into specific periods</li>
+<li><strong>Logger filtering</strong> to show or hide individual sensors</li>
+<li><strong>Metric toggle</strong> to switch between temperature and humidity views</li>
+<li><strong>Long-term mode</strong> that shows extended climate trends and projections</li>
+<li><strong>PNG export</strong> for use in reports and presentations</li>
+<li><strong>Admin config page</strong> (<code>config.html</code>) for renaming loggers and changing categories without rebuilding</li>
+</ul>
+<hr />
+<h2>Project Structure</h2>
+<pre><code>arc_tz_temp_humid/
+|
+|-- build.py                 Core build script (generates index.html)
+|-- fetch_openmeteo.py       Downloads weather data from Open-Meteo API
+|-- fetch_omnisense.py       Scrapes sensor data from Omnisense platform
+|-- fetch_cycles.py          Fetches climate cycle indices (ENSO, IOD, MJO)
+|-- index.html               Generated dashboard (do not edit directly)
+|-- config.html              Admin page for editing logger names
+|
+|-- data/
+|   |-- config.json          User overrides for logger names (tracked)
+|   |-- loggers.json         Logger manifest (generated, tracked)
+|   |-- sensor_snapshot.json Pre-processed TinyTag data for fast rebuilds
+|   |-- openmeteo/           Weather API data files (tracked)
+|   |-- omnisense/           IoT sensor data files (tracked)
+|   |-- cycles/              Climate index data (tracked)
+|   |-- hist_proj/           Long-term climate projection data (tracked)
+|   |-- house5/              TinyTag Excel files for House 5 (local only)
+|   |-- dauda/               TinyTag Excel files for Schoolteacher's House (local only)
+|
+|-- .github/workflows/      GitHub Actions automation
+|-- UPDATE.md                Instructions for data updates and git workflow
+|-- CHANGELOG.md             Record of all changes
+|-- runningmean.md           Technical explanation of the adaptive comfort algorithm
+</code></pre>
+<hr />
+<h2>Buildings Monitored</h2>
+<h3>House 5</h3>
+<p>The primary building being monitored. Has 24 sensor locations covering:</p>
+<ul>
+<li>Living room, kitchen, bedrooms, study, washrooms</li>
+<li>Above-ceiling spaces (to measure heat transfer through the roof)</li>
+<li>Exterior walls</li>
+<li>Both TinyTag (wired) and Omnisense (wireless) sensors</li>
+</ul>
+<h3>Schoolteacher's House</h3>
+<p>A second building with 3 TinyTag sensors for comparison. Uses a nearby TinyTag outdoor sensor as its reference for adaptive comfort calculations.</p>
+<hr />
+<h2>How Data Flows</h2>
+<pre><code>TinyTag Excel files -----+
+(added manually)         |
+                         v
+Omnisense sensors ----&gt; build.py ----&gt; index.html ----&gt; actionresearchprojects.net
+(auto-fetched)           ^                              (live dashboard)
+                         |
+Open-Meteo API ----------+
+(auto-fetched)           |
+                         |
+Climate indices ---------+
+(auto-fetched weekly)
+</code></pre>
+<p><strong>Automated path:</strong> GitHub Actions runs the fetch scripts on a schedule, then runs <code>build.py --auto</code> (which uses cached TinyTag data from <code>sensor_snapshot.json</code> plus fresh online data), and pushes the updated <code>index.html</code>.</p>
+<p><strong>Manual path:</strong> When new TinyTag Excel files are available, place them in the appropriate <code>data/</code> subfolder and run <code>python build.py</code> for a full rebuild.</p>
+<hr />
+<h2>Adaptive Comfort</h2>
+<p>The dashboard uses the <strong>EN16798-1</strong> standard to assess thermal comfort in naturally ventilated buildings. This works by calculating an "exponential running mean" of outdoor temperature, which represents what occupants have been experiencing recently and have adapted to.</p>
+<p>The formula is:</p>
+<pre><code>running_mean(today) = 0.2 * yesterday's_mean_temp + 0.8 * running_mean(yesterday)
+</code></pre>
+<p>This gives more weight to recent days while still accounting for the past week or two. The dashboard then plots indoor temperature against this running mean, with comfort bands showing acceptable ranges.</p>
+<p>The default comfort model is the Vellei model for high humidity (RH &gt; 60%), which is appropriate for the tropical climate near Mkuranga.</p>
+<p>For full technical details, see <code>runningmean.md</code>.</p>
+<hr />
+<h2>Key Technical Details</h2>
+<ul>
+<li><strong>All timestamps are in East African Time (EAT, UTC+3)</strong></li>
+<li><strong>The dashboard is a single self-contained HTML file</strong> with all data embedded as JSON in script tags</li>
+<li><strong><code>index.html</code> is generated by <code>build.py</code></strong> and should never be edited directly</li>
+<li><strong>The <code>--auto</code> flag</strong> lets <code>build.py</code> skip reading Excel files and use the cached <code>sensor_snapshot.json</code> instead, making automated rebuilds much faster</li>
+<li><strong><code>config.json</code></strong> stores user-customized logger names and is fetched by the dashboard at load time, so name changes show up without needing a rebuild</li>
+</ul>
+<hr />
+<h2>Technologies Used</h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Tools</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Languages</td>
+<td>Python, JavaScript, HTML, CSS</td>
+</tr>
+<tr>
+<td>Data processing</td>
+<td>pandas, openpyxl</td>
+</tr>
+<tr>
+<td>Visualization</td>
+<td>Plotly.js</td>
+</tr>
+<tr>
+<td>Hosting</td>
+<td>GitHub Pages, actionresearchprojects.net</td>
+</tr>
+<tr>
+<td>Automation</td>
+<td>GitHub Actions</td>
+</tr>
+<tr>
+<td>Data sources</td>
+<td>Open-Meteo API, Omnisense platform, TinyTag loggers, NOAA/BoM climate data</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Documentation</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What It Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UPDATE.md</code></td>
+<td>Full data update workflow including git commands</td>
+</tr>
+<tr>
+<td><code>CHANGELOG.md</code></td>
+<td>History of all changes made to the project</td>
+</tr>
+<tr>
+<td><code>runningmean.md</code></td>
+<td>Technical explanation of the adaptive comfort algorithm</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>License</h2>
+<p>This project is part of the Architecture for Resilient Communities Cool Buildings Programme, a research initiative focused on sustainable building design in tropical climates.</p>
 </body>
 </html>

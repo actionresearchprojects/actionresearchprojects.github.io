@@ -1,178 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PDF Viewer</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Data Flow</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  html, body {
-    margin: 0;
-    height: 100%;
-    background: #f5f5f5;
-    font-family: "Ubuntu", system-ui, sans-serif;
-  }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  #loading {
-    padding: 1rem;
-    text-align: center;
-    color: #555;
-  }
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
 
-  #pdf {
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+/* Paragraphs */
+p { margin: 0 0 16px; }
 
-  .page {
-    position: relative;
-    margin: 0 auto 1.5rem auto;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    max-width: 100%;
-  }
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-  canvas {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
 
-  .annotationLayer {
-    position: absolute;
-    inset: 0;
-    pointer-events: auto;
-  }
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
 
-  .annotationLayer a {
-    position: absolute;
-    display: block;
-  }
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
 </style>
 </head>
-
 <body>
-<div id="loading">Loading document...</div>
-<div id="pdf"></div>
+<h1>Data Retrieval Pipeline - Code Explainer</h1>
+<p>This document explains how sensor data is automatically fetched, processed, and built into the dashboard every day. It covers the GitHub Actions workflow, each fetch script, the build system's <code>--auto</code> mode, and how data flows from external APIs into the final <code>index.html</code>.</p>
+<hr />
+<h2>1. Overview</h2>
+<p>The dashboard combines data from four sources:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>What it provides</th>
+<th>How it gets there</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Open-Meteo</strong></td>
+<td>Hourly outdoor temperature and humidity (historical + 16-day forecast)</td>
+<td>Auto-fetched daily by GitHub Action</td>
+</tr>
+<tr>
+<td><strong>Omnisense</strong></td>
+<td>Indoor/outdoor wireless sensor readings (temperature + humidity)</td>
+<td>Auto-fetched daily by GitHub Action</td>
+</tr>
+<tr>
+<td><strong>Climate cycles</strong></td>
+<td>ENSO ONI, IOD DMI, MJO ROMI indices for Long-Term Mode</td>
+<td>Auto-fetched daily by GitHub Action</td>
+</tr>
+<tr>
+<td><strong>TinyTag</strong></td>
+<td>Indoor logger data exported as <code>.xlsx</code> files</td>
+<td>Added manually, processed during full builds</td>
+</tr>
+</tbody>
+</table>
+<p>Every day at 04:00 UTC, a GitHub Action runs all three auto-fetch scripts, then rebuilds the dashboard using <code>python build.py --auto</code>. The <code>--auto</code> flag tells the build to use a pre-saved snapshot of the TinyTag data (so it does not need the original <code>.xlsx</code> files) combined with the freshly fetched data.</p>
+<hr />
+<h2>2. The GitHub Action</h2>
+<p>The workflow file lives at <code>.github/workflows/update-dashboard-data.yml</code>.</p>
+<h3>Trigger</h3>
+<pre><code class="language-yaml">on:
+  schedule:
+    - cron: '0 4 * * *'  # daily at 04:00 UTC (07:00 EAT)
+  workflow_dispatch:       # manual trigger from GitHub UI
+</code></pre>
+<p>It runs once a day on a schedule, and can also be triggered manually from the GitHub Actions tab.</p>
+<h3>Steps</h3>
+<p>The job runs on <code>ubuntu-latest</code> and does the following in order:</p>
+<p><strong>Step 1: Checkout the repo and install Python dependencies</strong></p>
+<pre><code class="language-yaml">- name: Install build dependencies
+  run: pip install pandas pytz requests
+</code></pre>
+<p><strong>Step 2: Fetch climate cycle data</strong></p>
+<pre><code class="language-yaml">- name: Fetch climate cycle data (ENSO, IOD, MJO)
+  continue-on-error: true
+  run: python fetch_cycles.py
+</code></pre>
+<p>Each fetch step uses <code>continue-on-error: true</code>. This means if the NOAA server is down, or the Omnisense login fails, the workflow keeps going and still commits whatever data it did manage to fetch. A single failure does not block the entire pipeline.</p>
+<p><strong>Step 3: Fetch Open-Meteo data</strong></p>
+<pre><code class="language-yaml">- name: Fetch Open-Meteo data
+  continue-on-error: true
+  run: python fetch_openmeteo.py
+</code></pre>
+<p><strong>Step 4: Fetch Omnisense data</strong></p>
+<pre><code class="language-yaml">- name: Fetch Omnisense data
+  continue-on-error: true
+  env:
+    OMNISENSE_USERNAME: ${{ secrets.OMNISENSE_USERNAME }}
+    OMNISENSE_PASSWORD: ${{ secrets.OMNISENSE_PASSWORD }}
+  run: python fetch_omnisense.py
+</code></pre>
+<p>The Omnisense credentials are stored as GitHub repository secrets and injected as environment variables at runtime. They never appear in logs or code.</p>
+<p><strong>Step 5: Rebuild the dashboard</strong></p>
+<pre><code class="language-yaml">- name: Rebuild dashboard
+  run: python build.py --auto
+</code></pre>
+<p>This regenerates <code>index.html</code> using the sensor snapshot plus the freshly fetched data.</p>
+<p><strong>Step 6: Commit and push if anything changed</strong></p>
+<pre><code class="language-yaml">- name: Commit and push if changed
+  id: push
+  run: |
+    git config user.name &quot;github-actions[bot]&quot;
+    git config user.email &quot;actions@users.noreply.github.com&quot;
+    git add data/openmeteo/ index.html
+    [ -d data/omnisense ] &amp;&amp; git add data/omnisense/ || true
+    [ -d data/cycles ] &amp;&amp; git add data/cycles/ || true
+    if git diff --cached --quiet; then
+      echo &quot;changed=false&quot; &gt;&gt; $GITHUB_OUTPUT
+    else
+      git commit -m &quot;auto-update data $(date -u +%Y-%m-%d)&quot;
+      git push
+      echo &quot;changed=true&quot; &gt;&gt; $GITHUB_OUTPUT
+    fi
+</code></pre>
+<p>This stages only the data directories and <code>index.html</code>. If <code>git diff --cached --quiet</code> finds no changes (for example, the API returned the same data as yesterday), it skips the commit entirely. The <code>changed</code> output variable is used by the next step.</p>
+<p><strong>Step 7: Notify the main site</strong></p>
+<pre><code class="language-yaml">- name: Trigger main site sync
+  if: steps.push.outputs.changed == 'true'
+  run: |
+    curl -X POST \
+      -H &quot;Authorization: Bearer ${{ secrets.MAIN_SITE_PAT }}&quot; \
+      https://api.github.com/repos/actionresearchprojects/actionresearchprojects.github.io/dispatches \
+      -d '{&quot;event_type&quot;:&quot;sync-embedded&quot;,&quot;client_payload&quot;:{&quot;source_repo&quot;:&quot;arc_tz_temp_humid&quot;}}'
+</code></pre>
+<p>If data was committed, this sends a <code>repository_dispatch</code> event to the main site repo (<code>actionresearchprojects.github.io</code>), telling it to pull in the updated dashboard. This uses a Personal Access Token stored as the <code>MAIN_SITE_PAT</code> secret.</p>
+<h3>Push notification workflow</h3>
+<p>A separate, simpler workflow (<code>.github/workflows/notify-main-site.yml</code>) also triggers a main site sync whenever <code>index.html</code>, <code>config.html</code>, or files in <code>logo/</code> are pushed to main by anyone (not just the bot). This covers manual pushes.</p>
+<pre><code class="language-yaml">on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'config.html'
+      - 'logo/**'
+</code></pre>
+<hr />
+<h2>3. fetch_openmeteo.py - Weather Data</h2>
+<p>This script fetches hourly temperature and humidity from the Open-Meteo API for Dar es Salaam.</p>
+<h3>Configuration</h3>
+<pre><code class="language-python">LAT = -7.0650263
+LON = 39.298985
+START_DATE = &quot;2023-03-15&quot;
+OUTDIR = Path(&quot;data/openmeteo&quot;)
+</code></pre>
+<p>The coordinates point to the ecovillage site. Data collection starts from 15 March 2023, well before the first TinyTag loggers were deployed, so the running mean has a long warm-up period.</p>
+<h3>Two separate fetches</h3>
+<p>The script makes two API calls:</p>
+<p><strong>Historical data</strong> (everything up to yesterday):</p>
+<pre><code class="language-python">def fetch_historical(yesterday: str, now_tag: str):
+    url = (
+        f&quot;https://historical-forecast-api.open-meteo.com/v1/forecast&quot;
+        f&quot;?latitude={LAT}&amp;longitude={LON}&quot;
+        f&quot;&amp;hourly=temperature_2m,relative_humidity_2m&quot;
+        f&quot;&amp;timezone=Africa/Dar_es_Salaam&quot;
+        f&quot;&amp;start_date={START_DATE}&amp;end_date={yesterday}&quot;
+    )
+</code></pre>
+<p>This uses the <code>historical-forecast-api</code> endpoint, which provides verified past observations. The date range spans from <code>START_DATE</code> (2023-03-15) to yesterday. At the time of writing, this is roughly 3 years of hourly data, around 26,000 rows.</p>
+<p><strong>Forecast data</strong> (today onwards, up to 16 days):</p>
+<pre><code class="language-python">def fetch_forecast(today: str, now_tag: str):
+    url = (
+        f&quot;https://api.open-meteo.com/v1/forecast&quot;
+        f&quot;?latitude={LAT}&amp;longitude={LON}&quot;
+        f&quot;&amp;hourly=temperature_2m,relative_humidity_2m&quot;
+        f&quot;&amp;timezone=Africa/Dar_es_Salaam&quot;
+        f&quot;&amp;forecast_days=16&quot;
+    )
+</code></pre>
+<p>This uses the standard forecast endpoint. The dashboard shows forecast data as dashed lines and excludes it from comfort calculations.</p>
+<h3>Output format</h3>
+<p>Both fetches write CSVs with a metadata header that <code>build.py</code> expects:</p>
+<pre><code class="language-python">META_ROWS = [
+    [&quot;latitude&quot;, &quot;longitude&quot;, &quot;elevation&quot;, &quot;utc_offset_seconds&quot;, &quot;timezone&quot;, &quot;timezone_abbreviation&quot;],
+    [str(LAT), str(LON), &quot;61.0&quot;, &quot;10800&quot;, &quot;Africa/Dar_es_Salaam&quot;, &quot;EAT&quot;],
+]
+DATA_HEADERS = [&quot;time&quot;, &quot;temperature_2m (C)&quot;, &quot;relative_humidity_2m (%)&quot;]
+</code></pre>
+<p>The files are named with a UTC timestamp, for example <code>historical_20260322_0449.csv</code>. Before writing, any existing timestamped files are moved to <code>data/openmeteo/legacy/</code> so the directory always has exactly one current file of each type.</p>
+<h3>Error handling</h3>
+<pre><code class="language-python">def fetch_json(url: str, retries: int = 3, backoff: int = 60) -&gt; dict:
+    for attempt in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                return json.loads(resp.read().decode(&quot;utf-8&quot;))
+        except urllib.error.HTTPError as e:
+            if e.code &gt;= 500 and attempt &lt; retries - 1:
+                wait = backoff * (attempt + 1)
+                time.sleep(wait)
+                continue
+            raise
+</code></pre>
+<p>Server errors (HTTP 500+) are retried up to 3 times with increasing backoff (60s, 120s, 180s). Client errors (4xx) fail immediately. If the historical fetch fails, the previous CSV files remain untouched in <code>data/openmeteo/</code> and the build uses whatever data is already there.</p>
+<hr />
+<h2>4. fetch_omnisense.py - Wireless Sensors</h2>
+<p>This script logs into the Omnisense web portal, submits a data export form, and downloads the resulting CSV. There is no public API, so it works by mimicking a browser session.</p>
+<h3>Authentication</h3>
+<pre><code class="language-python">session = requests.Session()
+session.headers.update(HEADERS)
 
-<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script>
-  const PDF_URL = "Data-Flow-Explained.pdf";
+login_data = {
+    &quot;target&quot;: &quot;&quot;,
+    &quot;userId&quot;: username,
+    &quot;userPass&quot;: password,
+    &quot;btnAct&quot;: &quot;Log-In&quot;,
+}
+resp = session.post(f&quot;{BASE}/user_login.asp&quot;, data=login_data, allow_redirects=True)
+</code></pre>
+<p>The script creates a <code>requests.Session</code> (which persists cookies between requests) and POSTs the login form. If the response still contains the login page HTML, the credentials were wrong.</p>
+<h3>Data export</h3>
+<pre><code class="language-python">form_data = {
+    &quot;siteNbr&quot;: SITE_NBR,        # &quot;152865&quot; - the ecovillage site
+    &quot;sensorId&quot;: &quot;&quot;,              # empty = all sensors
+    &quot;gwayId&quot;: &quot;&quot;,                # empty = all gateways
+    &quot;dateFormat&quot;: &quot;SE&quot;,          # gives yyyy-mm-dd hh:mm:ss timestamps
+    &quot;dnldFrDate&quot;: start_ddmmyyyy,
+    &quot;dnldToDate&quot;: end_ddmmyyyy,
+    &quot;averaging&quot;: &quot;N&quot;,            # raw data, no averaging
+    &quot;btnAct&quot;: &quot;Submit&quot;,
+}
+resp = session.post(f&quot;{BASE}/dnld_rqst5.asp&quot;, data=form_data)
+</code></pre>
+<p>The form is submitted with all sensors selected and a date range covering the last 90 days (or from <code>EARLIEST_DATA = "2026-01-25"</code> with <code>--full-history</code>). The server processes the request and returns a page containing a JavaScript redirect to the generated CSV file.</p>
+<h3>Parsing the download link</h3>
+<pre><code class="language-python">match = re.search(r&quot;go\(\s*\\'([^']+)\\'\)&quot;, resp.text)
+</code></pre>
+<p>The server's response page contains JavaScript like <code>go(\'/fileshare/images/abc.csv\')</code>. The regex extracts the CSV path, then the script downloads it:</p>
+<pre><code class="language-python">csv_url = f&quot;{BASE}{csv_path}&quot;
+resp = session.get(csv_url, stream=True)
+</code></pre>
+<h3>Output</h3>
+<p>The CSV is saved as <code>data/omnisense/omnisense_YYYYMMDD_HHMM.csv</code>, with previous files archived to <code>legacy/</code>. The script validates that the download is a real Omnisense CSV by checking for the <code>sensor_desc</code> column header and a minimum file size of 100 bytes.</p>
+<hr />
+<h2>5. fetch_cycles.py - Climate Oscillation Indices</h2>
+<p>This is the simplest fetch script. It downloads three plain-text data files from public climate agencies:</p>
+<pre><code class="language-python">SOURCES = {
+    &quot;enso&quot;: {
+        &quot;url&quot;: &quot;https://psl.noaa.gov/data/correlation/oni.csv&quot;,
+        &quot;dest&quot;: CYCLES_DIR / &quot;enso&quot; / &quot;oni.csv&quot;,
+    },
+    &quot;iod&quot;: {
+        &quot;url&quot;: &quot;https://www.bom.gov.au/clim_data/IDCK000072/iod_1.txt&quot;,
+        &quot;dest&quot;: CYCLES_DIR / &quot;iod&quot; / &quot;iod_1.txt&quot;,
+    },
+    &quot;mjo&quot;: {
+        &quot;url&quot;: &quot;https://psl.noaa.gov/mjo/mjoindex/romi.cpcolr.1x.txt&quot;,
+        &quot;dest&quot;: CYCLES_DIR / &quot;mjo&quot; / &quot;romi.cpcolr.1x.txt&quot;,
+    },
+}
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th>What it measures</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ENSO ONI</strong></td>
+<td>El Nino / La Nina state based on Pacific sea surface temperatures</td>
+<td>NOAA</td>
+</tr>
+<tr>
+<td><strong>IOD DMI</strong></td>
+<td>Indian Ocean Dipole, affects East African rainfall and temperature</td>
+<td>Bureau of Meteorology (Australia)</td>
+</tr>
+<tr>
+<td><strong>MJO ROMI</strong></td>
+<td>Madden-Julian Oscillation, a 30-60 day tropical weather pattern</td>
+<td>NOAA</td>
+</tr>
+</tbody>
+</table>
+<p>Each file is simply downloaded and saved. A timestamp file (<code>cycles_fetched_YYYYMMDD_HHMM.txt</code>) is written so the build system knows when the data was last refreshed.</p>
+<p>These indices are parsed by <code>build.py</code> and displayed as coloured overlays on the Long-Term Mode chart, helping researchers see whether temperature patterns correlate with large-scale climate events.</p>
+<hr />
+<h2>6. build.py --auto Mode</h2>
+<p>The <code>--auto</code> flag is the key to making automated builds work without the original TinyTag <code>.xlsx</code> files. Here is how it works.</p>
+<h3>The sensor snapshot</h3>
+<p>When you run a full build (no <code>--auto</code> flag), <code>build.py</code> processes all the raw <code>.xlsx</code> and CSV source files, then saves the processed data to <code>data/sensor_snapshot.json</code>:</p>
+<pre><code class="language-python">def save_sensor_snapshot(datasets_dfs):
+    &quot;&quot;&quot;Save non-Open-Meteo data from all datasets to sensor_snapshot.json.
+    Excludes Open-Meteo data (fetched automatically). Omnisense data IS included
+    in the snapshot as a fallback for when the automated Omnisense fetch fails.&quot;&quot;&quot;
+</code></pre>
+<p>The snapshot contains every sensor's processed readings except Open-Meteo (which is always fetched fresh). Omnisense data is included in the snapshot as a fallback, but fresh Omnisense data replaces it when available.</p>
+<h3>The --auto build flow</h3>
+<pre><code class="language-python">if args.auto:
+    # 1. Load the snapshot (TinyTag + Omnisense fallback data)
+    datasets_dfs = load_sensor_snapshot()
 
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    # 2. Load fresh Open-Meteo data
+    ext_df_raw = load_external_temperature()
 
-  const container = document.getElementById("pdf");
-  const loading = document.getElementById("loading");
-  const DPR = Math.max(1, window.devicePixelRatio || 1);
+    # 3. Load fresh Omnisense data (if available)
+    omnisense_files = sorted(OMNISENSE_DIR.glob(&quot;omnisense_*.csv&quot;))
+    if omnisense_files:
+        os_df = load_omnisense_csv(omnisense_files[-1], sensor_filter=OMNISENSE_T_H_SENSORS)
 
-  let pdfDoc = null;
-  let renderQueue = Promise.resolve();
+    # 4. For each dataset, merge everything together
+    for key, cfg in DATASETS.items():
+        df = datasets_dfs.get(key, pd.DataFrame())
 
-  function renderPage(num) {
-    renderQueue = renderQueue.then(async () => {
-      const page = await pdfDoc.getPage(num);
+        # Merge fresh Open-Meteo
+        if cfg[&quot;external_logger&quot;] in OPENMETEO_IDS and not ext_df.empty:
+            df = pd.concat([df, filtered_ext]).sort_index()
 
-      const base = page.getViewport({ scale: 1 });
-      const width = container.clientWidth || window.innerWidth;
-      const scale = width / base.width;
-      const vp = page.getViewport({ scale });
-
-      const wrap = document.createElement("div");
-      wrap.className = "page";
-      wrap.style.width = vp.width + "px";
-      wrap.style.height = vp.height + "px";
-
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.floor(vp.width * DPR);
-      canvas.height = Math.floor(vp.height * DPR);
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
-
-      const ctx = canvas.getContext("2d", { alpha: false });
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-      wrap.appendChild(canvas);
-      container.appendChild(wrap);
-
-      await page.render({ canvasContext: ctx, viewport: vp }).promise;
-
-      const annLayer = document.createElement("div");
-      annLayer.className = "annotationLayer";
-      annLayer.style.width = vp.width + "px";
-      annLayer.style.height = vp.height + "px";
-      wrap.appendChild(annLayer);
-
-      const annotations = await page.getAnnotations({ intent: "display" });
-      for (const ann of annotations) {
-        if (ann.subtype !== "Link") continue;
-
-        const [x1, y1, x2, y2] =
-          pdfjsLib.Util.normalizeRect(vp.convertToViewportRectangle(ann.rect));
-
-        const a = document.createElement("a");
-        a.style.left = x1 + "px";
-        a.style.top = y1 + "px";
-        a.style.width = (x2 - x1) + "px";
-        a.style.height = (y2 - y1) + "px";
-
-        if (ann.url || ann.unsafeUrl) {
-          a.href = ann.url || ann.unsafeUrl;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-        }
-
-        annLayer.appendChild(a);
-      }
-    });
-  }
-
-  (async () => {
-    try {
-      pdfDoc = await pdfjsLib.getDocument({
-        url: PDF_URL,
-        disableStream: true,
-        disableRange: true
-      }).promise;
-
-      loading.remove();
-
-      await renderPage(1);
-
-      for (let i = 2; i <= pdfDoc.numPages; i++) {
-        renderPage(i);
-      }
-
-    } catch (e) {
-      console.error(e);
-      loading.textContent = "Failed to load document.";
-    }
-  })();
-</script>
-
-<script type="module">
-  let height = 0;
-
-  function sendEmbedHeight() {
-    window.parent.postMessage({ embedHeight: height }, "*");
-  }
-
-  const observer = new ResizeObserver((entries) => {
-    if (entries.length !== 1) return;
-    const entry = entries[0];
-    if (entry.target !== document.body) return;
-    height = entry.contentRect.height;
-    sendEmbedHeight();
-  });
-
-  observer.observe(document.body);
-
-  window.addEventListener("message", (event) => {
-    if (event.source !== window.parent) return;
-    if (event.data !== "getEmbedHeight") return;
-    sendEmbedHeight();
-  });
-</script>
+        # Replace snapshot Omnisense with fresh Omnisense (House 5 only)
+        if key == &quot;house5&quot; and not omnisense_df.empty:
+            df = df[~df[&quot;logger_id&quot;].isin(OMNISENSE_T_H_SENSORS)]
+            df = pd.concat([df, omnisense_df]).sort_index()
+</code></pre>
+<p>The logic is:
+1. Start with the saved snapshot (contains TinyTag data and Omnisense as fallback)
+2. Add fresh Open-Meteo data on top
+3. If fresh Omnisense data was fetched, remove the snapshot's Omnisense data and replace it with the new data
+4. If the Omnisense fetch failed, the snapshot's Omnisense data stays in place as a fallback</p>
+<h3>Full build vs auto build</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Full build (<code>python build.py</code>)</th>
+<th>Auto build (<code>python build.py --auto</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>When to use</strong></td>
+<td>After adding new TinyTag <code>.xlsx</code> files</td>
+<td>Daily automated runs</td>
+</tr>
+<tr>
+<td><strong>TinyTag data</strong></td>
+<td>Read from <code>.xlsx</code> files in <code>data/house5/</code> and <code>data/dauda/</code></td>
+<td>Read from <code>sensor_snapshot.json</code></td>
+</tr>
+<tr>
+<td><strong>Open-Meteo data</strong></td>
+<td>Loaded from CSVs in <code>data/openmeteo/</code></td>
+<td>Same</td>
+</tr>
+<tr>
+<td><strong>Omnisense data</strong></td>
+<td>Loaded from CSV in <code>data/omnisense/</code></td>
+<td>Fresh CSV if available, otherwise snapshot fallback</td>
+</tr>
+<tr>
+<td><strong>Saves snapshot?</strong></td>
+<td>Yes, writes <code>sensor_snapshot.json</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Where it runs</strong></td>
+<td>Your local machine</td>
+<td>GitHub Actions (daily)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>7. Data Freshness Checks</h2>
+<p>After building, the dashboard embeds timestamps showing when each data source was last updated. At runtime in the browser, the JavaScript checks whether the data is stale:</p>
+<ul>
+<li><strong>Open-Meteo and Omnisense</strong>: data should reach at least the day before the last fetch (2-day tolerance)</li>
+<li><strong>MJO</strong>: should be within 3 weeks of current date</li>
+<li><strong>ENSO and IOD</strong>: should be within 3 months (these indices update less frequently)</li>
+</ul>
+<p>If data is stale, a warning triangle appears next to the "last updated" line in the sidebar footer, with a hover tooltip explaining what is out of date.</p>
+<hr />
+<h2>8. End-to-End Flow</h2>
+<p>Here is what happens every day at 04:00 UTC, from start to finish:</p>
+<ol>
+<li>GitHub Actions triggers <code>update-dashboard-data.yml</code></li>
+<li><code>fetch_cycles.py</code> downloads ENSO/IOD/MJO index files to <code>data/cycles/</code></li>
+<li><code>fetch_openmeteo.py</code> downloads ~26,000 rows of historical weather data and ~384 rows of forecast data to <code>data/openmeteo/</code></li>
+<li><code>fetch_omnisense.py</code> logs into omnisense.com and downloads the last 90 days of wireless sensor data to <code>data/omnisense/</code></li>
+<li><code>build.py --auto</code> loads the sensor snapshot, merges in the fresh Open-Meteo and Omnisense data, processes everything, and writes a new <code>index.html</code></li>
+<li>The workflow checks if any files changed. If so, it commits and pushes with the message <code>auto-update data YYYY-MM-DD</code></li>
+<li>If a push happened, a <code>repository_dispatch</code> event notifies the main site to pull in the updated dashboard</li>
+<li>The main site (<code>actionresearchprojects.github.io</code>) syncs the new files and the live dashboard is updated</li>
+</ol>
+<p>If any single fetch fails (API down, credentials expired, server timeout), the pipeline continues with whatever data it has. The previous data files remain in place, so the dashboard always has something to show.</p>
 </body>
 </html>
