@@ -78,6 +78,20 @@
         overlay.style.display = 'none';
       }
     }
+
+    /*
+     * Password overlay sizing.
+     *
+     * body.style.zoom (even zoom:1) creates a stacking context in Chrome,
+     * making position:fixed children relative to the body box rather than
+     * the viewport. We compensate by setting explicit px dimensions so the
+     * overlay covers the full viewport regardless of zoom level or orientation.
+     */
+    var pwOverlay = document.getElementById('pw-overlay');
+    if (pwOverlay) {
+      pwOverlay.style.width  = Math.ceil(window.innerWidth  / zoom) + 'px';
+      pwOverlay.style.height = Math.ceil(window.innerHeight / zoom) + 'px';
+    }
   }
 
   /*
