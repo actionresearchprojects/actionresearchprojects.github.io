@@ -1,178 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>PDF Viewer</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Running Mean</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  html, body {
-    margin: 0;
-    height: 100%;
-    background: #f5f5f5;
-    font-family: "Ubuntu", system-ui, sans-serif;
-  }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  #loading {
-    padding: 1rem;
-    text-align: center;
-    color: #555;
-  }
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
 
-  #pdf {
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
+/* Paragraphs */
+p { margin: 0 0 16px; }
 
-  .page {
-    position: relative;
-    margin: 0 auto 1.5rem auto;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    max-width: 100%;
-  }
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-  canvas {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
 
-  .annotationLayer {
-    position: absolute;
-    inset: 0;
-    pointer-events: auto;
-  }
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
 
-  .annotationLayer a {
-    position: absolute;
-    display: block;
-  }
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
 </style>
 </head>
-
 <body>
-<div id="loading">Loading document...</div>
-<div id="pdf"></div>
+<h1>Running Mean &amp; Fallback Logic - Code Explainer</h1>
+<p>This document explains exactly how the adaptive comfort running mean is calculated and how the external data source fallback works, relating each part of the code to the underlying maths.</p>
+<hr />
+<h2>1. The EN16798-1 Formula</h2>
+<p>The running mean external temperature is defined in EN 16798-1 as:</p>
+<pre><code>θ_rm(n) = (1 - α) × θ_ed(n-1) + α × θ_rm(n-1)
+</code></pre>
+<p>Where:
+- <strong>θ_rm(n)</strong> = running mean external temperature for day <em>n</em> (the value plotted on the x-axis of the adaptive comfort chart)
+- <strong>θ_ed(n-1)</strong> = daily mean external temperature for <em>yesterday</em> (day n-1)
+- <strong>θ_rm(n-1)</strong> = running mean from <em>yesterday</em>
+- <strong>α = 0.8</strong> (the standard weighting constant)</p>
+<p>In plain English: today's running mean = 20% of yesterday's actual external temperature + 80% of yesterday's running mean.</p>
+<h3>Why people say "7-day" running mean</h3>
+<p>If you expand the recursion, the running mean is really a weighted sum of all past days:</p>
+<pre><code>θ_rm(n) = 0.2 × θ_ed(n-1)
+         + 0.2 × 0.8   × θ_ed(n-2)     = 0.16
+         + 0.2 × 0.8²  × θ_ed(n-3)     = 0.128
+         + 0.2 × 0.8³  × θ_ed(n-4)     = 0.1024
+         + 0.2 × 0.8⁴  × θ_ed(n-5)     = 0.08192
+         + 0.2 × 0.8⁵  × θ_ed(n-6)     = 0.06554
+         + 0.2 × 0.8⁶  × θ_ed(n-7)     = 0.05243
+         + ...
+</code></pre>
+<p>The past 7 days account for ~79% of the total weight. Days further back contribute the remaining ~21%, with rapidly diminishing influence. That's why it's often called a "7-day" running mean - it's not a strict 7-day average, but an exponential weighting where ~7 days dominate.</p>
+<hr />
+<h2>2. The Code - Step by Step</h2>
+<p>The function lives in <code>build.py</code>:</p>
+<pre><code class="language-python">def compute_exponential_running_mean(df, primary_logger, fallback_loggers, alpha=0.8):
+</code></pre>
+<h3>Step 1: Get daily mean temperatures from the chosen source</h3>
+<pre><code class="language-python">prim_df = df[df[&quot;logger_id&quot;] == primary_logger]
+prim_daily = prim_df[&quot;temperature&quot;].resample(&quot;D&quot;).mean().dropna()
+</code></pre>
+<p>This filters the full dataset to only the chosen external source (e.g. <code>"861011"</code> for the TinyTag external sensor), then computes one temperature value per day by averaging all readings for that day. Days with no data become gaps.</p>
+<h3>Step 2: Get daily means from the fallback source (always Open-Meteo)</h3>
+<pre><code class="language-python">fb_df = df[df[&quot;logger_id&quot;].isin(fallback_loggers)]
+fb_daily = fb_df[&quot;temperature&quot;].resample(&quot;D&quot;).mean().dropna()
+</code></pre>
+<p>Same thing, but for the Open-Meteo historical data. This runs regardless - the fallback data is always prepared.</p>
+<h3>Step 3: Combine - chosen source takes priority, gaps filled by Open-Meteo</h3>
+<pre><code class="language-python">all_days = prim_daily.index.union(fb_daily.index)
+combined = pd.Series(index=all_days, dtype=float)
 
-<script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-<script>
-  const PDF_URL = "Running-Mean-Explained.pdf";
-
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
-
-  const container = document.getElementById("pdf");
-  const loading = document.getElementById("loading");
-  const DPR = Math.max(1, window.devicePixelRatio || 1);
-
-  let pdfDoc = null;
-  let renderQueue = Promise.resolve();
-
-  function renderPage(num) {
-    renderQueue = renderQueue.then(async () => {
-      const page = await pdfDoc.getPage(num);
-
-      const base = page.getViewport({ scale: 1 });
-      const width = container.clientWidth || window.innerWidth;
-      const scale = width / base.width;
-      const vp = page.getViewport({ scale });
-
-      const wrap = document.createElement("div");
-      wrap.className = "page";
-      wrap.style.width = vp.width + "px";
-      wrap.style.height = vp.height + "px";
-
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.floor(vp.width * DPR);
-      canvas.height = Math.floor(vp.height * DPR);
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
-
-      const ctx = canvas.getContext("2d", { alpha: false });
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-      wrap.appendChild(canvas);
-      container.appendChild(wrap);
-
-      await page.render({ canvasContext: ctx, viewport: vp }).promise;
-
-      const annLayer = document.createElement("div");
-      annLayer.className = "annotationLayer";
-      annLayer.style.width = vp.width + "px";
-      annLayer.style.height = vp.height + "px";
-      wrap.appendChild(annLayer);
-
-      const annotations = await page.getAnnotations({ intent: "display" });
-      for (const ann of annotations) {
-        if (ann.subtype !== "Link") continue;
-
-        const [x1, y1, x2, y2] =
-          pdfjsLib.Util.normalizeRect(vp.convertToViewportRectangle(ann.rect));
-
-        const a = document.createElement("a");
-        a.style.left = x1 + "px";
-        a.style.top = y1 + "px";
-        a.style.width = (x2 - x1) + "px";
-        a.style.height = (y2 - y1) + "px";
-
-        if (ann.url || ann.unsafeUrl) {
-          a.href = ann.url || ann.unsafeUrl;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-        }
-
-        annLayer.appendChild(a);
-      }
-    });
-  }
-
-  (async () => {
-    try {
-      pdfDoc = await pdfjsLib.getDocument({
-        url: PDF_URL,
-        disableStream: true,
-        disableRange: true
-      }).promise;
-
-      loading.remove();
-
-      await renderPage(1);
-
-      for (let i = 2; i <= pdfDoc.numPages; i++) {
-        renderPage(i);
-      }
-
-    } catch (e) {
-      console.error(e);
-      loading.textContent = "Failed to load document.";
-    }
-  })();
-</script>
-
-<script type="module">
-  let height = 0;
-
-  function sendEmbedHeight() {
-    window.parent.postMessage({ embedHeight: height }, "*");
-  }
-
-  const observer = new ResizeObserver((entries) => {
-    if (entries.length !== 1) return;
-    const entry = entries[0];
-    if (entry.target !== document.body) return;
-    height = entry.contentRect.height;
-    sendEmbedHeight();
-  });
-
-  observer.observe(document.body);
-
-  window.addEventListener("message", (event) => {
-    if (event.source !== window.parent) return;
-    if (event.data !== "getEmbedHeight") return;
-    sendEmbedHeight();
-  });
-</script>
+# Fill with fallback first, then overwrite with primary where available
+combined.update(fb_daily)        # ← Open-Meteo fills all days it has
+combined.update(prim_daily)      # ← Chosen source overwrites where it has data
+</code></pre>
+<p>This is the fallback mechanism. Think of it as:
+1. Start with a blank calendar
+2. Write Open-Meteo temperatures on every day Open-Meteo has data
+3. Now go back and overwrite with TinyTag temperatures on every day TinyTag has data</p>
+<p>Result: any day the chosen source has data → that data is used. Any day it doesn't → Open-Meteo fills the gap. If neither has data for a day, that day is dropped.</p>
+<p>The code also tracks <em>which source was used for each day</em> (the <code>day_sources</code> series) so the dashboard can show this information on hover and in the legend.</p>
+<h3>Step 4: Compute the running mean (the actual EN16798-1 formula)</h3>
+<pre><code class="language-python">trm = [combined.iloc[0]]                                        # Seed: first day's temp
+for i in range(1, len(combined)):
+    trm.append((1 - alpha) * combined.iloc[i - 1] + alpha * trm[-1])
+</code></pre>
+<p>Line by line:
+- <code>trm[0] = combined[0]</code> - the very first running mean value is seeded with the first available day's temperature (standard practice; EN16798-1 doesn't specify initialisation, and the seed's influence decays to near-zero within a few weeks)
+- For every subsequent day: <code>trm[i] = 0.2 × combined[i-1] + 0.8 × trm[i-1]</code></p>
+<p>This is exactly: <strong>θ_rm(n) = (1 - α) × θ_ed(n-1) + α × θ_rm(n-1)</strong> ✓</p>
+<p>Note: <code>combined[i-1]</code> is the <em>previous day's</em> temperature (θ_ed(n-1)), and <code>trm[-1]</code> = <code>trm[i-1]</code> is the <em>previous day's</em> running mean (θ_rm(n-1)). The formula uses yesterday's values to compute today's running mean, which is correct per EN16798-1.</p>
+<h3>Step 5: Upsample to hourly and record source spans</h3>
+<pre><code class="language-python">return trm_series.resample(&quot;h&quot;).ffill(), source_spans
+</code></pre>
+<p>The running mean is computed once per day, then forward-filled to hourly resolution so it can be matched against the hourly indoor temperature readings on the comfort scatter plot.</p>
+<p>The <code>source_spans</code> list records consecutive date ranges showing which source was used, e.g.:</p>
+<pre><code class="language-json">[
+  {&quot;source&quot;: &quot;861011&quot;,                          &quot;from&quot;: &quot;2024-01-15&quot;, &quot;to&quot;: &quot;2024-05-31&quot;},
+  {&quot;source&quot;: &quot;External Historical (Open-Meteo)&quot;, &quot;from&quot;: &quot;2024-06-01&quot;, &quot;to&quot;: &quot;2024-06-15&quot;},
+  {&quot;source&quot;: &quot;861011&quot;,                          &quot;from&quot;: &quot;2024-06-16&quot;, &quot;to&quot;: &quot;2024-12-31&quot;}
+]
+</code></pre>
+<hr />
+<h2>3. How It's Called</h2>
+<p>In <code>build_dataset_json()</code>:</p>
+<pre><code class="language-python">source_id = logger_overrides.get(logger_id, {}).get(&quot;external_source&quot;, default_external_logger)
+</code></pre>
+<p>For each indoor logger, it looks up which external source the user chose in <code>config.html</code>. If none was chosen, it defaults to <code>"External Historical (Open-Meteo)"</code>.</p>
+<pre><code class="language-python">running_mean_cache[source_id] = compute_exponential_running_mean(df, source_id, fallback_loggers)
+</code></pre>
+<p>The <code>fallback_loggers</code> are always the Open-Meteo IDs:</p>
+<pre><code class="language-python">fallback_loggers = [l for l in cfg.get(&quot;external_sensors&quot;, []) if l in OPENMETEO_IDS]
+</code></pre>
+<p>So regardless of which primary source is chosen, <strong>Open-Meteo always serves as the fallback</strong>.</p>
+<hr />
+<h2>4. Summary of Guarantees</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Chosen source has data for every day</td>
+<td>100% chosen source used</td>
+</tr>
+<tr>
+<td>Chosen source has gaps on some days</td>
+<td>Those days filled by Open-Meteo, rest uses chosen source</td>
+</tr>
+<tr>
+<td>Chosen source has no data at all</td>
+<td>100% Open-Meteo used</td>
+</tr>
+<tr>
+<td>Neither source has data for a day</td>
+<td>That day is skipped (running mean continues from next available day)</td>
+</tr>
+</tbody>
+</table>
+<p>The running mean formula is applied identically regardless of which source provided each day's temperature. The blending is at the daily temperature level - the running mean doesn't "know" or care where each day's temperature came from.</p>
+<hr />
+<h2>5. What the User Sees</h2>
+<ul>
+<li><strong>Hover tooltip</strong>: shows all sources that contributed to the 7-day window for that specific data point (e.g. "TinyTag + Open-Meteo" when the window spans a source boundary)</li>
+<li><strong>Bottom-right annotation</strong>: lists all sources used across the entire visible date range, with their date spans</li>
+<li><strong>PNG export legend</strong>: each indoor logger shows which external source type(s) were used for its running mean</li>
+<li><strong>Config page</strong>: notes that gaps in the chosen source are filled with Open-Meteo</li>
+</ul>
 </body>
 </html>
