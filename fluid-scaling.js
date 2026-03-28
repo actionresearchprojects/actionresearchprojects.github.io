@@ -40,7 +40,7 @@
      */
     if (root) {
       if (!isSmall && zoom !== 1) {
-        root.style.minHeight = Math.ceil(window.innerHeight / zoom) + 'px';
+        root.style.minHeight = Math.floor(window.innerHeight / zoom) + 'px';
       } else if (isSmall && overlay) {
         root.style.minHeight = '';
       }
