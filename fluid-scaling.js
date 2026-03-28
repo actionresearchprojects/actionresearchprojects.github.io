@@ -17,7 +17,7 @@
     var isSmall = Math.min(screen.width, screen.height) <= 1024;
     document.body.style.zoom = zoom;
     document.body.classList.toggle('fluid-zoom-active', zoom !== 1);
-    document.documentElement.style.setProperty('--fluid-vh', Math.ceil(window.innerHeight / zoom) + 'px');
+    document.documentElement.style.setProperty('--fluid-vh', Math.floor(window.innerHeight / zoom) + 'px');
 
     var root = document.querySelector('[data-site-root]');
     var overlay = document.getElementById('orientation-overlay');
