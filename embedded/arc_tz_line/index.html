@@ -6260,10 +6260,22 @@ function hideLoadingBar() {
 
 function _doRender() {
   state.chartType = 'line';
+  // Detect user zoom before re-rendering: if Plotly's current displayed range differs from
+  // the natural (full-data) range we stored last render, the user has drag-zoomed.
+  const chartEl_ = document.getElementById('chart');
+  if (!_zoomReset && _naturalRange && chartEl_._fullLayout) {
+    const fl = chartEl_._fullLayout;
+    const cur = fl.xaxis && fl.xaxis.range;
+    if (cur) {
+      const ms = v => typeof v === 'number' ? v : +new Date(v);
+      const diff = Math.abs(ms(cur[0]) - ms(_naturalRange[0])) + Math.abs(ms(cur[1]) - ms(_naturalRange[1]));
+      _savedZoom = diff > 60000 ? cur.slice() : null;
+    }
+  }
   let result = renderLineGraph();
   // Replace with empty message if no actual data
   if (result._noData) {
-    _zoomReset = true; // prevent stale axis range from persisting into next render with data
+    _zoomReset = true;
     const sm = window.innerWidth < 680;
     result = {
       traces: [],
@@ -6282,14 +6294,12 @@ function _doRender() {
   _currentTitle = title || '';
   _currentLayout = layout;
   document.getElementById('bar-title').textContent = _currentTitle;
-  // Show "no data" overlay when substrat filters produce empty results
   const noDataEl = document.getElementById('substrat-no-data');
   const hasActiveFilters = getActiveSubstratFilters().length > 0;
   noDataEl.style.display = (hasActiveFilters && result._noData) ? 'block' : 'none';
-  // Capture the "natural" (unzoomed) x range so we can tell it apart from user zoom later
+  // Save the natural range before applying zoom (used for zoom detection next render)
   _naturalRange = (layout.xaxis && layout.xaxis.range) ? layout.xaxis.range.slice() : null;
-  // Restore user drag-zoom if active
-  const chartEl_ = document.getElementById('chart');
+  // Apply saved zoom if active
   if (!_zoomReset && _savedZoom) {
     layout.xaxis = Object.assign(layout.xaxis || {}, {range: _savedZoom, autorange: false});
   }
@@ -6298,22 +6308,8 @@ function _doRender() {
   chartEl_.classList.toggle('comfort-mode', state.chartType === 'comfort');
   Plotly.react('chart', traces, layout, PLOTLY_CONFIG);
   chartEl_.once('plotly_afterplot', () => setTimeout(positionComfortOverlays, 100));
-  // Register zoom listeners only once to prevent accumulation across re-renders
   if (!_zoomListenersAdded) {
     _zoomListenersAdded = true;
-    chartEl_.on('plotly_relayout', ev => {
-      let r0, r1;
-      if ('xaxis.range[0]' in ev)       { r0 = ev['xaxis.range[0]']; r1 = ev['xaxis.range[1]']; }
-      else if (Array.isArray(ev['xaxis.range'])) { r0 = ev['xaxis.range'][0]; r1 = ev['xaxis.range'][1]; }
-      else return; // not an x-range event (margin/legend/autorange etc.) — ignore
-      // Ignore if the range matches the current natural (full-data) range — that's Plotly
-      // re-emitting the programmatic range, not a user zoom
-      if (_naturalRange) {
-        const ms = v => typeof v === 'number' ? v : +new Date(v);
-        if (Math.abs(ms(r0) - ms(_naturalRange[0])) + Math.abs(ms(r1) - ms(_naturalRange[1])) < 60000) return;
-      }
-      _savedZoom = [r0, r1];
-    });
     chartEl_.on('plotly_doubleclick', () => { _zoomReset = true; _savedZoom = null; setTimeout(updatePlot, 0); });
   }
   const histTip = document.getElementById('hist-hover-tip');
