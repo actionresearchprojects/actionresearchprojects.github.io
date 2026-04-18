@@ -31,6 +31,25 @@ MS_TO_KN  = 900 / 463   # knots per m/s
 # Calm threshold: 0.1 m/s expressed in km/h (0.1 * 3.6 = 0.36)
 CALM_THRESHOLD_KPH = 0.36
 
+# Wind QC thresholds
+# avg_wind spike detection: flag readings that are isolated jumps relative to local context.
+# A reading is flagged if it exceeds AVG_SPIKE_RATIO * local rolling median AND exceeds
+# AVG_SPIKE_MIN_KPH. The rolling window is centered so the spike itself does not dominate
+# the median (a single outlier in ~12 readings cannot shift the median significantly).
+# This approach tolerates genuine sustained high-wind events (the local median rises with
+# the data) but catches single-point sensor errors regardless of their absolute value.
+AVG_SPIKE_RATIO   = 3.0   # must exceed 3x the local rolling median to be flagged
+AVG_SPIKE_WINDOW  = 12    # readings in the rolling window (~1 hour at 5-min intervals)
+AVG_SPIKE_MIN_KPH = 20    # minimum speed to apply ratio test (avoids near-zero false positives)
+# avg_wind: hard absolute ceiling regardless of local context.
+AVG_WIND_CEIL_KPH  = 60
+# peak_wind: hard absolute ceiling regardless of average.
+PEAK_WIND_CEIL_KPH = 100
+# Bounce ratio: peak/avg ratio above this threshold indicates reed switch bounce.
+BOUNCE_RATIO       = 8
+# Minimum peak speed for the bounce filter to apply (avoids flagging truly calm readings).
+BOUNCE_MIN_PEAK_KPH = 25
+
 # Thresholds in knots (WMO integer boundaries). range_kn is [lo, hi).
 BEAUFORT_SCALE = {
     0:  {"range_kn": (0,   1),   "label": "Calm"},
@@ -295,36 +314,65 @@ def spike_filter(series, max_val):
     return series.where(series <= max_val)
 
 
-def peak_wind_qc(df):
-    """Apply quality control to peak_wind_kph in-place and return the DataFrame.
+def wind_qc(df):
+    """Apply quality control to wind columns in-place and return the DataFrame.
 
-    Two filters are applied:
-      1. Reed switch bounce: peak_wind_kph / avg_wind_kph > 8 AND peak_wind_kph > 25.
-         A ratio this extreme is physically implausible and indicates sensor artefact.
-         Rows where avg == 0 and peak > 25 are treated as infinite ratio and flagged.
-      2. Ceiling filter: peak_wind_kph > 100, regardless of average speed.
+    Three filters are applied:
 
-    Flagged rows have peak_wind_kph replaced with NaN. avg_wind_kph is unaffected.
-    A boolean column 'peak_wind_flagged' is added (True = flagged).
+    avg_wind_kph:
+      1. Spike filter: reading > AVG_SPIKE_RATIO (3x) * local rolling median AND reading
+         > AVG_SPIKE_MIN_KPH (20 km/h). Catches isolated sensor jumps at any speed level
+         without rejecting genuine sustained high-wind events, where the local median
+         rises with the data so the ratio stays reasonable.
+      2. Ceiling filter: avg_wind_kph > AVG_WIND_CEIL_KPH (60 km/h). Catches spikes that
+         survive the ratio test because the local rolling median is already elevated.
+
+    peak_wind_kph:
+      2. Reed switch bounce: peak/avg ratio > BOUNCE_RATIO (8) AND peak > BOUNCE_MIN_PEAK_KPH
+         (25 km/h). A ratio this extreme indicates a mechanical sensor artefact where the
+         anemometer cup briefly spins fast from a single gust. Rows where avg == 0 and
+         peak > 25 are treated as infinite ratio and flagged.
+      3. Ceiling filter: peak_wind_kph > PEAK_WIND_CEIL_KPH (100 km/h).
+
+    Flagged values are replaced with NaN. Boolean columns 'avg_wind_flagged' and
+    'peak_wind_flagged' are added (True = flagged).
 
     Args:
         df: DataFrame with columns avg_wind_kph and peak_wind_kph.
     Returns:
-        The same DataFrame with peak_wind_kph cleaned and peak_wind_flagged added.
+        The same DataFrame with wind columns cleaned and flag columns added.
     """
     import numpy as np
 
-    # Ratio-based bounce filter: peak > 8x average AND peak > 25 km/h.
-    # Rows with avg == 0 and peak > 25 are treated as ratio-infinite, so flagged directly.
-    zero_avg = df["avg_wind_kph"] == 0
-    ratio = np.where(zero_avg, np.inf, df["peak_wind_kph"] / df["avg_wind_kph"].replace(0, np.nan))
-    bounce_mask = (np.array(ratio) > 8) & (df["peak_wind_kph"] > 25)
-    ceiling_mask = df["peak_wind_kph"] > 100
-    flagged = bounce_mask | ceiling_mask
+    # avg spike filter: flag readings that jump above 3x local rolling median
+    rolling_med = (
+        df["avg_wind_kph"]
+        .rolling(AVG_SPIKE_WINDOW, center=True, min_periods=3)
+        .median()
+    )
+    avg_flagged = (
+        ((df["avg_wind_kph"] > rolling_med * AVG_SPIKE_RATIO) & (df["avg_wind_kph"] > AVG_SPIKE_MIN_KPH))
+        | (df["avg_wind_kph"] > AVG_WIND_CEIL_KPH)
+    )
+    df["avg_wind_flagged"] = avg_flagged
+    df.loc[avg_flagged, "avg_wind_kph"] = np.nan
 
-    df["peak_wind_flagged"] = flagged
-    df.loc[flagged, "peak_wind_kph"] = np.nan
+    # Ratio-based bounce filter for peak. avg values already cleaned above, so safe to use.
+    # Rows with avg == 0 (or NaN after ceiling) and peak > threshold are treated as infinite ratio.
+    safe_avg = df["avg_wind_kph"].replace(0, np.nan)
+    ratio = np.where(safe_avg.isna(), np.inf, df["peak_wind_kph"] / safe_avg)
+    bounce_mask = (np.array(ratio) > BOUNCE_RATIO) & (df["peak_wind_kph"] > BOUNCE_MIN_PEAK_KPH)
+    ceiling_mask = df["peak_wind_kph"] > PEAK_WIND_CEIL_KPH
+    peak_flagged = bounce_mask | ceiling_mask
+
+    df["peak_wind_flagged"] = peak_flagged
+    df.loc[peak_flagged, "peak_wind_kph"] = np.nan
     return df
+
+
+def peak_wind_qc(df):
+    """Deprecated alias for wind_qc. Use wind_qc instead."""
+    return wind_qc(df)
 
 
 def compass_bin(degrees, n_points=16):
