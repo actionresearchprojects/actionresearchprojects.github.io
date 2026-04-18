@@ -315,7 +315,7 @@
       var val=document.getElementById('pw-in').value;
       var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
       var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
-      if(hash==='PLACEHOLDER_HASH'){
+      if(hash==='52e32618b274e60e320245f222a7a50dd485ea0e3edcf48cb2873977502b5f19'){
         sessionStorage.setItem('arc_auth','1');
         o.remove();
       }else{
