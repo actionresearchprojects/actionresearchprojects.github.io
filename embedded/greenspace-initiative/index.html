@@ -801,42 +801,49 @@ var JETPACK_MU_WPCOM_SETTINGS = {"assetsUrl":"https:\/\/s0.wp.com\/wp-content\/m
 
 
 <style>
-.arc-gs-carousel{position:relative;overflow:hidden;border-radius:4px;margin:0 auto}
-.arc-gs-carousel .arc-slide{display:none}
-.arc-gs-carousel .arc-slide.active{display:block}
-.arc-gs-carousel .arc-slide-link{display:block;line-height:0}
-.arc-gs-carousel .arc-slide img{width:100%;height:auto;display:block}
-.arc-gs-carousel .arc-slide-caption{background:rgba(0,0,0,.65);color:#fff;padding:10px 52px;font-size:1rem;font-weight:600;line-height:1.4;text-align:center}
-.arc-gs-carousel .arc-slide-caption a{color:#fff;text-decoration:none}
-.arc-gs-carousel .arc-slide-caption a:hover{text-decoration:underline}
-.arc-gs-btn{position:absolute;top:40%;transform:translateY(-50%);background:rgba(0,0,0,.45);border:none;color:#fff;font-size:2.5rem;line-height:1;width:44px;height:60px;cursor:pointer;z-index:2;border-radius:4px;transition:background .2s}
-.arc-gs-btn:hover{background:rgba(0,0,0,.75)}
-.arc-gs-prev{left:8px}.arc-gs-next{right:8px}
-.arc-gs-dots{display:flex;justify-content:center;gap:8px;padding:8px 0;background:rgba(0,0,0,.08)}
-.arc-gs-dot{width:10px;height:10px;border-radius:50%;background:rgba(100,100,100,.35);border:none;cursor:pointer;padding:0;transition:background .2s}
-.arc-gs-dot.active{background:#5e9f45}
+#arc-gallery-carousel{position:relative;overflow:hidden;border-radius:4px;margin:0 auto}
+#arc-gallery-carousel .gs-slide{display:none!important}
+#arc-gallery-carousel .gs-slide.gs-active{display:block!important}
+#arc-gallery-carousel .gs-slide-link{display:block;line-height:0}
+#arc-gallery-carousel .gs-slide img{width:100%;height:auto;display:block}
+#arc-gallery-carousel .gs-caption{background:rgba(0,0,0,.65);color:#fff;padding:10px 52px;font-size:1rem;font-weight:600;line-height:1.4;text-align:center}
+#arc-gallery-carousel .gs-caption a{color:#fff;text-decoration:none}
+#arc-gallery-carousel .gs-caption a:hover{text-decoration:underline}
+.gs-arr{position:absolute;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;z-index:2;padding:0;width:80px;height:80px}
+.gs-arr img{width:80px;height:80px}
+.gs-arr-prev{left:0}.gs-arr-next{right:0}
+.gs-dots{position:absolute;bottom:52px;left:50%;transform:translateX(-50%);display:flex;align-items:center;border-radius:50px;background:rgba(0,0,0,.2);backdrop-filter:blur(4px);z-index:2}
+.gs-dots button{border:none;background:transparent;cursor:pointer;margin:0;padding:10px 5px;display:flex;align-items:center;justify-content:center}
+.gs-dots button:first-child{padding-left:10px}
+.gs-dots button:last-child{padding-right:10px}
+.gs-dot{border-radius:50%;background:#fff;width:9px;height:9px;opacity:.5;display:block}
+.gs-dot.gs-dot-on{opacity:1}
 </style>
-<div class="arc-gs-carousel" id="arc-gs-carousel">
-  <div class="arc-slide active">
-    <a class="arc-slide-link" href="https://actionresearchprojectsnet.wordpress.com/2024/09/17/grove-cottage-garden/" target="_blank">
-      <img src="assets/greenspace-initiative/ARC%20Greenspace%20Initiative%20%E2%80%93%20Architecture%20.%20Resilience%20.%20Community_files/grove_forestgardengeneral5.jpg" alt="Grove Cottage Garden">
+<div id="arc-gallery-carousel">
+  <div class="gs-slide gs-active">
+    <a class="gs-slide-link" href="https://actionresearchprojectsnet.wordpress.com/2024/09/17/grove-cottage-garden/" target="_blank">
+      <img src="assets/wp-content/uploads/2024/09/grove_forestgardengeneral5.jpg" alt="Grove Cottage Garden">
     </a>
-    <div class="arc-slide-caption"><a href="https://actionresearchprojectsnet.wordpress.com/2024/09/17/grove-cottage-garden/" target="_blank">Grove Cottage Garden</a></div>
+    <div class="gs-caption"><a href="https://actionresearchprojectsnet.wordpress.com/2024/09/17/grove-cottage-garden/" target="_blank">Grove Cottage Garden</a></div>
   </div>
-  <div class="arc-slide">
-    <a class="arc-slide-link" href="https://actionresearchprojectsnet.wordpress.com/2024/09/15/organic-food-garden-and-wildlife-haven/" target="_blank">
-      <img src="assets/greenspace-initiative/ARC%20Greenspace%20Initiative%20%E2%80%93%20Architecture%20.%20Resilience%20.%20Community_files/20230824_095524-1.jpg" alt="Organic Food Garden and Wildlife Haven">
+  <div class="gs-slide">
+    <a class="gs-slide-link" href="https://actionresearchprojectsnet.wordpress.com/2024/09/15/organic-food-garden-and-wildlife-haven/" target="_blank">
+      <img src="assets/wp-content/uploads/2004/06/20230824_095524-1.jpg" alt="Organic Food Garden and Wildlife Haven">
     </a>
-    <div class="arc-slide-caption"><a href="https://actionresearchprojectsnet.wordpress.com/2024/09/15/organic-food-garden-and-wildlife-haven/" target="_blank">Organic Food Garden and Wildlife Haven</a></div>
+    <div class="gs-caption"><a href="https://actionresearchprojectsnet.wordpress.com/2024/09/15/organic-food-garden-and-wildlife-haven/" target="_blank">Organic Food Garden and Wildlife Haven</a></div>
   </div>
-  <button class="arc-gs-btn arc-gs-prev" onclick="arcGsNav(-1)">&#8249;</button>
-  <button class="arc-gs-btn arc-gs-next" onclick="arcGsNav(1)">&#8250;</button>
-  <div class="arc-gs-dots">
-    <button class="arc-gs-dot active" onclick="arcGsGo(0)"></button>
-    <button class="arc-gs-dot" onclick="arcGsGo(1)"></button>
+  <button class="gs-arr gs-arr-prev" onclick="gsCarouselNav(-1)" aria-label="Previous">
+    <img src="../../assets/images/carousel-previous-arrow.png" alt="">
+  </button>
+  <button class="gs-arr gs-arr-next" onclick="gsCarouselNav(1)" aria-label="Next">
+    <img src="../../assets/images/carousel-next-arrow.png" alt="">
+  </button>
+  <div class="gs-dots">
+    <button onclick="gsCarouselGo(0)" aria-label="Slide 1"><span class="gs-dot gs-dot-on"></span></button>
+    <button onclick="gsCarouselGo(1)" aria-label="Slide 2"><span class="gs-dot"></span></button>
   </div>
 </div>
-<script>(function(){var c=0,s,d;function init(){s=document.querySelectorAll('#arc-gs-carousel .arc-slide');d=document.querySelectorAll('#arc-gs-carousel .arc-gs-dot');}window.arcGsGo=function(n){if(!s)init();s[c].classList.remove('active');d[c].classList.remove('active');c=n;s[c].classList.add('active');d[c].classList.add('active');};window.arcGsNav=function(x){if(!s)init();arcGsGo((c+x+s.length)%s.length);};document.addEventListener('DOMContentLoaded',init);})();</script>
+<script>(function(){var c=0,s,d;function init(){s=document.querySelectorAll('#arc-gallery-carousel .gs-slide');d=document.querySelectorAll('#arc-gallery-carousel .gs-dot');}window.gsCarouselGo=function(n){if(!s)init();s[c].classList.remove('gs-active');d[c].classList.remove('gs-dot-on');c=n;s[c].classList.add('gs-active');d[c].classList.add('gs-dot-on');};window.gsCarouselNav=function(x){if(!s)init();gsCarouselGo((c+x+s.length)%s.length);};document.addEventListener('DOMContentLoaded',init);})();</script>
 
 
 
