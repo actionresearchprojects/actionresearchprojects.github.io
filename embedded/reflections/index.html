@@ -1,18 +1,20 @@
-<!DOCTYPE html><html lang="en"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Responsive Image Carousel — same height, variable width (Safari + Chrome mobile safe)</title>
 
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="assets/css2" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
 
   <!-- Preload a few images and arrows -->
-  <link rel="preload" as="image" href="assets/reflections/images/1.jpg">
-  <link rel="preload" as="image" href="assets/reflections/images/2.jpg">
-  <link rel="preload" as="image" href="assets/reflections/images/3.jpg">
-  <link rel="preload" as="image" href="assets/reflections/arrows/backward-arrow.png">
-  <link rel="preload" as="image" href="assets/reflections/arrows/forward-arrow.png">
+  <link rel="preload" as="image" href="images/1.jpg">
+  <link rel="preload" as="image" href="images/2.jpg">
+  <link rel="preload" as="image" href="images/3.jpg">
+  <link rel="preload" as="image" href="arrows/backward-arrow.png">
+  <link rel="preload" as="image" href="arrows/forward-arrow.png">
 
   <style>
     :root { --row-gap: clamp(4px, 0.75vw, 12px); --arrow-size: clamp(3rem, 8vw, 5rem); }
@@ -118,12 +120,12 @@
 </head>
 <body>
   <div class="container">
-    <button class="arrow left" id="arrowLeft" aria-label="Previous" style="display: none;">
-      <img id="arrowLeftImg" alt="Previous" src="assets/reflections/arrows/backward-arrow.png">
+    <button class="arrow left" id="arrowLeft" aria-label="Previous">
+      <img id="arrowLeftImg" alt="Previous" />
     </button>
     <div id="imageContainer"></div>
-    <button class="arrow right" id="arrowRight" aria-label="Next" style="display: none;">
-      <img id="arrowRightImg" alt="Next" src="assets/reflections/arrows/forward-arrow.png">
+    <button class="arrow right" id="arrowRight" aria-label="Next">
+      <img id="arrowRightImg" alt="Next" />
     </button>
   </div>
 
@@ -136,8 +138,8 @@
       return url.href;
     }
 
-    document.getElementById('arrowLeftImg').src = asset('assets/reflections/arrows/backward-arrow.png');
-    document.getElementById('arrowRightImg').src = asset('assets/reflections/arrows/forward-arrow.png');
+    document.getElementById('arrowLeftImg').src = asset('arrows/backward-arrow.png');
+    document.getElementById('arrowRightImg').src = asset('arrows/forward-arrow.png');
 
     let _currentLayout = null;
     let _resizeAnimationFrame = null;
@@ -199,8 +201,8 @@
     }
 
     function attachLazy(imgEl, index, priority=false) {
-      const primary = asset(`assets/reflections/images/${index}.jpg`);
-      const fallback = asset(`assets/reflections/images/${index}.png`);
+      const primary = asset(`images/${index}.jpg`);
+      const fallback = asset(`images/${index}.png`);
       const loadSrc = (src) => { imgEl.src = src; if (priority) imgEl.fetchPriority = 'high'; };
       let triedPng = false;
       imgEl.addEventListener('error', () => { if (!triedPng) { triedPng = true; loadSrc(fallback); } }, { once: true });
@@ -384,6 +386,5 @@
       if (scroller) scroller.scrollBy({ left: Math.max(300, scroller.clientWidth * 0.8), behavior: 'smooth' });
     };
   </script>
-
-
-</body></html>
+</body>
+</html>
