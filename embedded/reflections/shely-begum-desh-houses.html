@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Twin Passive Solar Courtyard Houses: Shely Begum</title>
+  <link href="assets/css2" rel="stylesheet">
+  <style>
+    html {
+      box-sizing: border-box;
+      height: 100%;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      color: #111;
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+    #topBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 6px 10px;
+      font-size: 18px;
+      background: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      z-index: 10;
+    }
+    #topBtn.visible {
+      opacity: 0.7;
+      pointer-events: auto;
+    }
+    #topBtn:hover {
+      opacity: 1;
+    }
+    #scrollPrompt {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      font-size: clamp(12px, 1.5vw, 16px);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      padding: 6px 10px;
+      z-index: 5;
+      user-select: none;
+      color: #000;
+      font-weight: bold;
+      line-height: 1;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    #scrollPrompt.fade-out {
+      opacity: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: 1px solid black;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .spacer {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div id="scrollPrompt" class="">↓ Scroll</div>
+  <h1>Twin Passive Solar Courtyard Houses, Sylhet, Bangladesh</h1>
+  <img src="images/desh_houses.jpg" alt="Twin Passive Solar Courtyard Houses">
+
+  <h2>Intro &amp; Design Concept</h2>
+  <p>I’ve undertaken the design and remote construction of two homes for my mum and aunty in the village of Mushibazar, Sylhet, Bangladesh. The project is rooted in local materials, craftsmanship, and traditions, with construction led by village-based contractors and subcontractors.</p>
+  <p>Drawing inspiration from traditional Bengali village homes, the design is centred around a south-facing courtyard space known as the ‘Utan’. This courtyard serves as both a passive design element and a vibrant social hub, fostering community interaction and daily rituals.</p>
+  <p>To harmonise the buildings with the surrounding landscape, I’ve incorporated a variety of outdoor spaces including terraces, balconies, and verandahs; each with unique orientations and shading strategies. These spaces offer comfort throughout the day and across seasons, providing shelter from intense heat or opportunities to enjoy it.</p>
+
+  <h2>Future Climate &amp; Passive Solar Design</h2>
+  <p>Sylhet’s monsoon subtropical climate presents unique challenges, especially in a low-lying village surrounded by rice paddies. Anticipating future climate impacts, I’ve prioritised resilient structural and foundation design, raising the houses above typical levels to mitigate flooding risks.</p>
+  <p>Passive solar design principles have been embedded from the outset. Each space is carefully oriented to maximise cross ventilation, while window overhangs and surrounds offer protection from monsoon rains and harsh sun. Traditional Mashrabiya-style grilles on verandahs enhance airflow and cooling, and strategic landscaping will help to reduce ambient heat.</p>
+  <p>Importantly, the design addresses the seasonal temperature extremes—hot summers and unexpectedly colder winters—by creating thermally comfortable spaces year-round, a feature often missing in current village homes.</p>
+
+  <h2>Challenges</h2>
+  <p>The journey of designing and constructing these homes has been anything but straightforward. One of the most significant hurdles has been working with the limited skillset of local village contractors. While their dedication has been unwavering, the lack of formal training and exposure to certain construction techniques meant that many aspects of the build required hands-on guidance and adaptation.</p>
+  <p>Sourcing appropriate materials posed another challenge. Availability was often unpredictable, and alternatives had to be found without compromising the integrity or intent of the design. The constraints in construction capabilities such as the absence of advanced tools and technology added further complexity, requiring creative problem-solving and a flexible approach to detailing.</p>
+  <p>Managing the project remotely from the UK introduced its own set of difficulties. Communication was often strained, not just due to distance but also because of the nuances in Bengali construction terminology. Translating architectural intent into actionable instructions required patience and persistence.</p>
+  <p>Security considerations also shaped the design in unexpected ways. Windows needed to accommodate insect screens and protective grilles, which led to the development of a bespoke plaster bead window surround detail. This increased the depth of the window reveals, allowing for these elements to be integrated seamlessly.</p>
+  <p>Perhaps the most surprising challenge was the intensity of the monsoon rains. Despite initial planning, the reality of the climate demanded mid-construction changes. Canopies and roof extensions were added to protect vulnerable areas, ensuring the homes could withstand the seasonal downpours more effectively.</p>
+
+  <h2>Progress &amp; Impact</h2>
+  <p>Despite these hurdles, the project has made remarkable progress. Each challenge has been met with collaboration, creativity, and resilience. The contractors’ tenacity and willingness to learn have been instrumental.</p>
+  <p>Notably, the subcontractors have been upskilled through this project, gaining techniques and knowledge they can apply to future work. The main contractor is now fully booked and highly sought after in the region, a testament to the project's transformative impact.</p>
+  <br>
+  <p><strong>By Shely Begum</strong></p>
+  <div class="spacer"></div>
+  <button id="topBtn" class="">▲</button>
+  <script>
+    const topBtn = document.getElementById('topBtn');
+    const scrollPrompt = document.getElementById('scrollPrompt');
+
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 100;
+      topBtn.classList.toggle('visible', scrolled);
+      scrollPrompt.classList.toggle('fade-out', scrolled);
+    });
+
+    topBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+
+</body></html>
