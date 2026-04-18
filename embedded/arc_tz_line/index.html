@@ -2683,8 +2683,23 @@ function setupStaticListeners() {
     state.selectedDay = parseInt(e.target.value); _zoomReset = true; updatePlot();
   });
 
+  function updateThresholdOption() {
+    const hasTemp = state.selectedMetrics.has('temperature');
+    const thresholdRow = document.getElementById('cb-threshold').parentElement;
+    if (!hasTemp) {
+      thresholdRow.style.display = 'none';
+      if (state.showThreshold) {
+        state.showThreshold = false;
+        document.getElementById('cb-threshold').checked = false;
+      }
+    } else {
+      thresholdRow.style.display = '';
+    }
+  }
+
   document.getElementById('cb-temperature').addEventListener('change', e => {
     e.target.checked ? state.selectedMetrics.add('temperature') : state.selectedMetrics.delete('temperature');
+    updateThresholdOption();
     _zoomReset = true; updatePlot();
   });
   document.getElementById('cb-humidity').addEventListener('change', e => {
@@ -3536,6 +3551,12 @@ function renderLineGraph() {
   const _lineHasData = dataMinMs !== Infinity;
   if (dataMinMs === Infinity) { dataMinMs = start; dataMaxMs = end; }
 
+  // Compute primary y-axis range early — needed for the threshold paper-coordinate shape
+  // so the threshold rect never touches the primary y-axis range and cannot disrupt overlaying axes.
+  const yPad = 1.5;
+  const yLo = yMin !== Infinity ? Math.floor((yMin - yPad) / yPad) * yPad : undefined;
+  const yHi = yMax !== -Infinity ? Math.ceil((yMax + yPad) / yPad) * yPad : undefined;
+
   // Expand bounds for historic/climate data before drawing threshold/season lines
   const showingHistoric = HISTORIC && state.historicMode;
   const historicFiltered = [];
@@ -3561,13 +3582,20 @@ function renderLineGraph() {
   // Threshold and season lines span the full visible range
   const rangeMinMs = state.timeMode === 'all' ? dataMinMs : start;
   const rangeMaxMs = state.timeMode === 'all' ? dataMaxMs : end;
-  // Only show threshold when temperature metric is active (it's a temperature band)
-  if (state.showThreshold && state.selectedMetrics.has('temperature')) {
-    shapes.push({type:'rect', xref:'x', yref:'y',
-      x0:toEATString(rangeMinMs), x1:toEATString(rangeMaxMs), y0:32, y1:35,
-      fillcolor:'rgba(231,76,60,0.12)', line:{width:0}});
+  // Use yref:'paper' so the shape is purely cosmetic and never alters the primary y-axis range,
+  // which would otherwise shift the overlaying weather station axes.
+  if (state.showThreshold && state.selectedMetrics.has('temperature') && yLo !== undefined) {
+    const yRange = yHi - yLo;
+    const y0paper = Math.max(0, (32 - yLo) / yRange);
+    const y1paper = Math.min(1, (35 - yLo) / yRange);
+    if (y1paper > y0paper) {
+      shapes.push({type:'rect', xref:'x', yref:'paper',
+        x0:toEATString(rangeMinMs), x1:toEATString(rangeMaxMs),
+        y0:y0paper, y1:y1paper,
+        fillcolor:'rgba(231,76,60,0.12)', line:{width:0}, layer:'below'});
+    }
     traces.push({x:[null], y:[null], type:'scatter', mode:'lines',
-      name:'32–35°C Threshold', line:{color:'rgba(231,76,60,0.35)', width:8},
+      name:'32\u201335\u00b0C Threshold', line:{color:'rgba(231,76,60,0.35)', width:8},
       hoverinfo:'skip', showlegend:true});
   }
 
@@ -3687,11 +3715,7 @@ function renderLineGraph() {
     }
   }
 
-  // Y-axis: pad to nearest 1.5°C
-  const yPad = 1.5;
-  const yLo = yMin !== Infinity ? Math.floor((yMin - yPad) / yPad) * yPad : undefined;
-  const yHi = yMax !== -Infinity ? Math.ceil((yMax + yPad) / yPad) * yPad : undefined;
-
+  // (yLo/yHi computed above before the threshold block)
   const hasTemp = state.selectedMetrics.has('temperature');
   const hasHum  = state.selectedMetrics.has('humidity');
   const yTitle  = hasTemp && hasHum ? t('tempHumidAxis') : hasTemp ? t('tempAxis') : t('humidAxis');
@@ -3700,26 +3724,33 @@ function renderLineGraph() {
   const dsl = dsLabel();
   const sm = window.innerWidth < 680;
 
-  // Compress xaxis domain to make room for stacked right-side weather axes
+  // Compress xaxis domain to make room for stacked right-side weather axes.
+  // Axes are coloured to match their trace and carry no title text; the unit is
+  // shown as a small annotation above the axis instead, saving horizontal space.
   const weatherAxesList = ['y2', 'y3', 'y4', 'y5', 'y6'].filter(a => activeWeatherAxes.has(a));
-  const axisOffsetStep = 0.05;
+  const axisOffsetStep = 0.045;
   const xRight = weatherAxesList.length > 0 ? Math.max(0.55, 1 - axisOffsetStep * weatherAxesList.length) : 1;
   const extraAxes = {};
   weatherAxesList.forEach((axKey, idx) => {
     const meta = WEATHER_AXIS_META[axKey];
     const position = Math.min(1, xRight + axisOffsetStep * idx);
     const yKey = 'yaxis' + axKey.slice(1);
-    // Compute explicit tick values: always show 0 and max (with a mid-point if range is large)
+    // Primary colour = first selected variable on this axis
+    const axisColor = [...state.selectedWeather]
+      .filter(wv => WEATHER_DEFS[wv] && WEATHER_DEFS[wv].axis === axKey)
+      .map(wv => WEATHER_DEFS[wv].color)[0] || '#999';
+    // Tick computation: always show exactly 0 and niceMax (2 ticks)
     let tickvals, tickmode, axisRange;
     if (meta.fixedTicks) {
-      tickvals = meta.fixedTicks;
+      // For wind direction show 0°, 180°, 360° only
+      tickvals = [meta.fixedTicks[0], meta.fixedTicks[Math.floor(meta.fixedTicks.length / 2)], meta.fixedTicks[meta.fixedTicks.length - 1]];
       tickmode = 'array';
       axisRange = [meta.fixedTicks[0], meta.fixedTicks[meta.fixedTicks.length - 1]];
     } else {
       const rawMax = weatherAxisMax[axKey];
       if (rawMax != null && rawMax > 0) {
         const niceMax = rawMax <= 10 ? Math.ceil(rawMax) : rawMax <= 100 ? Math.ceil(rawMax / 5) * 5 : Math.ceil(rawMax / 50) * 50;
-        tickvals = [0, Math.round(niceMax / 2), niceMax];
+        tickvals = [0, niceMax];
         tickmode = 'array';
         axisRange = [0, niceMax];
       } else {
@@ -3728,19 +3759,30 @@ function renderLineGraph() {
       }
     }
     extraAxes[yKey] = {
-      title: {text: meta.title, font: {size: 9}},
       overlaying: 'y',
       side: 'right',
       anchor: idx === 0 ? 'x' : 'free',
       position: position,
       showgrid: false,
+      showline: true, linewidth: 1.5, linecolor: axisColor,
+      tickcolor: axisColor,
       range: axisRange,
       rangemode: 'tozero',
-      tickfont: {size: 9},
+      tickfont: {size: 8, color: axisColor},
       tickmode, tickvals,
       ticks: 'outside', ticklen: 3,
       showticklabels: true,
+      automargin: false,
     };
+    // Unit annotation at the top of the axis — replaces the space-hungry rotated title
+    annotations.push({
+      xref: 'paper', yref: 'paper',
+      x: position, y: 1.01,
+      xanchor: 'center', yanchor: 'bottom',
+      text: meta.title,
+      showarrow: false,
+      font: {size: 8, color: axisColor},
+    });
   });
 
   const plotTitle = state.historicMode
