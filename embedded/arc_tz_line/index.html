@@ -6260,18 +6260,6 @@ function hideLoadingBar() {
 
 function _doRender() {
   state.chartType = 'line';
-  // Detect user zoom before re-rendering: if Plotly's current displayed range differs from
-  // the natural (full-data) range we stored last render, the user has drag-zoomed.
-  const chartEl_ = document.getElementById('chart');
-  if (!_zoomReset && _naturalRange && chartEl_._fullLayout) {
-    const fl = chartEl_._fullLayout;
-    const cur = fl.xaxis && fl.xaxis.range;
-    if (cur) {
-      const ms = v => typeof v === 'number' ? v : +new Date(v);
-      const diff = Math.abs(ms(cur[0]) - ms(_naturalRange[0])) + Math.abs(ms(cur[1]) - ms(_naturalRange[1]));
-      _savedZoom = diff > 60000 ? cur.slice() : null;
-    }
-  }
   let result = renderLineGraph();
   // Replace with empty message if no actual data
   if (result._noData) {
@@ -6297,20 +6285,17 @@ function _doRender() {
   const noDataEl = document.getElementById('substrat-no-data');
   const hasActiveFilters = getActiveSubstratFilters().length > 0;
   noDataEl.style.display = (hasActiveFilters && result._noData) ? 'block' : 'none';
-  // Save the natural range before applying zoom (used for zoom detection next render)
-  _naturalRange = (layout.xaxis && layout.xaxis.range) ? layout.xaxis.range.slice() : null;
-  // Apply saved zoom if active
-  if (!_zoomReset && _savedZoom) {
-    layout.xaxis = Object.assign(layout.xaxis || {}, {range: _savedZoom, autorange: false});
-  }
-  if (_zoomReset) _savedZoom = null;
-  _zoomReset = false;
+  // uirevision: when constant, Plotly.react() preserves all user interactions (zoom/pan).
+  // Changing the value resets them — used when the user explicitly requests a view reset.
+  layout.uirevision = _zoomReset ? Date.now() : 'arc-line-stable';
+  if (_zoomReset) _zoomReset = false;
+  const chartEl_ = document.getElementById('chart');
   chartEl_.classList.toggle('comfort-mode', state.chartType === 'comfort');
   Plotly.react('chart', traces, layout, PLOTLY_CONFIG);
   chartEl_.once('plotly_afterplot', () => setTimeout(positionComfortOverlays, 100));
   if (!_zoomListenersAdded) {
     _zoomListenersAdded = true;
-    chartEl_.on('plotly_doubleclick', () => { _zoomReset = true; _savedZoom = null; setTimeout(updatePlot, 0); });
+    chartEl_.on('plotly_doubleclick', () => { _zoomReset = true; setTimeout(updatePlot, 0); });
   }
   const histTip = document.getElementById('hist-hover-tip');
   histTip.style.display = 'none';
@@ -6380,16 +6365,14 @@ function _doRender() {
 
 // Tracks last rendered chart type + dataset to detect slow transitions
 let _lastRenderKey = null;
-let _zoomReset = false;        // set true by double-click or chart switch to allow autorange
-let _savedZoom = null;         // [x0, x1] captured on user drag-zoom; null = no active zoom
-let _naturalRange = null;      // full x range from last buildLineLayout, for zoom detection
-let _zoomListenersAdded = false; // listeners registered only once to prevent accumulation
+let _zoomReset = false;          // set true when zoom should be reset; causes new uirevision
+let _zoomListenersAdded = false; // doubleclick listener registered only once
 let _currentTitle = '';
 let _currentLayout = {};
 function updatePlot(forceLoader) {
   const renderKey = state.chartType + '|' + state.datasetKey;
   const isSlowOp = forceLoader || renderKey !== _lastRenderKey;
-  if (renderKey !== _lastRenderKey) { _zoomReset = true; _savedZoom = null; } // reset zoom on chart/dataset switch
+  if (renderKey !== _lastRenderKey) _zoomReset = true; // reset zoom on chart/dataset switch
   _lastRenderKey = renderKey;
   // Always show loading bar - slower estimate for chart/dataset switches, short for other updates
   const ms = isSlowOp ? (state.chartType === 'comfort' ? 1500 : state.chartType.startsWith('beta-') ? 1000 : 800) : 350;
