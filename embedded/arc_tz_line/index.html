@@ -3771,7 +3771,11 @@ function renderLineGraph() {
     autosize:true, font:{family:'Ubuntu, sans-serif'}, margin:{l:sm?45:65, r:sm?8:(hasWeather?50:20), t:state.showSeasonLines?(sm?70:85):(sm?6:10), b:sm?40:60},
     xaxis:{title:t('dateTime') + ' <i><span style="color:#aaa">(EAT, UTC+03:00)</span></i>', type:'date', showgrid:true, gridcolor:'#eee',
       domain: [0, xRight],
-      range: state.timeMode === 'all' ? [toEATString(dataMinMs), toEATString(dataMaxMs)] : [toEATString(start), toEATString(end)],
+      // 'all time' mode: let Plotly autorange so uirevision can preserve drag-zoom.
+      // Explicit range = developer-managed, which makes Plotly ignore user zoom even with uirevision.
+      ...(state.timeMode === 'all'
+        ? {autorange: true}
+        : {range: [toEATString(start), toEATString(end)]}),
       nticks:20, tickangle:-30, automargin:true},
     yaxis:{title:yTitle, ticksuffix:ySuffix, showgrid:true, gridcolor:'#eee', range: yLo !== undefined ? [yLo, yHi] : (hasWeather ? [0, 1] : undefined)},
     ...extraAxes,
@@ -6285,11 +6289,18 @@ function _doRender() {
   const noDataEl = document.getElementById('substrat-no-data');
   const hasActiveFilters = getActiveSubstratFilters().length > 0;
   noDataEl.style.display = (hasActiveFilters && result._noData) ? 'block' : 'none';
-  // uirevision: when constant, Plotly.react() preserves all user interactions (zoom/pan).
-  // Changing the value resets them — used when the user explicitly requests a view reset.
-  layout.uirevision = _zoomReset ? Date.now() : 'arc-line-stable';
-  if (_zoomReset) _zoomReset = false;
   const chartEl_ = document.getElementById('chart');
+  // In 'all time' mode, always feed the current displayed x range back into the layout so
+  // that Plotly.react() never resets a drag-zoom.  We skip this only when _zoomReset is
+  // true (double-click reset / dataset switch), in which case buildLineLayout already set
+  // autorange:true so Plotly will re-fit to the data.
+  if (state.timeMode === 'all' && !_zoomReset) {
+    const fl = chartEl_._fullLayout;
+    if (fl && fl.xaxis && fl.xaxis.range && fl.xaxis.range.length === 2) {
+      layout.xaxis = Object.assign(layout.xaxis || {}, {range: fl.xaxis.range.slice(), autorange: false});
+    }
+  }
+  if (_zoomReset) _zoomReset = false;
   chartEl_.classList.toggle('comfort-mode', state.chartType === 'comfort');
   Plotly.react('chart', traces, layout, PLOTLY_CONFIG);
   chartEl_.once('plotly_afterplot', () => setTimeout(positionComfortOverlays, 100));
