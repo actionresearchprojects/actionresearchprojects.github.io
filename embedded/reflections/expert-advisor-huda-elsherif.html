@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expert Advisor: Huda Elsherif</title>
+  <link href="assets/css2" rel="stylesheet">
+  <style>
+    html {
+      box-sizing: border-box;
+      height: 100%;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      color: #111;
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+    #topBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 6px 10px;
+      font-size: 18px;
+      background: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      z-index: 10;
+    }
+    #topBtn.visible {
+      opacity: 0.7;
+      pointer-events: auto;
+    }
+    #topBtn:hover {
+      opacity: 1;
+    }
+    #scrollPrompt {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      font-size: clamp(12px, 1.5vw, 16px);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      padding: 6px 10px;
+      z-index: 5;
+      user-select: none;
+      color: #000;
+      font-weight: bold;
+      line-height: 1;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    #scrollPrompt.fade-out {
+      opacity: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: 1px solid black;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .spacer {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div id="scrollPrompt" class="">↓ Scroll</div>
+  <h1>Expert Advisor: Huda Elsherif</h1>
+  <img src="images/image1.jpg" alt="Huda Elsherif">
+  <p>As a Sudanese expat who spent every summer visiting family in the village, I was frequently exposed to various house typologies and lifestyles. These experiences varied from living in a centrally airconditioned villa in the Arabian Gulf, a mixed-mode apartment building in the capital city Khartoum and a naturally ventilated courtyard house in rural Sudan. Despite all three areas sharing a similar climate, my expectations and lifestyle had to change depending on where I was staying. The lack of air conditioners (ACs) in the village meant adaptive behaviours were needed to keep cool. Though these adaptations were very laborious and time-consuming, they were an integral part of everyday life there. It was exhausting to take out all the mattresses and spray the yard every evening, but it also marked the beginning of teatime and boisterous conversations under the starlight.</p>
+  <p>In the past 20 years, with every visit, I noticed the number of ACs and modern buildings increases in both Khartoum and rural areas. Existing buildings were also impacted; naturally ventilated buildings became mixed-mode, and mixed-mode buildings became fully air-conditioned. Most changed beyond just adding an AC to spaces; the buildings and occupant behaviour also changed. My family in the village closed all the verandas and stopped using the yard entirely 15 years after they installed the first AC.</p>
+  <p>As an architect, I tried to design sustainable buildings to resist this trend. The key issue was that most hot climate solutions I found either focused on high-tech, fully airconditioned buildings or low-cost subsidised soil housing in Africa. So I decided to embark on a PhD journey to find a solution that fitted our transitional context. As part of my research, I reached out to other researchers and architects who had to face similar challenges in Africa, and that’s why I first contacted ARC. I was interested in their experience in the eco-village project in Tanzania. Our conversations helped me identify the building physics aspect of the challenge of designing for an airconditioned space vs a naturally ventilated one in a hot developing country. This formed a key part of my argument in my PhD study, which advocates for an ‘optimised mixed-mode building’, a zone-based approach to efficiently meet the demands of both modes in the same house.</p>
+  <p>I volunteered to perform a CFD analysis of their design to verify its efficiency and identify ways to improve it. My experience in the African context and thermal comfort also guided my advice for future-proofing the design and improving its resilience.</p>
+  <p>As part of my research, I am developing a framework for sustainable housing in the climate-vulnerable that respects the local socioeconomic conditions. My continued involvement with ARC in their projects will help me refine that theoretical framework through practical application. This is important because my next project is to write a practical guide for architects in the climate-vulnerable.</p>
+  <p>I believe that the diversity of socioeconomic and environmental conditions in the climate-vulnerable requires that we steer away from standardisation and focus on providing flexible context-specific solutions. A sustainable and comfortable house should be viewed as a spectrum of possibilities rather than a specific goal. It could be anything from a cosy mud house in the village to an ultra-modern Passivhaus in the capital or somewhere in between. It is also important to adjust expectations. It is difficult to achieve a net zero building with the limited available capabilities in many communities, but there is always room for improvement. Whether that is improving thermal comfort, resilience or energy consumption, climate change is here, and every bit counts.</p>
+  <div class="spacer"></div>
+  <button id="topBtn" class="">▲</button>
+  <script>
+    const topBtn = document.getElementById('topBtn');
+    const scrollPrompt = document.getElementById('scrollPrompt');
+
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 100;
+      topBtn.classList.toggle('visible', scrolled);
+      scrollPrompt.classList.toggle('fade-out', scrolled);
+    });
+
+    topBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
+
+</body></html>
