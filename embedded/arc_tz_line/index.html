@@ -14,7 +14,7 @@
 // the user can still pinch-zoom the Plotly chart afterwards.
 (function(){var m=document.querySelector('meta[name=viewport]');if(!m)return;var c=m.content;m.content=c+',maximum-scale=1';requestAnimationFrame(function(){m.content=c;});})();
 </script>
-<title>Aladdin's Cave</title>
+<title>ARC Tanzania - Aladdin's Cave</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -187,7 +187,7 @@ hr.divider { border: none; border-top: 1px solid #eee; margin: 2px 0; }
 <div id="header">
   <button id="sidebar-toggle" aria-label="Toggle controls">☰</button>
   <a href="https://actionresearchprojects.net"><img id="logo" src="logo/logotrim.png" alt="ARC logo"></a>
-  <h1 data-i18n="title">Aladdin's Cave</h1>
+  <h1 data-i18n="title">ARC Tanzania - Aladdin's Cave</h1>
   <a href="https://actionresearchprojects.net/explainers/arc-tz-temp-humid" target="_blank" class="info-i" id="about-info-icon" title="About this dashboard" style="text-decoration:none;margin-left:auto;">i</a>
   <div id="lang-wrap">
     <button id="lang-btn" onclick="document.getElementById('lang-menu').classList.toggle('open')" title="Language"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
@@ -524,7 +524,7 @@ const state = {
 let currentLang = localStorage.getItem('arcLang') || 'en';
 const I18N = {
   en: {
-    title: "Aladdin's Cave",
+    title: "ARC Tanzania - Aladdin's Cave",
     weatherStation: 'Weather Station',
     periodSettings: 'Period Settings',
     histogramSettings: 'Histogram Settings',
@@ -666,7 +666,7 @@ const I18N = {
     infoRunningMean: 'The running mean is an exponentially weighted average of past outdoor temperatures, where recent days count most. It captures how people acclimatise to changing weather: when outdoor temperatures have been high, occupants can tolerate higher indoor temperatures. <a href="https://actionresearchprojects.net/explainers/running-mean" target="_blank" style="color:#6a9fd8">Read more →</a>',
   },
   sw: {
-    title: "Aladdin's Cave",
+    title: "ARC Tanzania - Aladdin's Cave",
     weatherStation: 'Kituo cha Hali ya Hewa',
     periodSettings: 'Mipangilio ya Kipindi',
     histogramSettings: 'Mipangilio ya Histogramu',
