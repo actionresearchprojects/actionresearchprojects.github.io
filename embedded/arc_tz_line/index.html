@@ -382,7 +382,7 @@ hr.divider { border: none; border-top: 1px solid #eee; margin: 2px 0; }
       <div id="time-bar-top">
         <div id="time-bar-left">
           <select id="dataset-select">
-            <option value="house5" data-i18n="house5">ARC Tanzania - Aladdin's Cave</option>
+            <option value="house5" data-i18n="house5">House 5</option>
             <option value="schoolteacher" data-i18n="schoolteacher">Schoolteacher's House</option>
           </select>
           <select id="chart-type" style="display:none">
@@ -599,7 +599,7 @@ const I18N = {
     withinComfort: 'Within comfort zone',
     aboveLower: 'Above lower boundary',
     // Dataset labels
-    house5: "ARC Tanzania - Aladdin's Cave",
+    house5: 'House 5',
     schoolteacher: "Schoolteacher's House",
     // Section sub-headers
     sectionExternal: 'External',
@@ -740,7 +740,7 @@ const I18N = {
     belowUpper: 'Chini ya mpaka wa juu',
     withinComfort: 'Ndani ya eneo la starehe',
     aboveLower: 'Juu ya mpaka wa chini',
-    house5: "ARC Tanzania - Aladdin's Cave",
+    house5: 'House 5',
     schoolteacher: 'Nyumba ya Mwalimu',
     sectionExternal: 'Nje',
     sectionRoom: 'Chumba',
@@ -3765,7 +3765,7 @@ function renderLineGraph() {
 
   const plotTitle = state.historicMode
     ? 'Dar es Salaam \u2013 Historic and Projected Temperatures'
-    : `${dsl} \u2013 ${chartTitle}`;
+    : dsl;
   const barTitle = plotTitle.replace(/&amp;/g, '&');
   return {traces, layout: {
     autosize:true, font:{family:'Ubuntu, sans-serif'}, margin:{l:sm?45:65, r:sm?8:(hasWeather?50:20), t:state.showSeasonLines?(sm?70:85):(sm?6:10), b:sm?40:60},
