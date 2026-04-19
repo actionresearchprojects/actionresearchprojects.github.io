@@ -13,8 +13,8 @@ from .common import (
     COMPASS_DIRS_16, COMPASS_DIRS_8, WIND_SPEED_BINS, WIND_SPEED_LABELS,
     WIND_SPEED_COLORS, BEAUFORT_SCALE, VENTILATION_COLORS, WIND_CLASSIFICATIONS,
     KN_TO_KPH, TIMEZONE, CALM_THRESHOLD_KPH,
-    peak_wind_qc, compass_bin, beaufort_number, weibull_fit, to_eat_ms,
-    get_season_boundaries,
+    wind_qc, compass_bin, beaufort_number, weibull_fit, to_eat_ms,
+    get_season_boundaries, insert_gap_breaks,
 )
 
 
@@ -28,11 +28,13 @@ def process(df):
     """
     wdf = df.copy()
 
-    # Quality-control peak wind before any analysis:
-    # - flag reed switch bounce (avg < 1.0 km/h and peak > 25 km/h)
-    # - flag implausible ceiling (peak > 100 km/h)
-    # Flagged values are set to NaN; avg_wind_kph is unchanged.
-    wdf = peak_wind_qc(wdf)
+    # Quality-control wind before any analysis (see common.wind_qc for full rules):
+    # - avg spike: ratio > 3x rolling median AND > 20 km/h
+    # - avg ceiling: avg_wind_kph > 60 km/h (above Beaufort 7, implausible at this site)
+    # - bounce filter: peak/avg ratio > 8 AND peak > 25 km/h (reed switch artefact)
+    # - peak ceiling: peak_wind_kph > 100 km/h
+    # Flagged values are set to NaN.
+    wdf = wind_qc(wdf)
 
     # Compass direction labels
     wdf["compass_16"] = wdf["wind_dir"].apply(lambda d: compass_bin(d, 16))
@@ -187,6 +189,9 @@ def _build_wind_timeseries(wdf):
 
     avg_vals = [round(v, 1) if not pd.isna(v) else None for v in wdf["avg_wind_kph"]]
     peak_vals = [round(v, 1) if not pd.isna(v) else None for v in wdf["peak_wind_kph"]]
+
+    timestamps, avg_vals, peak_vals = insert_gap_breaks(timestamps, avg_vals, peak_vals)
+    rm_ts, rm_vals = insert_gap_breaks(rm_ts, rm_vals)
 
     season_bounds = get_season_boundaries(wdf)
 
@@ -343,7 +348,7 @@ def _build_wind_distribution(wdf, k_val, c_val):
     traces = [{
         "type": "bar",
         "name": "Frequency",
-        "x": [round(b, 1) for b in bin_centers],
+        "x": [round(b, 2) for b in bin_centers],
         "y": hist.tolist(),
         "marker": {"color": "#1f77b4"},
     }]
@@ -390,7 +395,11 @@ def _build_wind_distribution(wdf, k_val, c_val):
 
 def _build_gust_factor(wdf):
     """Build gust factor scatter plot (gust factor vs avg speed, colored by hour)."""
-    valid = wdf[(wdf["avg_wind_kph"] > CALM_THRESHOLD_KPH) & wdf["peak_wind_kph"].notna()].copy()
+    valid = wdf[
+        (wdf["avg_wind_kph"] > CALM_THRESHOLD_KPH) &
+        wdf["peak_wind_kph"].notna() &
+        (wdf["peak_wind_kph"] >= wdf["avg_wind_kph"])
+    ].copy()
     valid["gust_factor"] = valid["peak_wind_kph"] / valid["avg_wind_kph"]
     valid["hour"] = valid["timestamp"].dt.hour
 
@@ -398,6 +407,13 @@ def _build_gust_factor(wdf):
     valid = valid[valid["gust_factor"] < 20]
 
     timestamps = [to_eat_ms(t) for t in valid["timestamp"]]
+    eat_labels = [t.strftime("%d %b %Y, %H:%M") for t in valid["timestamp"]]
+    # customdata columns: [hour, peak_kph, eat_label]
+    customdata = list(zip(
+        valid["hour"].tolist(),
+        [round(v, 1) for v in valid["peak_wind_kph"]],
+        eat_labels,
+    ))
 
     traces = [{
         "type": "scatter",
@@ -406,6 +422,7 @@ def _build_gust_factor(wdf):
         "x_ms": timestamps,
         "x_speed": [round(v, 1) for v in valid["avg_wind_kph"]],
         "y": [round(v, 2) for v in valid["gust_factor"]],
+        "customdata": customdata,
         "marker": {
             "color": valid["hour"].tolist(),
             "colorscale": "Viridis",
