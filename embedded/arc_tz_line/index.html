@@ -2045,7 +2045,7 @@ function loadDataset(key) {
     lbl.innerHTML = `<input type="checkbox" data-logger-id="${id}" ${stateSet.has(id) ? 'checked' : ''}> <span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:${m.colors[id]};vertical-align:middle"></span> <span class="logger-name" data-lid="${id}">${ln(id)}</span>${meteoSuffix(id)}${omniSuffix(m.loggerSources[id] || '')}${extraLabel || ''}${anomSuffix}`;
     lbl.querySelector('input').addEventListener('change', e => {
       e.target.checked ? stateSet.add(id) : stateSet.delete(id);
-      if (state.timeMode === 'all') _zoomReset = true; updatePlot();
+      updatePlot();
     });
     if (hasAnom) {
       const warn = lbl.querySelector('.anomalous-warn');
@@ -2075,12 +2075,12 @@ function loadDataset(key) {
     btnRow.appendChild(mkSelBtn(t('btnAll'), () => {
       ids.forEach(id => { stateSet.add(id); container.querySelector(`input[data-logger-id="${id}"]`).checked = true; });
       if (sectionKey) { state.showSectionAvg[sectionKey] = true; const cb = container.querySelector(`input[data-section-avg="${sectionKey}"]`); if (cb) cb.checked = true; }
-      if (state.timeMode === 'all') _zoomReset = true; updatePlot();
+      updatePlot();
     }, 'btnAll'));
     btnRow.appendChild(mkSelBtn(t('btnNone'), () => {
       ids.forEach(id => { stateSet.delete(id); container.querySelector(`input[data-logger-id="${id}"]`).checked = false; });
       if (sectionKey) { state.showSectionAvg[sectionKey] = false; const cb = container.querySelector(`input[data-section-avg="${sectionKey}"]`); if (cb) cb.checked = false; }
-      if (state.timeMode === 'all') _zoomReset = true; updatePlot();
+      updatePlot();
     }, 'btnNone'));
     if (sectionKey) {
       const lockBtn = document.createElement('button');
@@ -2118,8 +2118,8 @@ function loadDataset(key) {
     const hasOS = ids.some(id => m.loggerSources[id] === 'Omnisense');
     if (!hasTT || !hasOS) return null;
     return [
-      mkSelBtn('TinyTag',  () => { ids.forEach(id => { const is = m.loggerSources[id]==='TinyTag';  is ? stateSet.add(id) : stateSet.delete(id); container.querySelector(`input[data-logger-id="${id}"]`).checked = is; }); if (state.timeMode === 'all') _zoomReset = true; updatePlot(); }),
-      mkSelBtn('Omnisense',() => { ids.forEach(id => { const is = m.loggerSources[id]==='Omnisense'; is ? stateSet.add(id) : stateSet.delete(id); container.querySelector(`input[data-logger-id="${id}"]`).checked = is; }); if (state.timeMode === 'all') _zoomReset = true; updatePlot(); }),
+      mkSelBtn('TinyTag',  () => { ids.forEach(id => { const is = m.loggerSources[id]==='TinyTag';  is ? stateSet.add(id) : stateSet.delete(id); container.querySelector(`input[data-logger-id="${id}"]`).checked = is; }); updatePlot(); }),
+      mkSelBtn('Omnisense',() => { ids.forEach(id => { const is = m.loggerSources[id]==='Omnisense'; is ? stateSet.add(id) : stateSet.delete(id); container.querySelector(`input[data-logger-id="${id}"]`).checked = is; }); updatePlot(); }),
     ];
   }
   const extSet   = new Set(m.externalLoggers || []);
@@ -2700,17 +2700,17 @@ function setupStaticListeners() {
   document.getElementById('cb-temperature').addEventListener('change', e => {
     e.target.checked ? state.selectedMetrics.add('temperature') : state.selectedMetrics.delete('temperature');
     updateThresholdOption();
-    _zoomReset = true; updatePlot();
+    updatePlot();
   });
   document.getElementById('cb-humidity').addEventListener('change', e => {
     e.target.checked ? state.selectedMetrics.add('humidity') : state.selectedMetrics.delete('humidity');
-    _zoomReset = true; updatePlot();
+    updatePlot();
   });
   document.querySelectorAll('.cb-weather').forEach(cb => {
     cb.addEventListener('change', e => {
       const v = e.target.getAttribute('data-wv');
       if (e.target.checked) state.selectedWeather.add(v); else state.selectedWeather.delete(v);
-      _zoomReset = true; updatePlot();
+      updatePlot();
     });
   });
   document.getElementById('cb-threshold').addEventListener('change', e => {
@@ -3771,7 +3771,11 @@ function renderLineGraph() {
     autosize:true, font:{family:'Ubuntu, sans-serif'}, margin:{l:sm?45:65, r:sm?8:(hasWeather?50:20), t:state.showSeasonLines?(sm?70:85):(sm?6:10), b:sm?40:60},
     xaxis:{title:t('dateTime') + ' <i><span style="color:#aaa">(EAT, UTC+03:00)</span></i>', type:'date', showgrid:true, gridcolor:'#eee',
       domain: [0, xRight],
-      range: state.timeMode === 'all' ? [toEATString(dataMinMs), toEATString(dataMaxMs)] : [toEATString(start), toEATString(end)],
+      // 'all time' mode: let Plotly autorange so uirevision can preserve drag-zoom.
+      // Explicit range = developer-managed, which makes Plotly ignore user zoom even with uirevision.
+      ...(state.timeMode === 'all'
+        ? {autorange: true}
+        : {range: [toEATString(start), toEATString(end)]}),
       nticks:20, tickangle:-30, automargin:true},
     yaxis:{title:yTitle, ticksuffix:ySuffix, showgrid:true, gridcolor:'#eee', range: yLo !== undefined ? [yLo, yHi] : (hasWeather ? [0, 1] : undefined)},
     ...extraAxes,
@@ -6260,18 +6264,6 @@ function hideLoadingBar() {
 
 function _doRender() {
   state.chartType = 'line';
-  // Detect user zoom before re-rendering: if Plotly's current displayed range differs from
-  // the natural (full-data) range we stored last render, the user has drag-zoomed.
-  const chartEl_ = document.getElementById('chart');
-  if (!_zoomReset && _naturalRange && chartEl_._fullLayout) {
-    const fl = chartEl_._fullLayout;
-    const cur = fl.xaxis && fl.xaxis.range;
-    if (cur) {
-      const ms = v => typeof v === 'number' ? v : +new Date(v);
-      const diff = Math.abs(ms(cur[0]) - ms(_naturalRange[0])) + Math.abs(ms(cur[1]) - ms(_naturalRange[1]));
-      _savedZoom = diff > 60000 ? cur.slice() : null;
-    }
-  }
   let result = renderLineGraph();
   // Replace with empty message if no actual data
   if (result._noData) {
@@ -6297,20 +6289,24 @@ function _doRender() {
   const noDataEl = document.getElementById('substrat-no-data');
   const hasActiveFilters = getActiveSubstratFilters().length > 0;
   noDataEl.style.display = (hasActiveFilters && result._noData) ? 'block' : 'none';
-  // Save the natural range before applying zoom (used for zoom detection next render)
-  _naturalRange = (layout.xaxis && layout.xaxis.range) ? layout.xaxis.range.slice() : null;
-  // Apply saved zoom if active
-  if (!_zoomReset && _savedZoom) {
-    layout.xaxis = Object.assign(layout.xaxis || {}, {range: _savedZoom, autorange: false});
+  const chartEl_ = document.getElementById('chart');
+  // In 'all time' mode, always feed the current displayed x range back into the layout so
+  // that Plotly.react() never resets a drag-zoom.  We skip this only when _zoomReset is
+  // true (double-click reset / dataset switch), in which case buildLineLayout already set
+  // autorange:true so Plotly will re-fit to the data.
+  if (state.timeMode === 'all' && !_zoomReset) {
+    const fl = chartEl_._fullLayout;
+    if (fl && fl.xaxis && fl.xaxis.range && fl.xaxis.range.length === 2) {
+      layout.xaxis = Object.assign(layout.xaxis || {}, {range: fl.xaxis.range.slice(), autorange: false});
+    }
   }
-  if (_zoomReset) _savedZoom = null;
-  _zoomReset = false;
+  if (_zoomReset) _zoomReset = false;
   chartEl_.classList.toggle('comfort-mode', state.chartType === 'comfort');
   Plotly.react('chart', traces, layout, PLOTLY_CONFIG);
   chartEl_.once('plotly_afterplot', () => setTimeout(positionComfortOverlays, 100));
   if (!_zoomListenersAdded) {
     _zoomListenersAdded = true;
-    chartEl_.on('plotly_doubleclick', () => { _zoomReset = true; _savedZoom = null; setTimeout(updatePlot, 0); });
+    chartEl_.on('plotly_doubleclick', () => { _zoomReset = true; setTimeout(updatePlot, 0); });
   }
   const histTip = document.getElementById('hist-hover-tip');
   histTip.style.display = 'none';
@@ -6380,16 +6376,14 @@ function _doRender() {
 
 // Tracks last rendered chart type + dataset to detect slow transitions
 let _lastRenderKey = null;
-let _zoomReset = false;        // set true by double-click or chart switch to allow autorange
-let _savedZoom = null;         // [x0, x1] captured on user drag-zoom; null = no active zoom
-let _naturalRange = null;      // full x range from last buildLineLayout, for zoom detection
-let _zoomListenersAdded = false; // listeners registered only once to prevent accumulation
+let _zoomReset = false;          // set true when zoom should be reset; causes new uirevision
+let _zoomListenersAdded = false; // doubleclick listener registered only once
 let _currentTitle = '';
 let _currentLayout = {};
 function updatePlot(forceLoader) {
   const renderKey = state.chartType + '|' + state.datasetKey;
   const isSlowOp = forceLoader || renderKey !== _lastRenderKey;
-  if (renderKey !== _lastRenderKey) { _zoomReset = true; _savedZoom = null; } // reset zoom on chart/dataset switch
+  if (renderKey !== _lastRenderKey) _zoomReset = true; // reset zoom on chart/dataset switch
   _lastRenderKey = renderKey;
   // Always show loading bar - slower estimate for chart/dataset switches, short for other updates
   const ms = isSlowOp ? (state.chartType === 'comfort' ? 1500 : state.chartType.startsWith('beta-') ? 1000 : 800) : 350;
