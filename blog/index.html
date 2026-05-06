@@ -459,12 +459,25 @@
       }
     }
 
-    function showPost(index) {
-      const post = postsData[index];
-      if (!post) return;
+    async function showPost(index) {
+      const meta = postsData[index];
+      if (!meta) return;
 
-      const slug = post.slug || index;
+      const slug = meta.slug || index;
       window.location.hash = slug;
+
+      document.getElementById('list-view').style.display = 'none';
+      document.getElementById('post-view').style.display = 'block';
+      document.getElementById('post-content').innerHTML = '<p style="color:#999;text-align:center;padding:40px">Loading...</p>';
+      window.scrollTo(0, 0);
+
+      let post;
+      try {
+        const res = await fetch(`posts/${slug}.json?t=${Date.now()}`);
+        post = await res.json();
+      } catch (e) {
+        post = meta;
+      }
 
       const date = new Date(post.date).toLocaleDateString('en-GB', {
         day: 'numeric', month: 'long', year: 'numeric'
@@ -482,7 +495,6 @@
           </a>`
         : '';
 
-      // Build additional images grid
       const additionalImages = (post.images || []).filter(img => img !== post.coverImage);
       const imagesGrid = additionalImages.length > 0
         ? `<div class="post-images-grid">${additionalImages.map(img =>
@@ -499,16 +511,12 @@
           <h1 class="post-header-title">${esc(post.title)}</h1>
           ${coverImg}
           <div class="post-body">
-            ${post.body}
+            ${post.body || ''}
           </div>
           ${imagesGrid}
           ${linkedinLink}
         </div>
       `;
-
-      document.getElementById('list-view').style.display = 'none';
-      document.getElementById('post-view').style.display = 'block';
-      window.scrollTo(0, 0);
     }
 
     function showList() {
