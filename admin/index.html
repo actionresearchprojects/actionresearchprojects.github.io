@@ -752,6 +752,10 @@
         </div>
         <button class="pub-btn" id="pbtn" onclick="publish()">Publish</button>
       </div>
+      <div style="margin-top:16px">
+        <p class="lbl">Existing LinkedIn URL (optional — paste if already posted there)</p>
+        <input type="url" id="linkedin-url" style="width:100%;padding:10px 12px;background:#fff;border:1px solid #ddd;border-radius:8px;color:#333;font-family:inherit;font-size:14px;outline:none;transition:border-color 0.2s" placeholder="https://www.linkedin.com/feed/update/...">
+      </div>
     </div>
   </div>
 
@@ -969,6 +973,7 @@
       document.getElementById('other-name').value = '';
       document.getElementById('cb1').checked = true;
       document.getElementById('cb2').checked = true;
+      document.getElementById('linkedin-url').value = '';
       images = []; tags = []; cIdx = 0; authorPicData = null;
       dTh(); dTg();
       onAuthorChange();
@@ -1055,6 +1060,7 @@
 
         document.getElementById('cb1').checked = true;
         document.getElementById('cb2').checked = !!post.linkedinRequested;
+        document.getElementById('linkedin-url').value = post.linkedinUrl || '';
         toast('Post loaded');
       } catch (e) {
         toast('Error loading post: ' + e.message, 1);
@@ -1280,6 +1286,7 @@
         const slug = editingSlug || title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 60);
         const author = getAuthorInfo();
         const wLI = document.getElementById('cb2').checked;
+        const manualLinkedinUrl = document.getElementById('linkedin-url').value.trim();
         const customExcerpt = document.getElementById('post-excerpt').value.trim();
 
         // Upload author pic if changed
@@ -1327,10 +1334,12 @@
           coverImage: cover,
           images: paths.map(p => '/blog/' + p.replace('blog/', '')),
           tags,
-          linkedinRequested: wLI
+          linkedinRequested: manualLinkedinUrl ? false : wLI
         };
 
-        if (editingSlug) {
+        if (manualLinkedinUrl) {
+          post.linkedinUrl = manualLinkedinUrl;
+        } else if (editingSlug) {
           const existing = allPosts.find(p => p.slug === slug);
           if (existing?.linkedinUrl) post.linkedinUrl = existing.linkedinUrl;
         }
