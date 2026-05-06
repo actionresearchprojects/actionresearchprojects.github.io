@@ -4,10 +4,17 @@
   "author": "Andy Simmonds",
   "authorImage": "/blog/authors/andy.jpeg",
   "date": "2026-05-05T00:00:00.000Z",
-  "body": "<p>Here's an update by Archie Worthington on the ARC data analysis platform:</p><div style=\"position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:16px 0\"><iframe src=\"https://www.youtube.com/embed/M6noLlFBv24\" style=\"position:absolute;top:0;left:0;width:100%;height:100%;border:0\" allowfullscreen loading=\"lazy\"></iframe></div>",
+  "body": "<p>Here's an update by Archie Worthington on the ARC data analysis platform:</p><div style=\"position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin:16px 0\"><iframe src=\"https://www.youtube.com/embed/M6noLlFBv24\" style=\"position:absolute;top:0;left:0;width:100%;height:100%;border:0\" allowfullscreen=\"\" loading=\"lazy\"></iframe></div>",
   "excerpt": "An update by Archie Worthington on the ARC data analysis platform — overview of the Tanzania temperature and humidity monitoring tool.",
   "coverImage": "",
   "images": [],
-  "tags": ["data", "Tanzania", "temperature", "humidity", "analysis"],
-  "linkedinRequested": false
+  "tags": [
+    "data",
+    "Tanzania",
+    "temperature",
+    "humidity",
+    "analysis"
+  ],
+  "linkedinRequested": false,
+  "linkedinUrl": "https://www.linkedin.com/posts/arc-cool-buildings_arc-tanzania-temphumidity-tool-overview-activity-7457512389958119424-f9sQ"
 }
