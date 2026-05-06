@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "slug": "arc-tanzania-temp-humidity-tool-overview",
+    "title": "ARC Tanzania Temp & Humidity Tool Overview",
+    "author": "Andy Simmonds",
+    "authorImage": "",
+    "date": "2026-05-05T00:00:00.000Z",
+    "excerpt": "An update by Archie Worthington on the ARC data analysis platform — overview of the Tanzania temperature and humidity monitoring tool.",
+    "coverImage": "",
+    "images": [],
+    "tags": ["data", "Tanzania", "temperature", "humidity", "analysis"],
+    "linkedinRequested": false
+  },
+  {
+    "slug": "prototype-ventilating-window-tanzania",
+    "title": "Prototype Insect-Proof Ventilating Window Installed in Tanzania",
+    "author": "Andy Simmonds",
+    "authorImage": "",
+    "date": "2026-03-27T00:00:00.000Z",
+    "excerpt": "Prototype secure, insect proof ventilating window installed in local teachers' home in semi-rural Tanzania — researched and designed by ARC, with a steel frame and mashrabiya security screen by Vogue Engineering in Dar es Salaam.",
+    "coverImage": "",
+    "images": [],
+    "tags": ["Tanzania", "prototype", "ventilation", "cool buildings"],
+    "linkedinRequested": false
+  }
+]
