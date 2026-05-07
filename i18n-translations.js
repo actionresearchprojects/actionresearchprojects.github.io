@@ -145,6 +145,10 @@ window.ARC_TRANSLATIONS = {
     'blog.tagline': 'Latest from ARC - Architecture for Resilient Communities',
     'blog.loading': 'Loading posts...',
     'blog.allPosts': '← All posts',
+
+    // ── Embedded sub-projects ──────────────────────────────────
+    // projects-grid (iframed into projects/index.html)
+    'pg.project1': 'Project 1',
   },
 
   sw: {
@@ -287,5 +291,9 @@ window.ARC_TRANSLATIONS = {
     'blog.tagline': 'Habari za hivi karibuni kutoka ARC - Usanifu wa Majengo kwa Jamii Imara',
     'blog.loading': 'Inapakia machapisho...',
     'blog.allPosts': '← Machapisho yote',
+
+    // ── Embedded sub-projects ──────────────────────────────────
+    // projects-grid
+    'pg.project1': 'Mradi 1',
   },
 };

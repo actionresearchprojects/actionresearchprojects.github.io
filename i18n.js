@@ -156,7 +156,21 @@ var ARC_I18N_ENABLED = true;
 
   window.ARCi18n = { apply: apply, t: t, getLang: getLang, pickLanguage: pickLanguage };
 
+  // Detect if we're running inside an iframe — embedded sub-projects
+  // (projects-grid, CBG-grid, arc-people, etc.) load this script via
+  // /i18n.js and need translations applied, but the parent page already
+  // owns the footer globe + mobile picker — so iframes skip those.
+  function inIframe() {
+    try { return window.self !== window.top; } catch (e) { return true; }
+  }
+
   function init() {
+    if (inIframe()) {
+      // Iframe context: just translate. The parent decides language;
+      // we read the same shared localStorage / sessionStorage.
+      apply();
+      return;
+    }
     // If the picker will block the user, leave the page in its
     // static English state until they pick — avoids a Swahili flash
     // from a stale localStorage value behind the dimmed overlay.
@@ -168,6 +182,15 @@ var ARC_I18N_ENABLED = true;
     if (!willShowPicker) apply();
     showPickerIfNeeded();
   }
+
+  // Re-apply translations when the parent page broadcasts a language
+  // change. Same-origin iframes share storage, but a `storage` event
+  // only fires in OTHER tabs/iframes, not the one that wrote it — so
+  // when the desktop globe in the parent flips language, this fires
+  // here and the iframe re-translates.
+  window.addEventListener('storage', function (e) {
+    if (e.key === STORAGE_KEY || e.key === SESSION_KEY) apply();
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
