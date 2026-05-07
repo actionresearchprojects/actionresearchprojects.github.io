@@ -131,3 +131,28 @@
   background: #333;
   color: #fff;
 }
+
+/* ── Swahili overflow handling ──────────────────────────────────
+   Framer locks font-size via inline style on <p class="framer-text">,
+   so overrides need !important. Only applied when Swahili is the
+   active language (set on <html lang="sw"> by i18n.js).
+   Allow wrapping + shrink the worst-offending nav buttons. */
+html[lang="sw"] [data-nav-button] p.framer-text {
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+  line-height: 1.05em !important;
+}
+/* Support button: longest Swahili string. Shrink + tighten leading. */
+html[lang="sw"] [data-nav-button="support"] p.framer-text {
+  font-size: 26px !important;
+  --framer-font-size: 26px !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1.1em !important;
+}
+/* Cool Buildings Guide: ~30% longer in Swahili. Slight font-size reduction. */
+html[lang="sw"] [data-nav-button="cbg"] p.framer-text {
+  font-size: 26px !important;
+  --framer-font-size: 26px !important;
+}

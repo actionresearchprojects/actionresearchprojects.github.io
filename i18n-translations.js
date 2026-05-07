@@ -152,10 +152,10 @@ window.ARC_TRANSLATIONS = {
   },
 
   sw: {
-    // Nav buttons
-    'nav.cbg': 'Mwongozo wa Majengo Yanayopoa',
+    // Nav buttons (kept short to fit Framer's fixed-width buttons)
+    'nav.cbg': 'Mwongozo wa Majengo Baridi',
     'nav.map': 'Ramani ya Watu na Miradi',
-    'nav.support': 'Saidia dhamira ya ARC ya kuyaweka majengo yakiwa na ubaridi katika tabianchi inayobadilika',
+    'nav.support': 'Saidia ARC kupoza majengo katika tabianchi inayobadilika',
     'nav.reflections': 'Tafakari',
     'nav.people': 'Watu wa ARC',
     'nav.science': 'Sayansi',
@@ -182,7 +182,7 @@ window.ARC_TRANSLATIONS = {
 
     // Page titles
     'title.home': 'ARC (Usanifu wa Majengo kwa Jamii Imara)',
-    'title.cbg': 'Mwongozo wa Majengo Yanayopoa — ARC',
+    'title.cbg': 'Mwongozo wa Majengo Baridi — ARC',
     'title.map': 'Ramani ya Watu na Miradi — ARC',
     'title.people': 'Watu wa ARC',
     'title.projects': 'Miradi ya ARC',
