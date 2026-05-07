@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'blog/posts/*.json'
+  workflow_dispatch:
 
 jobs:
   linkedin-post:
