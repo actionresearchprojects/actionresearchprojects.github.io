@@ -63,3 +63,71 @@
   font-weight: 600;
   color: #1f77b4;
 }
+
+/* ── Mobile language picker overlay ──────────────────────────────
+   Hidden by default. Runtime adds .show only on mobile (≤1024px)
+   and only when no per-session choice exists yet. Z-index above
+   the orientation-lock overlay so language is picked first. */
+#lang-picker-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 20, 0.92);
+  z-index: 100000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  -webkit-tap-highlight-color: transparent;
+}
+#lang-picker-overlay.show {
+  display: flex;
+}
+#lang-picker-overlay .lang-picker-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 22px 24px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  font-family: "Ubuntu", sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+#lang-picker-overlay .lang-picker-globe {
+  margin: 0 auto 14px;
+  display: block;
+  color: #333;
+}
+#lang-picker-overlay .lang-picker-prompt {
+  font-size: 15px;
+  font-weight: 300;
+  color: #555;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+#lang-picker-overlay .lang-picker-prompt span {
+  display: block;
+  margin-top: 2px;
+  font-style: italic;
+}
+#lang-picker-overlay .lang-picker-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#lang-picker-overlay .lang-picker-buttons button {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 400;
+  padding: 14px 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+#lang-picker-overlay .lang-picker-buttons button:hover,
+#lang-picker-overlay .lang-picker-buttons button:active {
+  background: #333;
+  color: #fff;
+}

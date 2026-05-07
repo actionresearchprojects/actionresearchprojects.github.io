@@ -15,9 +15,11 @@ var ARC_I18N_ENABLED = true;
 // ──────────────────────────────────────────────────────────────────────
 
 (function () {
-  var STORAGE_KEY = 'arc-lang';
+  var STORAGE_KEY = 'arc-lang';            // localStorage: cross-visit (desktop globe)
+  var SESSION_KEY = 'arc-lang-session';    // sessionStorage: per-tab (mobile picker)
   var DEFAULT_LANG = 'en';
   var SUPPORTED = { en: 1, sw: 1 };
+  var MOBILE_MAX = 1024;                   // matches orientation-lock breakpoint
 
   // When disabled: hide the language UI + force English. Stored 'sw'
   // preferences are ignored (not deleted, so re-enabling restores the
@@ -43,10 +45,36 @@ var ARC_I18N_ENABLED = true;
   }
 
   function getLang() {
+    // Per-tab pick (mobile overlay or in-session change) takes priority.
+    var session = null;
+    try { session = sessionStorage.getItem(SESSION_KEY); } catch (e) {}
+    if (session && SUPPORTED[session]) return session;
+    // Cross-visit pick (desktop globe button).
     var stored = null;
     try { stored = localStorage.getItem(STORAGE_KEY); } catch (e) {}
     if (stored && SUPPORTED[stored]) return stored;
     return DEFAULT_LANG;
+  }
+
+  function isMobile() {
+    return (window.innerWidth || document.documentElement.clientWidth || 0) <= MOBILE_MAX;
+  }
+
+  function showPickerIfNeeded() {
+    // Show mobile picker once per browser session, only when no choice has
+    // been made yet in this tab. localStorage is intentionally ignored here
+    // — the spec is "ask every fresh visit on mobile".
+    if (!isMobile()) return;
+    var sessionPick = null;
+    try { sessionPick = sessionStorage.getItem(SESSION_KEY); } catch (e) {}
+    if (sessionPick) return;
+    var overlay = document.getElementById('lang-picker-overlay');
+    if (overlay) overlay.classList.add('show');
+  }
+
+  function hidePicker() {
+    var overlay = document.getElementById('lang-picker-overlay');
+    if (overlay) overlay.classList.remove('show');
   }
 
   function t(key) {
@@ -108,20 +136,43 @@ var ARC_I18N_ENABLED = true;
     }
   }
 
+  // Desktop globe button: persist across visits AND for the rest of the tab session.
   window.setLanguage = function (lang) {
     if (!SUPPORTED[lang]) return;
     try { localStorage.setItem(STORAGE_KEY, lang); } catch (e) {}
+    try { sessionStorage.setItem(SESSION_KEY, lang); } catch (e) {}
     apply();
     var menu = document.getElementById('lang-menu');
     if (menu) menu.classList.remove('open');
   };
 
-  window.ARCi18n = { apply: apply, t: t, getLang: getLang };
+  // Mobile picker button: per-tab only (no localStorage write — fresh visits re-prompt).
+  function pickLanguage(lang) {
+    if (!SUPPORTED[lang]) return;
+    try { sessionStorage.setItem(SESSION_KEY, lang); } catch (e) {}
+    apply();
+    hidePicker();
+  }
+
+  window.ARCi18n = { apply: apply, t: t, getLang: getLang, pickLanguage: pickLanguage };
+
+  function init() {
+    // If the picker will block the user, leave the page in its
+    // static English state until they pick — avoids a Swahili flash
+    // from a stale localStorage value behind the dimmed overlay.
+    var willShowPicker = false;
+    try {
+      willShowPicker =
+        isMobile() && !sessionStorage.getItem(SESSION_KEY);
+    } catch (e) {}
+    if (!willShowPicker) apply();
+    showPickerIfNeeded();
+  }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', apply);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    apply();
+    init();
   }
 
   // Close menu on outside click / escape
