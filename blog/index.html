@@ -374,30 +374,22 @@
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(255,255,255,0.15);
+      background: transparent;
       border: none;
-      border-radius: 50%;
-      width: 52px;
-      height: 52px;
+      padding: 0;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.15s;
       z-index: 1001;
+      transition: transform 0.1s ease;
     }
-
-    .lightbox-arrow:hover { background: rgba(255,255,255,0.3); }
 
     .lightbox-arrow img {
-      width: 22px;
-      height: 22px;
+      width: 60px;
+      height: 60px;
       object-fit: contain;
-      filter: invert(1);
     }
 
-    .lightbox-prev { left: 20px; }
-    .lightbox-next { right: 20px; }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
 
     /* LinkedIn link */
     .post-linkedin-link {
@@ -633,9 +625,22 @@
       document.getElementById('lightbox').classList.add('open');
       document.body.style.overflow = 'hidden';
       const hasMultiple = currentLightboxImages.length > 1;
-      document.getElementById('lightbox-prev').style.display = hasMultiple ? 'flex' : 'none';
-      document.getElementById('lightbox-next').style.display = hasMultiple ? 'flex' : 'none';
+      document.getElementById('lightbox-prev').style.display = hasMultiple ? 'block' : 'none';
+      document.getElementById('lightbox-next').style.display = hasMultiple ? 'block' : 'none';
     }
+
+    // Press animation matching carousel.js behaviour
+    ['lightbox-prev', 'lightbox-next'].forEach(id => {
+      const btn = document.getElementById(id);
+      btn.style.transition = 'transform 0.1s ease';
+      const press = () => btn.style.transform = 'translateY(-50%) scale(0.85)';
+      const release = () => btn.style.transform = 'translateY(-50%)';
+      btn.addEventListener('mousedown', press);
+      btn.addEventListener('touchstart', press);
+      btn.addEventListener('mouseup', release);
+      btn.addEventListener('touchend', release);
+      btn.addEventListener('mouseleave', release);
+    });
 
     function lightboxPrev(e) {
       e.stopPropagation();
