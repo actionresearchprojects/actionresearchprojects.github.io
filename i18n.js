@@ -19,7 +19,6 @@ var ARC_I18N_ENABLED = true;
   var SESSION_KEY = 'arc-lang-session';    // sessionStorage: per-tab (mobile picker)
   var DEFAULT_LANG = 'en';
   var SUPPORTED = { en: 1, sw: 1 };
-  var MOBILE_MAX = 1024;                   // matches orientation-lock breakpoint
 
   // When disabled: hide the language UI + force English. Stored 'sw'
   // preferences are ignored (not deleted, so re-enabling restores the
@@ -56,23 +55,10 @@ var ARC_I18N_ENABLED = true;
     return DEFAULT_LANG;
   }
 
-  function isMobile() {
-    // The viewport meta is locked to width=1440, so window.innerWidth reports
-    // 1440 on phones too — useless here. screen.width/height give the actual
-    // device pixels. Match fluid-scaling.js's detection: smaller dimension
-    // ≤1024 == mobile/tablet. Fall back to innerWidth if screen is somehow
-    // unavailable (very old browsers).
-    if (typeof screen !== 'undefined' && screen.width && screen.height) {
-      return Math.min(screen.width, screen.height) <= MOBILE_MAX;
-    }
-    return (window.innerWidth || 0) <= MOBILE_MAX;
-  }
-
   function showPickerIfNeeded() {
-    // Show mobile picker once per browser session, only when no choice has
-    // been made yet in this tab. localStorage is intentionally ignored here
-    // — the spec is "ask every fresh visit on mobile".
-    if (!isMobile()) return;
+    // Show picker once per browser session (desktop and mobile both).
+    // localStorage is intentionally ignored — the spec is "ask every
+    // fresh visit". sessionStorage clears when the tab/window closes.
     var sessionPick = null;
     try { sessionPick = sessionStorage.getItem(SESSION_KEY); } catch (e) {}
     if (sessionPick) return;
@@ -183,10 +169,7 @@ var ARC_I18N_ENABLED = true;
     // static English state until they pick — avoids a Swahili flash
     // from a stale localStorage value behind the dimmed overlay.
     var willShowPicker = false;
-    try {
-      willShowPicker =
-        isMobile() && !sessionStorage.getItem(SESSION_KEY);
-    } catch (e) {}
+    try { willShowPicker = !sessionStorage.getItem(SESSION_KEY); } catch (e) {}
     if (!willShowPicker) apply();
     showPickerIfNeeded();
   }
