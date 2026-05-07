@@ -144,12 +144,28 @@ html[lang="sw"] [data-nav-button] p.framer-text {
   hyphens: auto !important;
   line-height: 1.05em !important;
 }
-/* Support button: longest Swahili string. Shrink + tighten leading. */
+/* Support button: longest Swahili string. Shrink + tighten leading.
+   Force the <a> + its inner divs into a flex-centered column so the
+   shrunken text sits vertically centered (Framer's original layout
+   reserves vertical space for ~3 lines at 35px; at 26px the text is
+   shorter and would otherwise sit top-anchored). */
+html[lang="sw"] a[data-nav-button="support"] {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+html[lang="sw"] a[data-nav-button="support"] > div,
+html[lang="sw"] a[data-nav-button="support"] > div > div {
+  position: static !important;
+  width: 100% !important;
+  height: auto !important;
+  transform: none !important;
+}
 html[lang="sw"] [data-nav-button="support"] p.framer-text {
   font-size: 26px !important;
   --framer-font-size: 26px !important;
   letter-spacing: -0.2px !important;
-  line-height: 1.1em !important;
+  line-height: 1.15em !important;
 }
 /* Cool Buildings Guide: ~30% longer in Swahili. Slight font-size reduction. */
 html[lang="sw"] [data-nav-button="cbg"] p.framer-text {
