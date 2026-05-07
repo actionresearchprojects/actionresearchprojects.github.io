@@ -4,6 +4,13 @@ on:
   repository_dispatch:
     types: [sync-embedded]
 
+# Serialize sync runs so concurrent dispatches don't fight over `git push`.
+# Without this, two dispatches checked out at the same SHA and one push wins
+# while the other gets a non-fast-forward rejection.
+concurrency:
+  group: sync-embedded
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -55,7 +62,18 @@ jobs:
           git add "embedded/${FOLDER}/"
           if git diff --cached --quiet; then
             echo "No changes to sync"
-          else
-            git commit -m "sync embedded/${FOLDER} from ${SOURCE_REPO}"
-            git push
+            exit 0
           fi
+          git commit -m "sync embedded/${FOLDER} from ${SOURCE_REPO}"
+          # Retry push up to 5 times — concurrency:group serialises sync runs,
+          # but other workflows (e.g. linkedin-post) can also commit to main.
+          for i in 1 2 3 4 5; do
+            if git push; then
+              echo "Push succeeded on attempt $i"
+              exit 0
+            fi
+            echo "Push attempt $i failed; rebasing onto remote and retrying"
+            git pull --rebase origin main
+          done
+          echo "Push failed after 5 attempts"
+          exit 1
