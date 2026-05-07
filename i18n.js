@@ -57,7 +57,15 @@ var ARC_I18N_ENABLED = true;
   }
 
   function isMobile() {
-    return (window.innerWidth || document.documentElement.clientWidth || 0) <= MOBILE_MAX;
+    // The viewport meta is locked to width=1440, so window.innerWidth reports
+    // 1440 on phones too — useless here. screen.width/height give the actual
+    // device pixels. Match fluid-scaling.js's detection: smaller dimension
+    // ≤1024 == mobile/tablet. Fall back to innerWidth if screen is somehow
+    // unavailable (very old browsers).
+    if (typeof screen !== 'undefined' && screen.width && screen.height) {
+      return Math.min(screen.width, screen.height) <= MOBILE_MAX;
+    }
+    return (window.innerWidth || 0) <= MOBILE_MAX;
   }
 
   function showPickerIfNeeded() {
