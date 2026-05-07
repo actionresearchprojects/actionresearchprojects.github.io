@@ -73,11 +73,7 @@ jobs:
           SITE_URL="https://actionresearchprojects.github.io"
           POST_URL="${SITE_URL}/blog/#${SLUG}"
 
-          POST_TEXT="${TITLE}
-
-${EXCERPT}
-
-Read more: ${POST_URL}"
+          POST_TEXT=$(printf '%s\n\n%s\n\nRead more: %s' "$TITLE" "$EXCERPT" "$POST_URL")
 
           if [ -n "$COVER_IMAGE" ] && [ "$COVER_IMAGE" != "null" ]; then
             BODY=$(jq -n \
