@@ -1,0 +1,135 @@
+body {
+  font-size: 1.4rem;
+}
+.k2FeedIcon a,
+a.k2FeedIcon {
+  margin-top: 32px;
+}
+.demo-typo-col2,
+.demo-typo-col3,
+.demo-typo-col4 {
+  clear: both;
+  float: none;
+  padding-bottom: 20px;
+  width: 100%;
+}
+.login,
+.registration,
+.reset,
+.remind {
+  width: 100%;
+}
+.itemCommentsForm textarea,
+.itemCommentsForm .inputbox {
+  margin: 0 1rem 1rem 0;
+}
+.item-body .the-icons > li {
+  width: 50%;
+}
+.single-page .item-info + .item-body {
+  padding-left: 0;
+}
+.gk-slideshow,
+.single-page > .item-content figure {
+  margin: 40px 0;
+}
+#gkFooterNav li {
+  line-height: 3;
+}
+#gkFooterNavPopup {
+  top: 84px;
+}
+.subpage,
+.component-header {
+  padding: 20px;
+}
+.single-page > .header {
+  margin: -20px -20px 0 -20px !important;
+}
+.single-page .item-top-info {
+  margin: 0 0 10px 0;
+}
+.item-body .itemTags {
+  margin: 40px 0 -10px 0;
+}
+.single-page .item-info {
+  left: 0;
+  margin-top: 20px;
+  position: static;
+  top: 0;
+  width: 100%;
+}
+.single-page .item-info .itemAuthor img {
+  float: left;
+  margin: 0 10px 0 0;
+  width: 40px;
+}
+.single-page .item-info .itemAuthor .item-author-name {
+  padding: 10px 0;
+}
+.item-body {
+  margin: 40px 0 10px;
+}
+.single-page .item-title {
+  margin-bottom: 20px;
+}
+.user-page .item-author .item-author-avatar {
+  margin: 0 20px 0 0;
+  max-width: 100px !important;
+}
+h2,
+.componentheading {
+  font-size: 2rem;
+  margin: 0 0 10px 0;
+}
+.blog-page .item-list .item-list-row {
+  margin: 0 0 40px 0;
+}
+.nsp-switch .nspArt {
+  width: 50% !important;
+}
+.nsp-switch .nspArt img,
+.nsp-switch .nspArt .nspImageWrapper {
+  width: 100%;
+}
+.itemSubheader {
+  margin: 40px 0 0 0;
+  padding: 0;
+}
+.nspArts,
+.nspLinksWrap {
+  padding: 0;
+}
+.gkNspPM-VideoList .gkItem .gkImageWrap:after {
+  display: none;
+}
+#gkSidebar .box,
+#gkTop1 .box,
+#gkTop2 .box,
+#gkBottom1 .box,
+#gkBottom2 .box,
+#gkBottom3 .box,
+#gkBottom4 .box,
+#gkBottom5 .box,
+#gkBottom6 .box,
+#gkBottom7 .box,
+#gkBottom8 .box,
+#gkBottom9 .box {
+  clear: both !important;
+  width: 100%;
+}
+#gkFooter.gkFooterFrontpage {
+  padding: 0 10px 40px 10px !important;
+}
+.gkFooterFrontpage #gkFooterNavPopup {
+  right: 10px;
+}
+h1 {
+  font-size: 2.4rem;
+}
+.gkCols3 .box,
+.gkCols4 .box,
+.gkCols6 .box {
+  margin-bottom: 20px !important;
+  width: 100%;
+}

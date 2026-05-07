@@ -1,0 +1,89 @@
+	.sidebar .socialbar{
+		padding: 1.2rem 0 1.2rem 1.2rem;
+		position:relative;
+		margin-top:0px!important;
+	}	
+	.entry-content .socialbar {
+		text-align: right;
+		padding: 0 0 1.2rem 1.2rem;
+		margin-top: -50px;position:relative;
+	}
+
+	.socialbar a{display:inline-block;
+		border-radius:25px;width:50px; height:50px; 
+		background:#fff;text-align:center;line-height:50px;
+		margin:0 10px; color:#7f7f7d;text-decoration:none;
+		transition:all 0.3s;
+	}
+
+	.socialbar .shareablelink{
+			display:none;
+			font-size:16px;background:#fff; color:#333;line-height:normal;position:absolute;
+			position: absolute;
+			padding: 1rem 2rem;
+			top: 60px;
+			right: 0;
+			width:300px;
+			z-index:1000;
+	}
+		
+	.socialbar a.linkshare:hover .shareablelink{display:block;}	
+		
+.shareinput{
+  float: left;
+  font-size: 1em;
+  padding: 3px 6px;
+  margin: 0;
+  border: 1px solid #333;
+  outline: 0;
+  box-shadow: none;
+}
+
+::-moz-focus-inner { 
+  padding: 0;
+  border: 0;
+}
+
+.shareinput {
+  width: 15em;
+  background-color: #fff;
+  border-right: 0 none;
+  border-radius: 3px 0 0 3px;
+}
+.copied .shareablelink{background:#B1DD49;color:#B1DD49;}
+.copied::after {
+ position: absolute;z-index:2000;
+  top: 65px;
+  right: 0px;
+  display: block;
+  content: "copied";
+  font-size: 16px;
+  padding: 5px 10px;line-height:normal;
+  font-family:Arial, Helvetica, sans-serif;
+  color: #fff;
+  background-color: #B1DD49;
+  border-radius: 3px;
+  opacity: 0;
+  will-change: opacity, transform;
+  animation: showcopied 1.5s ease;
+}
+
+@keyframes showcopied {
+  0% {
+    opacity: 0;
+    /*transform: translateX(100%);*/
+  }
+  70% {
+    opacity: 1;
+   /* transform: translateX(0);*/
+  }
+  100% {
+    opacity: 0;
+	/*transform: translateX(100%);*/
+  }
+}
+@media screen and (max-width: 799px) {
+	/*small mobile screen*/
+.single .socialbar{margin-top:0;}
+
+}

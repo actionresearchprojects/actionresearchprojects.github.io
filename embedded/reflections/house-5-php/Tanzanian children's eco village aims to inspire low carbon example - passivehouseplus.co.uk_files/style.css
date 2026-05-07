@@ -1,0 +1,185 @@
+.latestbusiness .view-all-items{
+	text-align: center;
+}.latestbusiness .btn-success {	background-color: #ed592f !important;	border: 0;}
+.latestbusiness .jitem-body{	border: 0;}.latestbusiness .jitem-card .jitem-img-wrap > img{	padding: 15px;}
+.latestbusiness .view-all-items a{
+	background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.075);
+    border-radius: 3px;
+    font-size: 14px;
+    padding: 6px 18px;
+}
+
+.latestbusiness .view-all-items a:hover{
+	background-color: #F0F0F0;
+}
+
+@media (max-width: 576px) {
+	.dynamic-col{
+		width: 100% !important;
+		height: auto !important;
+	}
+	.full-width-logo{
+		width: 100%;
+	}
+
+	.full-width-logo img{
+		width: 100%;
+	}
+}
+
+.jbd-container .grid-divider{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.latestbusiness li{
+	display: block;
+	clear: both;
+	margin-bottom: 5px;
+}
+
+.latestbusiness ul{
+	margin: 0;
+}
+
+.latestbusiness .company-info{
+	margin-bottom: 15px;
+}
+
+.latestbusiness .company-name{
+	display: block;
+	margin:5px 0;
+}
+
+.latestbusiness .company-address{
+	line-height: 20px!important;
+	font-size: 13px;
+}
+
+.latestbusiness.list-view img{
+	width: 100%;
+}
+
+.latestbusiness .offer-overlay .offer-vertical-middle {
+	display: table;
+	height: 100%;
+	width: 100%;
+}
+
+
+.latestbusiness .offer-overlay .offer-vertical-middle > div {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.latestbusiness .offer-overlay{
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.5);
+	bottom: 0;
+	color: #fff;
+	left: 0;
+	opacity: 0;
+	padding: 10px;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	top: 0;
+	transition: opacity 400ms ease 0s;
+	z-index: 2;
+}
+
+.latestbusiness .company-box:hover .offer-overlay {
+	opacity: 1;
+}
+
+.latestbusiness .offer-overlay .offer-vertical-middle {
+	display: table;
+	height: 100%;
+	width: 100%;
+}
+
+
+.latestbusiness .offer-overlay .offer-vertical-middle > div {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.latestbusiness .offer-overlay a {
+	background: none repeat scroll 0 0 transparent;
+	border: 1px solid #fff;
+	border-radius: 100px;
+	color: #fff;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 12px;
+	letter-spacing: 2px;
+	line-height: 1;
+	margin: 3px;
+	opacity: 0;
+	padding: 10px 22px;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	transform: scale3d(0, 0, 0);
+	transition: all 400ms ease 0s;
+	vertical-align: middle;
+}
+.latestbusiness:hover .offer-overlay a:hover {
+	background: none repeat scroll 0 0 #333;
+	border-color: #333;
+}
+
+.latestbusiness .offer-overlay:hover a{
+	opacity:1;
+	transform: scale3d(1, 1, 1);
+}
+
+#latestbusiness h1 {
+	font-size:18px;
+}
+
+#latestbusiness .col-md-12{
+	text-align:center;
+	display:block;
+}
+
+#latestbusiness .col-md-12 ul{
+	display: inline-block;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#latestbusiness .col-md-12 ul li {
+	display: inline;
+}
+
+.company-box {
+	margin-bottom: 25px;
+	text-align: center;
+	width: 220px;
+	margin-left: 15px;
+}
+
+.list-view2 .item-container{
+	background: #FAFAFA;
+	padding: 10px;
+	border: 1px solid #E8E8E8;
+	margin-bottom: 10px;
+	min-height: 130px;
+}
+
+.small-image .btn-view{
+	font-size:10px !important;
+	padding: 5px 10px !important;
+}
+
+.medium-image.company-box{
+	width: 170px;
+	height: 140px;
+}
+.small-image.company-box{
+	width: 120px;
+	height: 100px;
+}

@@ -1,0 +1,99 @@
+@media (max-width: 1280px) {
+  .subpage,
+  .component-header {
+    padding: 40px;
+  }
+  .blog-page .item-list .item-view .item-image + .item-content {
+    padding-left: 40px;
+  }
+  .blog-page .item-list .item-view .item-image + .item-content .item-footer {
+    left: 40px;
+  }
+  div[data-sidebar-pos="left"] > #gkSidebar {
+    padding-right: 0;
+  }
+  div[data-sidebar-pos="right"] > #gkSidebar {
+    padding-left: 0;
+  }
+  #gkHeaderNav .gkMainMenu {
+    margin-left: 10px !important;
+  }
+  .no-image .item-social-icons {
+    right: 40px !important;
+    top: 90px !important;
+  }
+  #gkBottom1,
+  #gkBottom2,
+  #gkBottom3,
+  #gkBottom4,
+  #gkBottom5,
+  #gkBottom6,
+  #gkBottom7,
+  #gkBottom8,
+  #gkBottom9 {
+    padding: 40px;
+  }
+  .gk-modules-block + .gk-modules-block:before {
+    left: 40px;
+    right: 40px;
+  }
+  .gkCols3 .box.gkmod-1,
+  .gkCols3 .box.gkmod-2,
+  .gkCols3 .box.gkmod-3,
+  .gkCols3 .box.gkmod-more {
+    float: left;
+    padding: 0 20px;
+  }
+  .gkCols4 .box.gkmod-1,
+  .gkCols4 .box.gkmod-2,
+  .gkCols4 .box.gkmod-3,
+  .gkCols4 .box.gkmod-4,
+  .gkCols4 .box.gkmod-more {
+    float: left;
+    padding: 0 20px;
+  }
+  .gkCols6 .box.gkmod-1,
+  .gkCols6 .box.gkmod-2,
+  .gkCols6 .box.gkmod-3,
+  .gkCols6 .box.gkmod-4,
+  .gkCols6 .box.gkmod-5,
+  .gkCols6 .box.gkmod-6,
+  .gkCols6 .box.gkmod-more {
+    float: left;
+    padding: 0 20px;
+  }
+  .single-page > .header {
+    margin: -40px -40px 0 -40px;
+  }
+  .gk-review-partials {
+    padding-left: 10px;
+  }
+  .gkTabsNav li {
+    margin: 0 20px -3px 0;
+  }
+  .vertical-list .gkArtContentWrap {
+    padding: 0 0 0 25px;
+  }
+  #gkFooter.gkFooterFrontpage {
+    padding: 0 40px 80px 40px;
+  }
+  .gkFooterFrontpage #gkFooterNavPopup {
+    right: 40px;
+  }
+  #gkMainbody .box {
+    padding: 40px;
+  }
+  .nsp-switch .nspArt .nspInfo {
+    left: 20px;
+    right: 20px;
+    width: auto;
+  }
+  .nsp-switch .gkArtContentWrap {
+    padding: 20px 20px 60px 20px;
+  }
+  .gkCols3 > div,
+  .gkCols4 > div,
+  .gkCols6 > div {
+    margin: 0 -20px;
+  }
+}
