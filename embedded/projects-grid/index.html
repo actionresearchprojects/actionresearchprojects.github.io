@@ -128,26 +128,31 @@
 </head>
 <body>
   <div class="grid">
-    <a href="/projects/project-1" target="_top">
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
       <img src="icons/placeholder.jpg" alt="">
-      <div class="overlay"><div class="overlay-text">Project 1</div></div>
-      <div class="label">Project 1</div>
+      <div class="overlay"><div class="overlay-text" data-i18n="pg.project1">Project 1</div></div>
+      <div class="label" data-i18n="pg.project1">Project 1</div>
     </a>
-    <a href="/projects/project-1" target="_top">
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
       <img src="icons/placeholder.jpg" alt="">
-      <div class="overlay"><div class="overlay-text">Project 1</div></div>
-      <div class="label">Project 1</div>
+      <div class="overlay"><div class="overlay-text" data-i18n="pg.project1">Project 1</div></div>
+      <div class="label" data-i18n="pg.project1">Project 1</div>
     </a>
-    <a href="/projects/project-1" target="_top">
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
       <img src="icons/placeholder.jpg" alt="">
-      <div class="overlay"><div class="overlay-text">Project 1</div></div>
-      <div class="label">Project 1</div>
+      <div class="overlay"><div class="overlay-text" data-i18n="pg.project1">Project 1</div></div>
+      <div class="label" data-i18n="pg.project1">Project 1</div>
     </a>
-    <a href="/projects/project-1" target="_top">
+    <a href="https://actionresearchprojects.net/projects/project-1" target="_top">
       <img src="icons/placeholder.jpg" alt="">
-      <div class="overlay"><div class="overlay-text">Project 1</div></div>
-      <div class="label">Project 1</div>
+      <div class="overlay"><div class="overlay-text" data-i18n="pg.project1">Project 1</div></div>
+      <div class="label" data-i18n="pg.project1">Project 1</div>
     </a>
   </div>
+  <!-- i18n loaded from main site (same origin) — translates [data-i18n] elements
+       based on the user's language pick stored in localStorage / sessionStorage.
+       Standalone preview falls back gracefully if scripts 404. -->
+  <script src="/i18n-translations.js"></script>
+  <script src="/i18n.js"></script>
 </body>
 </html>
