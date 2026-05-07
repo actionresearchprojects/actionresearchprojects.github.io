@@ -4,10 +4,39 @@
 // For elements with child HTML, use a wrapper <span data-i18n="..."> around the translatable
 // substring, or — when whole-element HTML must change — add data-i18n-html alongside data-i18n.
 // Attribute translation: data-i18n-attr="title:foo,placeholder:bar" maps attr->key.
+// ─── KILL SWITCH ──────────────────────────────────────────────────────
+// Set to false to disable Kiswahili site-wide:
+//   - Globe button + language menu hide on every page
+//   - Runtime forces English regardless of any stored preference
+//   - No translations are applied
+// Flip back to true to re-enable. One-line change, deploys with the
+// next git push.
+var ARC_I18N_ENABLED = true;
+// ──────────────────────────────────────────────────────────────────────
+
 (function () {
   var STORAGE_KEY = 'arc-lang';
   var DEFAULT_LANG = 'en';
   var SUPPORTED = { en: 1, sw: 1 };
+
+  // When disabled: hide the language UI + force English. Stored 'sw'
+  // preferences are ignored (not deleted, so re-enabling restores the
+  // user's previous choice).
+  if (!ARC_I18N_ENABLED) {
+    var hideLangUI = function () {
+      var wrap = document.getElementById('lang-wrap');
+      if (wrap) wrap.style.display = 'none';
+      try { document.documentElement.setAttribute('lang', 'en'); } catch (e) {}
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', hideLangUI);
+    } else {
+      hideLangUI();
+    }
+    window.setLanguage = function () {};
+    window.ARCi18n = { apply: function () {}, t: function (k) { return k; }, getLang: function () { return 'en'; } };
+    return;
+  }
 
   function dict() {
     return (window.ARC_TRANSLATIONS && window.ARC_TRANSLATIONS) || { en: {}, sw: {} };
