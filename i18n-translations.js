@@ -168,6 +168,27 @@ window.ARC_TRANSLATIONS = {
     'sg.module5': 'Module 5: Resources',
     'sg.module6': 'Module 6: Insect protection',
     'sg.module7': 'Module 7: Citizen Science Experiments',
+
+    // arc-people (iframed into people.html) — aria-labels for accessibility
+    // (the bios themselves are rasterized in biogs/*.webp images)
+    'ap.prevImage': 'Previous image',
+    'ap.nextImage': 'Next image',
+    'ap.openLink': 'Open external link',
+    'ap.expandedView': 'Expanded view',
+    'ap.previous': 'Previous',
+    'ap.next': 'Next',
+
+    // reflections-grid (iframed into reflections/index.html) — case study cards
+    'rg.expertAdvisor': 'Expert Advisor: Huda Elsherif',
+    'rg.shelyBegum': 'Shely Begum: Desh Houses',
+    'rg.house5php': "Tanzanian children's eco village aims to inspire low carbon example",
+    'rg.simmondsmills': 'SimmondsMills: Tanzania Eco Village',
+    'rg.scroll': '↓ Scroll',
+
+    // project-map (iframed into map.html) — UI controls
+    'pm.showClimate': 'Show Climate',
+    'pm.climateOpacity': 'Climate opacity',
+    'pm.showLegend': 'Show Legend',
   },
 
   sw: {
@@ -333,5 +354,25 @@ window.ARC_TRANSLATIONS = {
     'sg.module5': 'Moduli 5: Rasilimali',
     'sg.module6': 'Moduli 6: Kinga dhidi ya wadudu',
     'sg.module7': 'Moduli 7: Majaribio ya Sayansi ya Wananchi',
+
+    // arc-people aria-labels
+    'ap.prevImage': 'Picha iliyotangulia',
+    'ap.nextImage': 'Picha inayofuata',
+    'ap.openLink': 'Fungua kiungo cha nje',
+    'ap.expandedView': 'Mwonekano uliopanuliwa',
+    'ap.previous': 'Iliyotangulia',
+    'ap.next': 'Inayofuata',
+
+    // reflections-grid card titles
+    'rg.expertAdvisor': 'Mshauri Mtaalamu: Huda Elsherif',
+    'rg.shelyBegum': 'Shely Begum: Nyumba za Desh',
+    'rg.house5php': 'Kijiji cha kiikolojia cha watoto wa Tanzania kinalenga kuhamasisha mfano wa kaboni ya chini',
+    'rg.simmondsmills': 'SimmondsMills: Kijiji cha Kiikolojia Tanzania',
+    'rg.scroll': '↓ Sogeza',
+
+    // project-map UI controls
+    'pm.showClimate': 'Onyesha Hali ya Hewa',
+    'pm.climateOpacity': 'Uzito wa hali ya hewa',
+    'pm.showLegend': 'Onyesha Maelezo',
   },
 };
