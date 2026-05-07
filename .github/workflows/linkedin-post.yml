@@ -9,7 +9,6 @@ on:
 jobs:
   linkedin-post:
     runs-on: ubuntu-latest
-    if: ${{ vars.LINKEDIN_ENABLED == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,11 +29,17 @@ jobs:
       - name: Post to LinkedIn
         if: steps.posts.outputs.skip == 'false'
         env:
+          LINKEDIN_ENABLED: ${{ vars.LINKEDIN_ENABLED }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_ORG_ID: ${{ vars.LINKEDIN_ORG_ID }}
           POST_FILE: ${{ steps.posts.outputs.file }}
         run: |
           set -e
+
+          if [ "$LINKEDIN_ENABLED" != "true" ]; then
+            echo "LINKEDIN_ENABLED is not 'true' — skipping."
+            exit 0
+          fi
 
           TITLE=$(jq -r '.title' "$POST_FILE")
           EXCERPT=$(jq -r '.excerpt' "$POST_FILE")
