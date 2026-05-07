@@ -5,12 +5,16 @@
 // substring, or — when whole-element HTML must change — add data-i18n-html alongside data-i18n.
 // Attribute translation: data-i18n-attr="title:foo,placeholder:bar" maps attr->key.
 // ─── KILL SWITCH ──────────────────────────────────────────────────────
-// Set to false to disable Kiswahili site-wide:
-//   - Globe button + language menu hide on every page
+// Set to false to disable Kiswahili site-wide. When false:
+//   - Footer globe button (+ menu) hides on every page
+//   - First-visit language picker overlay is suppressed on every page
 //   - Runtime forces English regardless of any stored preference
+//   - setLanguage() / pickLanguage() become no-ops
 //   - No translations are applied
 // Flip back to true to re-enable. One-line change, deploys with the
-// next git push.
+// next git push. Note: localStorage values are NOT cleared, so any
+// user who previously chose Kiswahili gets that choice restored when
+// re-enabled.
 var ARC_I18N_ENABLED = true;
 // ──────────────────────────────────────────────────────────────────────
 
@@ -20,13 +24,15 @@ var ARC_I18N_ENABLED = true;
   var DEFAULT_LANG = 'en';
   var SUPPORTED = { en: 1, sw: 1 };
 
-  // When disabled: hide the language UI + force English. Stored 'sw'
-  // preferences are ignored (not deleted, so re-enabling restores the
-  // user's previous choice).
+  // When disabled: hide ALL language UI (footer globe + picker overlay)
+  // and force English. Stored 'sw' preferences are ignored — not
+  // deleted, so re-enabling restores the user's previous choice.
   if (!ARC_I18N_ENABLED) {
     var hideLangUI = function () {
       var wrap = document.getElementById('lang-wrap');
       if (wrap) wrap.style.display = 'none';
+      var picker = document.getElementById('lang-picker-overlay');
+      if (picker) picker.style.display = 'none';
       try { document.documentElement.setAttribute('lang', 'en'); } catch (e) {}
     };
     if (document.readyState === 'loading') {
@@ -35,7 +41,12 @@ var ARC_I18N_ENABLED = true;
       hideLangUI();
     }
     window.setLanguage = function () {};
-    window.ARCi18n = { apply: function () {}, t: function (k) { return k; }, getLang: function () { return 'en'; } };
+    window.ARCi18n = {
+      apply: function () {},
+      t: function (k) { return k; },
+      getLang: function () { return 'en'; },
+      pickLanguage: function () {},
+    };
     return;
   }
 
