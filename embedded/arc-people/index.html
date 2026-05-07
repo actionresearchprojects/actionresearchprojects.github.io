@@ -1,7 +1,9 @@
-<!DOCTYPE html><html lang="en"><head>
-  <meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
   <title>Responsive Bio Carousel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- Optional: first images preloaded to speed first paint -->
   <link rel="preload" href="biogs/portrait/portrait1.webp" as="image">
   <link rel="preload" href="biogs/landscape/landscape1.webp" as="image">
@@ -44,7 +46,6 @@
       height: calc(100% - (var(--vertical-gap) * 2));
     }
     .carousel-track::-webkit-scrollbar { display: none; }
-    .carousel-track:not(.ready) { visibility: hidden; }
 
     .carousel-image {
       position: relative;
@@ -172,19 +173,19 @@
 </head>
 <body>
   <div class="carousel-container">
-    <button class="arrow left" id="prevBtn" aria-label="Previous image" style="display: none;">
-      <img src="assets/arc-people/arrows/backward-arrow.png" alt="Previous">
+    <button class="arrow left" id="prevBtn" aria-label="Previous image" data-i18n-attr="aria-label:ap.prevImage">
+      <img src="arrows/backward-arrow.png" alt="Previous" data-i18n-attr="alt:ap.previous" />
     </button>
     <div class="carousel-track" id="track" tabindex="0" role="list"></div>
-    <button class="arrow right" id="nextBtn" aria-label="Next image" style="display: block;">
-      <img src="assets/arc-people/arrows/forward-arrow.png" alt="Next">
+    <button class="arrow right" id="nextBtn" aria-label="Next image" data-i18n-attr="aria-label:ap.nextImage">
+      <img src="arrows/forward-arrow.png" alt="Next" data-i18n-attr="alt:ap.next" />
     </button>
   </div>
 
   <div class="popup" id="popup" role="dialog" aria-modal="true">
     <div class="popup-inner">
-      <img id="popupImg" src="" alt="Expanded view">
-      <button id="infoBtn" class="info-button" aria-label="Open external link">i</button>
+      <img id="popupImg" src="" alt="Expanded view" data-i18n-attr="alt:ap.expandedView" />
+      <button id="infoBtn" class="info-button" aria-label="Open external link" data-i18n-attr="aria-label:ap.openLink">i</button>
     </div>
   </div>
 
@@ -377,7 +378,6 @@
       });
 
       setupPopupPreload();
-      track.classList.add('ready');
       requestAnimationFrame(updateControls);
     }
 
@@ -415,6 +415,7 @@
 
     document.addEventListener('DOMContentLoaded', renderCarousel);
   </script>
-
-
-</body></html>
+  <script src="/i18n-translations.js"></script>
+  <script src="/i18n.js"></script>
+</body>
+</html>
