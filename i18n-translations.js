@@ -149,6 +149,25 @@ window.ARC_TRANSLATIONS = {
     // ── Embedded sub-projects ──────────────────────────────────
     // projects-grid (iframed into projects/index.html)
     'pg.project1': 'Project 1',
+
+    // CBG-grid (iframed into cool-buildings-guide/index.html) — chapter cards
+    'cbg.avoidingHeat': 'Avoiding Heat',
+    'cbg.keepingHeatOut': 'Keeping Heat Out',
+    'cbg.airMovement': 'Air Movement',
+    'cbg.coolingTheAir': 'Cooling the Air',
+    'cbg.dryingTheAir': 'Drying the Air',
+    'cbg.thermalMass': 'Thermal Mass',
+    'cbg.practicalConstraints': 'Practical Constraints',
+    'cbg.environmentalPerformance': 'Environmental Performance',
+
+    // science-grid (iframed into science/index.html) — module cards
+    'sg.module1': 'Module 1: The ARC standard for cool buildings',
+    'sg.module2': 'Module 2: Physical factors that affect comfort',
+    'sg.module3': 'Module 3: Keeping cool in heatwaves',
+    'sg.module4': "Module 4: The 'three zone' concept for buildings",
+    'sg.module5': 'Module 5: Resources',
+    'sg.module6': 'Module 6: Insect protection',
+    'sg.module7': 'Module 7: Citizen Science Experiments',
   },
 
   sw: {
@@ -295,5 +314,24 @@ window.ARC_TRANSLATIONS = {
     // ── Embedded sub-projects ──────────────────────────────────
     // projects-grid
     'pg.project1': 'Mradi 1',
+
+    // CBG-grid
+    'cbg.avoidingHeat': 'Kuepuka Joto',
+    'cbg.keepingHeatOut': 'Kuzuia Joto Liingie',
+    'cbg.airMovement': 'Mwendo wa Hewa',
+    'cbg.coolingTheAir': 'Kupoza Hewa',
+    'cbg.dryingTheAir': 'Kukausha Hewa',
+    'cbg.thermalMass': 'Misa ya Joto',
+    'cbg.practicalConstraints': 'Vikwazo vya Kivitendo',
+    'cbg.environmentalPerformance': 'Utendaji wa Kimazingira',
+
+    // science-grid
+    'sg.module1': 'Moduli 1: Kiwango cha ARC kwa majengo baridi',
+    'sg.module2': 'Moduli 2: Sababu za kimaumbile zinazoathiri faraja',
+    'sg.module3': 'Moduli 3: Kupoza katika mawimbi ya joto',
+    'sg.module4': "Moduli 4: Dhana ya 'kanda tatu' kwa majengo",
+    'sg.module5': 'Moduli 5: Rasilimali',
+    'sg.module6': 'Moduli 6: Kinga dhidi ya wadudu',
+    'sg.module7': 'Moduli 7: Majaribio ya Sayansi ya Wananchi',
   },
 };
