@@ -173,9 +173,9 @@ html[lang="sw"] [data-nav-button="cbg"] p.framer-text {
   --framer-font-size: 26px !important;
 }
 /* Support page tagline: Swahili is much longer than English, reduce font size */
-html[lang="sw"] [data-i18n="support.tagline"] p.framer-text {
-  font-size: 18px !important;
-  --framer-font-size: 18px !important;
+html[lang="sw"] p.framer-text[data-i18n="support.tagline"] {
+  font-size: 16px !important;
+  --framer-font-size: 16px !important;
   line-height: 1.2em !important;
 }
 /* Support page mission paragraphs: Swahili text is significantly longer, shrink to avoid overlapping images */
