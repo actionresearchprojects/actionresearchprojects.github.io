@@ -178,3 +178,10 @@ html[lang="sw"] [data-i18n="support.tagline"] p.framer-text {
   --framer-font-size: 22px !important;
   line-height: 1.2em !important;
 }
+/* Support page mission paragraphs: Swahili text is significantly longer, shrink to avoid overlapping images */
+html[lang="sw"] [data-i18n^="support.mission"],
+html[lang="sw"] [data-i18n^="support.larger.mission"] {
+  font-size: 15px !important;
+  --framer-font-size: 15px !important;
+  line-height: 1.4em !important;
+}
