@@ -174,14 +174,14 @@ html[lang="sw"] [data-nav-button="cbg"] p.framer-text {
 }
 /* Support page tagline: Swahili is much longer than English, reduce font size */
 html[lang="sw"] [data-i18n="support.tagline"] p.framer-text {
-  font-size: 22px !important;
-  --framer-font-size: 22px !important;
+  font-size: 18px !important;
+  --framer-font-size: 18px !important;
   line-height: 1.2em !important;
 }
 /* Support page mission paragraphs: Swahili text is significantly longer, shrink to avoid overlapping images */
 html[lang="sw"] [data-i18n^="support.mission"],
 html[lang="sw"] [data-i18n^="support.larger.mission"] {
-  font-size: 15px !important;
-  --framer-font-size: 15px !important;
+  font-size: 18px !important;
+  --framer-font-size: 18px !important;
   line-height: 1.4em !important;
 }
