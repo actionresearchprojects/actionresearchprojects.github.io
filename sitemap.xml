@@ -28,7 +28,7 @@
 
   <!-- Science -->
   <url><loc>https://actionresearchprojects.net/science</loc></url>
-  <url><loc>https://actionresearchprojects.net/science/1-arc-standard</loc></url>
+  <url><loc>https://actionresearchprojects.net/science/1-introduction</loc></url>
   <url><loc>https://actionresearchprojects.net/science/2-physical-factors</loc></url>
   <url><loc>https://actionresearchprojects.net/science/3-keeping-cool</loc></url>
   <url><loc>https://actionresearchprojects.net/science/4-three-zone-concept</loc></url>
@@ -47,8 +47,22 @@
   <url><loc>https://actionresearchprojects.net/cool-buildings-guide/practical-constraints</loc></url>
   <url><loc>https://actionresearchprojects.net/cool-buildings-guide/thermal-mass</loc></url>
 
+  <!-- Greenspace Initiative sub-pages -->
+  <url><loc>https://actionresearchprojects.net/arc-greenspace-initiative/gallery-of-inspiration</loc></url>
+  <url><loc>https://actionresearchprojects.net/arc-greenspace-initiative/grove-cottage-garden</loc></url>
+  <url><loc>https://actionresearchprojects.net/arc-greenspace-initiative/keystones-indicators</loc></url>
+  <url><loc>https://actionresearchprojects.net/arc-greenspace-initiative/organic-food-garden</loc></url>
+  <url><loc>https://actionresearchprojects.net/arc-greenspace-initiative/upload-your-garden</loc></url>
+
   <!-- Graphs -->
+  <url><loc>https://actionresearchprojects.net/graphs/arc-tz-line/</loc></url>
+  <url><loc>https://actionresearchprojects.net/graphs/arc-tz-line/config</loc></url>
   <url><loc>https://actionresearchprojects.net/graphs/arc-tz-temp-humid/</loc></url>
   <url><loc>https://actionresearchprojects.net/graphs/arc-tz-temp-humid/config</loc></url>
   <url><loc>https://actionresearchprojects.net/graphs/arc-tz-weather</loc></url>
+
+  <!-- Explainers -->
+  <url><loc>https://actionresearchprojects.net/explainers/arc-tz-temp-humid/</loc></url>
+  <url><loc>https://actionresearchprojects.net/explainers/data-flow/</loc></url>
+  <url><loc>https://actionresearchprojects.net/explainers/running-mean/</loc></url>
 </urlset>

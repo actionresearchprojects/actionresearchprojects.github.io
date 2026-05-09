@@ -172,3 +172,9 @@ html[lang="sw"] [data-nav-button="cbg"] p.framer-text {
   font-size: 26px !important;
   --framer-font-size: 26px !important;
 }
+/* Support page tagline: Swahili is much longer than English, reduce font size */
+html[lang="sw"] [data-i18n="support.tagline"] p.framer-text {
+  font-size: 22px !important;
+  --framer-font-size: 22px !important;
+  line-height: 1.2em !important;
+}
