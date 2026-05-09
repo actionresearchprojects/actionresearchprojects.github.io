@@ -174,8 +174,8 @@ html[lang="sw"] [data-nav-button="cbg"] p.framer-text {
 }
 /* Support page tagline: Swahili is much longer than English, reduce font size */
 html[lang="sw"] p.framer-text[data-i18n="support.tagline"] {
-  font-size: 16px !important;
-  --framer-font-size: 16px !important;
+  font-size: 20px !important;
+  --framer-font-size: 20px !important;
   line-height: 1.2em !important;
 }
 /* Support page mission paragraphs: Swahili text is significantly longer, shrink to avoid overlapping images */
