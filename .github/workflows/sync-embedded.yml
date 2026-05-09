@@ -45,7 +45,7 @@ jobs:
           # Remove build/config files that shouldn't be in embedded
           cd /tmp/source
           rm -rf .git .github .gitignore __pycache__ \
-                 *.py *.md *.txt data/ .aider* .claude .DS_Store
+                 *.py *.md data/ .aider* .claude .DS_Store
           cd -
 
           # Clear the existing embedded folder and copy fresh output
