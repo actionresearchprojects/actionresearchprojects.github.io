@@ -98,5 +98,25 @@
   "gdpr": false,
   "imageUrl": "https://media.licdn.com/dms/image/v2/C4D03AQFz3wiKjGvJyw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1581769682036?e=1779926400&v=beta&t=HtGO0QKcNYiVIa2SpQwzLMFQ21LLsUBGCqjuQSGx614",
   "colour": "#0db8b8"
+},
+{
+  "id": "susannetheumer",
+  "type": "Person",
+  "title": "Susanne Theumer",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Zellingen, Bavaria, Germany",
+  "zones": [
+    {
+      "code": "Dfb",
+      "text": "Warm-summer continental (Dfb)",
+      "colour": "#37c8ff"
+    }
+  ],
+  "latitude": 49.89748,
+  "longitude": 9.81628,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://media.licdn.com/dms/image/v2/C4E03AQE9oxtcGcIkrw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1640278257039?e=1779926400&v=beta&t=bCFzf5HZHuNTEQDBAYzQNhfV9ljOhE4WoRoeMREHPTs",
+  "colour": "#0db8b8"
 }
 ]
