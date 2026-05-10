@@ -252,7 +252,8 @@
                 : '') +
               `</a>`;
 
-            new mapboxgl.Marker({ color: '#FF0000' })
+            const markerColor = pt.colour || '#FF0000';   // fallback if missing
+            new mapboxgl.Marker({ color: markerColor })
               .setLngLat(coords)
               .setPopup(new mapboxgl.Popup().setHTML(popupHtml))
               .addTo(map);
