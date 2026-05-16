@@ -252,8 +252,7 @@
                 : '') +
               `</a>`;
 
-            const markerColor = pt.colour || '#FF0000';   // fallback if missing
-            new mapboxgl.Marker({ color: markerColor })
+            new mapboxgl.Marker({ color: pt.colour || '#006400' })
               .setLngLat(coords)
               .setPopup(new mapboxgl.Popup().setHTML(popupHtml))
               .addTo(map);
@@ -313,12 +312,11 @@
                     <g filter="url(#shadow)">
                       <!-- Outer black stroke for contrast -->
                       <g stroke="#000000" stroke-width="2.5" fill="none">
-                        <!-- Sun rays (5 dots equally spaced at 45° intervals, distance 7 from centre 13,13) -->
-                        <circle cx="6" cy="13" r="1.2"/>
-                        <circle cx="8" cy="8" r="1.2"/>
-                        <circle cx="13" cy="6" r="1.2"/>
-                        <circle cx="18" cy="8" r="1.2"/>
-                        <circle cx="20" cy="13" r="1.2"/>
+                        <!-- Sun rays -->
+                        <circle cx="11" cy="9" r="1.2"/>
+                        <circle cx="16" cy="6" r="1.2"/>
+                        <circle cx="21" cy="9" r="1.2"/>
+                        <circle cx="7" cy="13" r="1.2"/>
                         
                         <!-- Sun circle -->
                         <circle cx="13" cy="13" r="4.5"/>
@@ -335,11 +333,10 @@
                       <!-- Sun with light yellow -->
                       <g stroke="#FFE87C" stroke-width="1.2" fill="#FFE87C">
                         <!-- Sun rays -->
-                        <circle cx="6" cy="13" r="1.2"/>
-                        <circle cx="8" cy="8" r="1.2"/>
-                        <circle cx="13" cy="6" r="1.2"/>
-                        <circle cx="18" cy="8" r="1.2"/>
-                        <circle cx="20" cy="13" r="1.2"/>
+                        <circle cx="11" cy="9" r="1.2"/>
+                        <circle cx="16" cy="6" r="1.2"/>
+                        <circle cx="21" cy="9" r="1.2"/>
+                        <circle cx="7" cy="13" r="1.2"/>
                         
                         <!-- Sun circle -->
                         <circle cx="13" cy="13" r="4.5"/>
