@@ -447,6 +447,99 @@ window.ARC_TRANSLATIONS = {
     "gs.archie.role": "<em><a href=\"http://aecb.net/\" target=\"_blank\" rel=\"noreferrer noopener\">ARC Research Assistant</a></em><br>Architecture Design Studies student, University of Liverpool.",
     "gs.andy.role": "<em>ARC lead / Partner Simmonds Mills</em>",
 
+    // Shared subpage strings
+    "gs.sub.back": "&#8592; ARC Greenspace Initiative",
+    "gs.sub.back.gallery": "<strong>Back to Gallery of Inspiration</strong>",
+    "gs.sub.key-images": "Key Images",
+    "gs.sub.key-aims": "Key Aims:",
+    "gs.sub.theme": "Theme and Emphases:",
+    "gs.sub.planting-layers": "<span style=\"text-decoration: underline\">Planting Layers</span>",
+    "gs.sub.constructed": "<span style=\"text-decoration: underline\">Constructed Features</span>",
+    "gs.sub.outputs": "<span style=\"text-decoration: underline\">Outputs</span>",
+    "gs.sub.soil": "<span style=\"text-decoration: underline\">Soil Quality</span>",
+    "gs.sub.soil.strategies": "<strong>•</strong> Strategies:",
+    "gs.sub.soil.plants": "<strong>•</strong> Plants:",
+
+    // Planting layer bullet labels (shared)
+    "gs.layer.canopy": "    <strong>•</strong> Canopy Layer:",
+    "gs.layer.vertical": "    <strong>•</strong> Vertical Layer:",
+    "gs.layer.shrub": "    <strong>•</strong> Shrub Layer:",
+    "gs.layer.herbaceous": "    <strong>•</strong> Herbaceous Layer:",
+    "gs.layer.groundcover": "    <strong>•</strong> Ground Cover Layer:",
+    "gs.layer.rhizosphere": "    <strong>•</strong> Rhizosphere Layer:",
+
+    // Constructed feature bullet labels (shared)
+    "gs.feat.pond": "<strong>•</strong> Pond or Water Source:",
+    "gs.feat.hedgehog-boundaries": "<strong>•</strong> Hedgehog-friendly Boundaries:",
+    "gs.feat.hedgehog-habitat": "<strong>•</strong> Hedgehog habitat:",
+    "gs.feat.mammal": "<strong>•</strong> Mammal habitat:",
+    "gs.feat.bird": "<strong>•</strong> Bird habitat:",
+    "gs.feat.bat": "<strong>•</strong> Bat habitat:",
+    "gs.feat.bee": "<strong>•</strong> Bee habitat:",
+    "gs.feat.insect": "<strong>•</strong> Insect habitat:",
+    "gs.feat.other": "<strong>•</strong> Other:",
+
+    // Output bullet labels (shared)
+    "gs.out.fruit": "<strong>•</strong> Fruit or Berries:",
+    "gs.out.nuts": "<strong>•</strong> Nuts:",
+    "gs.out.medicinal": "<strong>•</strong> Medicinal Plants:",
+    "gs.out.veg": "<strong>•</strong> Vegetables:",
+    "gs.out.herbs": "<strong>•</strong> Herbs:",
+    "gs.out.timber": "<strong>•</strong> Timber &amp; Wood Products:",
+    "gs.out.bamboo": "<strong>•</strong> Bamboo &amp; Other Grasses:",
+    "gs.out.companion": "<strong>•</strong> Companion Plants:",
+    "gs.out.rootcrops": "<strong>•</strong> Root Crops:",
+
+    // Keystones & Indicators page
+    "gs.ki.h2": "Keystone and Indicator Animals List",
+    "gs.ki.intro": "As part of measuring biodiversity in a given greenspace, it is key to keep a watchful eye on the species that spend time in it. Certain species play vital roles in complex ecosystems, and others indicate the health of their environment. Identifying these species can tell you a lot about interactions you would otherwise have more difficulty quantifying. These species are categorised as &#8216;Keystone&#8217; and &#8216;Indicator&#8217; animals.",
+    "gs.ki.li1": "<em>Keystone animal species typically control prey populations, facilitate seed dispersal, or perform other critical ecosystem functions.</em>",
+    "gs.ki.li2": "<em>Indicator animal species typically indicate environmental health and signal ecosystem changes.</em>",
+    "gs.ki.download": "Below, we&#8217;ve collated an extensive list that contains many keystone and indicator animal species and their functions to help you if you are interested in identifying species at any point in your greenspace journey. Use the tabs at the bottom to navigate between animal types. Please click <a href=\"https://actionresearchprojectsnet.wordpress.com/wp-content/uploads/2024/09/keystone-and-indicator-species.xlsx\"><span style=\"text-decoration: underline\">here</span></a> to download a copy of this list, including a search function. If you are aware of any other keystone or indicator species that you think should be included in this list, please email <a href=\"mailto:arc.archie@simmondsmills.com\">arc.archie@simmondsmills.com</a>",
+
+    // Upload Your Garden page
+    "gs.ug.h2": "Upload your Garden",
+    "gs.ug.p1": "If you have designed a resilient greenspace of your own, you can use the tool provided below to submit information about your garden to us, providing useful information that will be fed back into our guidance.",
+    "gs.ug.p2": "To complete the spreadsheet, please enter values in the fields highlighted in <mark style=\"background-color:#dae8f8\" class=\"has-inline-color has-theme-6-color\">blue</mark>. We ask for mandatory fields <mark style=\"background-color:rgba(0, 0, 0, 0);color:#ff0000\" class=\"has-inline-color\">(red text)</mark> to be completed and for one single photo to be provided for each given layer, each constructed feature, and each output type. The spreadsheet will provide a checklist to help you with this.",
+    "gs.ug.p3": "Once you have filled out the spreadsheet, please email it to Archie Worthington at <span style=\"text-decoration: underline\"><a href=\"mailto:arc.archie@simmondsmills.com\">arc.archie@simmondsmills.com</a></span>, and, if you consent, we will include it in our <a href=\"https://actionresearchprojects.net/aecb-greenspace-initiative/gallery-of-inspiration/\"><span style=\"text-decoration: underline\">Gallery of Inspiration</span></a> and use it to improve our educational material.",
+    "gs.ug.p4": "To send images, please either upload them to a site such as <a href=\"http://photos.google.com\" target=\"_blank\" rel=\"noreferrer noopener\"><span style=\"text-decoration: underline\">Google Photos</span></a> or <a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noreferrer noopener\"><span style=\"text-decoration: underline\">Postimages</span></a> and provide the link within the designated area of the spreadsheet, or include them in your email to us alongside the spreadsheet.",
+    "gs.ug.p5": "We look forward to hearing from you!",
+    "gs.ug.btn": "Download Tool",
+
+    // Gallery of Inspiration page
+    "gs.goi.h2": "Gallery of Inspiration",
+    "gs.goi.intro": "Take some inspiration from our database of successful resilient greenspaces.",
+    "gs.goi.grove": "<a href=\"/arc-greenspace-initiative/grove-cottage-garden/\" target=\"_self\" >Grove Cottage Garden</a>",
+    "gs.goi.organic": "<a href=\"/arc-greenspace-initiative/organic-food-garden/\" target=\"_self\" >Organic Food Garden and Wildlife&nbsp;Haven</a>",
+
+    // Template page
+    "gs.tmpl.download": "<span style=\"text-decoration: underline\"><a href=\"https://actionresearchprojectsnet.wordpress.com/wp-content/uploads/2024/08/blank-structural-elements-diagram.jpg\">Download</a></span>",
+
+    // Grove Cottage Garden page
+    "gs.gcg.h2": "Grove Cottage Garden",
+    "gs.gcg.info-labels": "Project Title:<br>Location:<br>Owner/Designer Name:<br>Contact:",
+    "gs.gcg.info-values": "<em>Grove Cottage Garden<br>Hereford<br>Andrew Simmonds<br>andy@simmondsmills.com</em>",
+    "gs.gcg.aims.li1": "To eliminate most grass in the garden.",
+    "gs.gcg.aims.li2": "To create a diverse forest garden; maximising the diversity of food and utility plants and trees.",
+    "gs.gcg.aims.li3": "To provide a diverse range of habitats; maximising biodiversity.",
+    "gs.gcg.aims.li4": "To eliminate or minimise chemical use.",
+    "gs.gcg.aims.li5": "To eliminate irrigation.",
+    "gs.gcg.aims.li6": "To maximise capture and storage of carbon.",
+    "gs.gcg.aims.li7": "To improve soil health.",
+    "gs.gcg.theme": "Many years ago, living in rural Buckinghamshire, Andrew was inspired by what was already growing in the garden — primarily grass. It appeared then, as now, that a garden full of grass is a rather mono-cultural and sterile landscape; more akin to a crop field than a habitat. The contrast of the neighbour's kitchen garden, and the nearby ancient hedgerows and woodland was also stark. It seemed natural to try to replicate and extend this natural diversity. Some years later, a new location in Herefordshire provided both the opportunity to act and put into practice a more ambitious vision for what a garden could be. An ecologist and a tree specialist kindly provided advice at the outset that helped form the current vision. The garden has been evolving to become more diverse and wildlife-friendly, and to produce more useful outputs, for over two decades. Visits to other forest gardens have also helped — particularly Martin Crawford's Forest Garden at the Agroforestry Research Trust in Dartington, and the Ryton Organic Gardens. The project has also contributed to the design of ARC's Greenspace Guide.",
+
+    // Organic Food Garden page
+    "gs.ofg.h2": "Organic Food Garden and Wildlife Haven",
+    "gs.ofg.info-labels": "Project Title: <br>Location:",
+    "gs.ofg.info-values": "<em>Organic Food Garden and Wildlife Haven<br>Gloucestershire</em>",
+    "gs.ofg.aims.li1": "To grow organic food for a family.",
+    "gs.ofg.aims.li2": "To be as chemical-free as possible.",
+    "gs.ofg.aims.li3": "To create wildlife habitats for birds, insects, and mammals.",
+    "gs.ofg.aims.li4": "To use low/no dig techniques.",
+    "gs.ofg.aims.li5": "To encourage and create biodiversity.",
+    "gs.ofg.aims.li6": "To create a place of peace and quiet.",
+    "gs.ofg.theme": "Organic, low/no dig gardening, to provide food and beauty and to also be a wildlife haven.",
+
   },
 
   sw: {
@@ -889,6 +982,99 @@ window.ARC_TRANSLATIONS = {
     "gs.nick.bio": "Nick Organ ni mshauri wa mambo ya miti mwenye uzoefu mkubwa, akiwa na karibu miaka 40 katika utunzaji wa miti ya mapambo, akibobea katika usalama wa miti, tafiti za hali, na tathmini za hatari kwa wateja mbalimbali, na kusimamia miradi ya maendeleo ambapo miti inahitaji ulinzi. Ana hamu mahususi katika majengo endelevu na mazingira yake.",
     "gs.archie.role": "<em><a href=\"http://aecb.net/\" target=\"_blank\" rel=\"noreferrer noopener\">Msaidizi wa Utafiti wa ARC</a></em><br>Mwanafunzi wa Masomo ya Muundo wa Usanifu, Chuo Kikuu cha Liverpool.",
     "gs.andy.role": "<em>Mkuu wa ARC / Mshirika wa Simmonds Mills</em>",
+
+    // Shared subpage strings
+    "gs.sub.back": "&#8592; Mpango wa Maeneo ya Kijani wa ARC",
+    "gs.sub.back.gallery": "<strong>Rudi kwenye Gallery ya Msukumo</strong>",
+    "gs.sub.key-images": "Picha Muhimu",
+    "gs.sub.key-aims": "Malengo Makuu:",
+    "gs.sub.theme": "Mada na Misisitizo:",
+    "gs.sub.planting-layers": "<span style=\"text-decoration: underline\">Safu za Upandaji</span>",
+    "gs.sub.constructed": "<span style=\"text-decoration: underline\">Vipengele Vilivyojengwa</span>",
+    "gs.sub.outputs": "<span style=\"text-decoration: underline\">Mazao</span>",
+    "gs.sub.soil": "<span style=\"text-decoration: underline\">Ubora wa Udongo</span>",
+    "gs.sub.soil.strategies": "<strong>•</strong> Mikakati:",
+    "gs.sub.soil.plants": "<strong>•</strong> Mimea:",
+
+    // Planting layer bullet labels (shared)
+    "gs.layer.canopy": "    <strong>•</strong> Safu ya Mwavuli:",
+    "gs.layer.vertical": "    <strong>•</strong> Safu ya Wima:",
+    "gs.layer.shrub": "    <strong>•</strong> Safu ya Vichaka:",
+    "gs.layer.herbaceous": "    <strong>•</strong> Safu ya Mimea ya Majani:",
+    "gs.layer.groundcover": "    <strong>•</strong> Safu ya Kifuniko cha Ardhi:",
+    "gs.layer.rhizosphere": "    <strong>•</strong> Safu ya Rizosfia:",
+
+    // Constructed feature bullet labels (shared)
+    "gs.feat.pond": "<strong>•</strong> Bwawa au Chanzo cha Maji:",
+    "gs.feat.hedgehog-boundaries": "<strong>•</strong> Mipaka Rafiki kwa Kalunguyeye:",
+    "gs.feat.hedgehog-habitat": "<strong>•</strong> Makazi ya Kalunguyeye:",
+    "gs.feat.mammal": "<strong>•</strong> Makazi ya Mamalia:",
+    "gs.feat.bird": "<strong>•</strong> Makazi ya Ndege:",
+    "gs.feat.bat": "<strong>•</strong> Makazi ya Popo:",
+    "gs.feat.bee": "<strong>•</strong> Makazi ya Nyuki:",
+    "gs.feat.insect": "<strong>•</strong> Makazi ya Wadudu:",
+    "gs.feat.other": "<strong>•</strong> Nyingine:",
+
+    // Output bullet labels (shared)
+    "gs.out.fruit": "<strong>•</strong> Matunda au Beri:",
+    "gs.out.nuts": "<strong>•</strong> Karanga:",
+    "gs.out.medicinal": "<strong>•</strong> Mimea ya Dawa:",
+    "gs.out.veg": "<strong>•</strong> Mboga:",
+    "gs.out.herbs": "<strong>•</strong> Viungo:",
+    "gs.out.timber": "<strong>•</strong> Mbao na Bidhaa za Kuni:",
+    "gs.out.bamboo": "<strong>•</strong> Mianzi na Nyasi Nyingine:",
+    "gs.out.companion": "<strong>•</strong> Mimea Rafiki:",
+    "gs.out.rootcrops": "<strong>•</strong> Mazao ya Mizizi:",
+
+    // Keystones & Indicators page
+    "gs.ki.h2": "Orodha ya Wanyama wa Msingi na wa Kiashiria",
+    "gs.ki.intro": "Kama sehemu ya kupima bayoanuwai katika eneo fulani la kijani, ni muhimu kuwa makini kwa aina za viumbe vinavyokaa ndani yake. Spishi fulani zina majukumu muhimu katika mifumo tata ya ikolojia, na nyingine zinaonyesha afya ya mazingira yao. Kutambua spishi hizi kunaweza kukuambia mengi kuhusu maingiliano ambayo vinginevyo ungepata ugumu zaidi wa kuyapima. Spishi hizi zimegawanywa kama wanyama wa &#8216;Msingi&#8217; na &#8216;Kiashiria&#8217;.",
+    "gs.ki.li1": "<em>Spishi za wanyama wa msingi kawaida hudhibiti idadi ya mawindo, husaidia kueneza mbegu, au hutekeleza majukumu mengine muhimu ya mfumo wa ikolojia.</em>",
+    "gs.ki.li2": "<em>Spishi za wanyama wa kiashiria kawaida huashiria afya ya mazingira na kuonyesha mabadiliko ya mfumo wa ikolojia.</em>",
+    "gs.ki.download": "Hapa chini, tumekusanya orodha ya kina inayojumuisha spishi nyingi za wanyama wa msingi na wa kiashiria pamoja na kazi zao ili kukusaidia ikiwa una nia ya kutambua spishi wakati wowote katika safari yako ya eneo la kijani. Tumia vichupo chini ili kusogea kati ya aina za wanyama. Tafadhali bofya <a href=\"https://actionresearchprojectsnet.wordpress.com/wp-content/uploads/2024/09/keystone-and-indicator-species.xlsx\"><span style=\"text-decoration: underline\">hapa</span></a> kupakua nakala ya orodha hii, ikiwa ni pamoja na kipengele cha utafutaji. Ikiwa unajua spishi nyingine za msingi au za kiashiria ambazo unafikiri zinapaswa kujumuishwa katika orodha hii, tafadhali tuma barua pepe kwa <a href=\"mailto:arc.archie@simmondsmills.com\">arc.archie@simmondsmills.com</a>",
+
+    // Upload Your Garden page
+    "gs.ug.h2": "Pakia Bustani Yako",
+    "gs.ug.p1": "Ikiwa umebuni eneo la kijani lenye ustahimilivu la kwako mwenyewe, unaweza kutumia zana iliyotolewa hapa chini kuwasilisha taarifa kuhusu bustani yako kwetu, ukitoa taarifa muhimu itakayorudishwa kwenye mwongozo wetu.",
+    "gs.ug.p2": "Ili kukamilisha jedwali, tafadhali ingiza maadili katika sehemu zilizoangaziwa kwa <mark style=\"background-color:#dae8f8\" class=\"has-inline-color has-theme-6-color\">buluu</mark>. Tunaomba sehemu za lazima <mark style=\"background-color:rgba(0, 0, 0, 0);color:#ff0000\" class=\"has-inline-color\">(maandishi nyekundu)</mark> zikamilishwe na picha moja itolewe kwa kila safu, kila kipengele kilichojengwa, na kila aina ya mazao. Jedwali litatoa orodha ya ukaguzi kukusaidia.",
+    "gs.ug.p3": "Baada ya kujaza jedwali, tafadhali litumie kwa barua pepe kwa Archie Worthington kwa <span style=\"text-decoration: underline\"><a href=\"mailto:arc.archie@simmondsmills.com\">arc.archie@simmondsmills.com</a></span>, na, ikiwa unakubali, tutaijumuisha katika <a href=\"https://actionresearchprojects.net/aecb-greenspace-initiative/gallery-of-inspiration/\"><span style=\"text-decoration: underline\">Gallery yetu ya Msukumo</span></a> na kuitumia kuboresha nyenzo zetu za kielimu.",
+    "gs.ug.p4": "Kutuma picha, tafadhali pakia kwenye tovuti kama vile <a href=\"http://photos.google.com\" target=\"_blank\" rel=\"noreferrer noopener\"><span style=\"text-decoration: underline\">Google Photos</span></a> au <a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noreferrer noopener\"><span style=\"text-decoration: underline\">Postimages</span></a> na toa kiungo ndani ya eneo lililotengwa katika jedwali, au viambatishe katika barua pepe yako kwetu pamoja na jedwali.",
+    "gs.ug.p5": "Tunatazamia kusikia kutoka kwako!",
+    "gs.ug.btn": "Pakua Zana",
+
+    // Gallery of Inspiration page
+    "gs.goi.h2": "Gallery ya Msukumo",
+    "gs.goi.intro": "Chukua msukumo kutoka kwa hifadhidata yetu ya maeneo ya kijani yenye mafanikio na ustahimilivu.",
+    "gs.goi.grove": "<a href=\"/arc-greenspace-initiative/grove-cottage-garden/\" target=\"_self\" >Bustani ya Grove Cottage</a>",
+    "gs.goi.organic": "<a href=\"/arc-greenspace-initiative/organic-food-garden/\" target=\"_self\" >Bustani ya Chakula Cha Kikaboni na Hifadhi ya&nbsp;Wanyamapori</a>",
+
+    // Template page
+    "gs.tmpl.download": "<span style=\"text-decoration: underline\"><a href=\"https://actionresearchprojectsnet.wordpress.com/wp-content/uploads/2024/08/blank-structural-elements-diagram.jpg\">Pakua</a></span>",
+
+    // Grove Cottage Garden page
+    "gs.gcg.h2": "Bustani ya Grove Cottage",
+    "gs.gcg.info-labels": "Jina la Mradi:<br>Mahali:<br>Jina la Mmiliki/Mbuni:<br>Mawasiliano:",
+    "gs.gcg.info-values": "<em>Bustani ya Grove Cottage<br>Hereford<br>Andrew Simmonds<br>andy@simmondsmills.com</em>",
+    "gs.gcg.aims.li1": "Kuondoa nyasi nyingi bustanini.",
+    "gs.gcg.aims.li2": "Kuunda bustani ya msitu yenye utofauti; kuongeza utofauti wa mimea ya chakula na ya matumizi.",
+    "gs.gcg.aims.li3": "Kutoa aina mbalimbali za makazi; kuongeza bayoanuwai.",
+    "gs.gcg.aims.li4": "Kuondoa au kupunguza matumizi ya kemikali.",
+    "gs.gcg.aims.li5": "Kuondoa umwagiliaji.",
+    "gs.gcg.aims.li6": "Kuongeza unasaji na uhifadhi wa kaboni.",
+    "gs.gcg.aims.li7": "Kuboresha afya ya udongo.",
+    "gs.gcg.theme": "Miaka mingi iliyopita, akiishi vijijini mwa Buckinghamshire, Andrew alihamasishwa na kilichokuwa kikimea bustanini — hasa nyasi. Ilionekana wakati huo, kama ilivyo sasa, kwamba bustani iliyojaa nyasi ni mandhari yenye utamaduni mmoja na tupu; inafanana zaidi na shamba la mazao kuliko makazi. Utofauti wa bustani ya jikoni ya jirani, na ua wa kale wa miti ya karibu ulikuwa pia mkubwa. Ilionekana kuwa ya kawaida kujaribu kuiga na kupanua utofauti huu wa asili. Miaka michache baadaye, mahali mpya Herefordshire palitoa fursa ya kutenda na kutekeleza maono ya kina zaidi ya bustani inaweza kuwa nini. Mtaalamu wa ikolojia na mtaalamu wa miti walitoa ushauri kwa upole mwanzoni uliosaidia kuunda maono ya sasa. Bustani imekuwa ikibadilika ili kuwa na utofauti zaidi na urafiki wa wanyamapori, na kuzalisha mazao muhimu zaidi, kwa zaidi ya miaka miwili. Ziara za bustani nyingine za misitu pia zimeisaidia — hasa Bustani ya Msitu ya Martin Crawford katika Agroforestry Research Trust huko Dartington, na Bustani za Ryton Organic. Mradi pia umechangia katika muundo wa Mwongozo wa Maeneo ya Kijani wa ARC.",
+
+    // Organic Food Garden page
+    "gs.ofg.h2": "Bustani ya Chakula Cha Kikaboni na Hifadhi ya Wanyamapori",
+    "gs.ofg.info-labels": "Jina la Mradi: <br>Mahali:",
+    "gs.ofg.info-values": "<em>Bustani ya Chakula Cha Kikaboni na Hifadhi ya Wanyamapori<br>Gloucestershire</em>",
+    "gs.ofg.aims.li1": "Kulima chakula cha kikaboni kwa familia.",
+    "gs.ofg.aims.li2": "Kuwa bila kemikali iwezekanavyo.",
+    "gs.ofg.aims.li3": "Kuunda makazi ya wanyamapori kwa ndege, wadudu, na mamalia.",
+    "gs.ofg.aims.li4": "Kutumia mbinu za kuchimba kidogo/bila kuchimba.",
+    "gs.ofg.aims.li5": "Kuhimiza na kuunda bayoanuwai.",
+    "gs.ofg.aims.li6": "Kuunda mahali pa amani na utulivu.",
+    "gs.ofg.theme": "Kilimo cha kikaboni, kwa kuchimba kidogo/bila kuchimba, kutoa chakula na uzuri na pia kuwa hifadhi ya wanyamapori.",
 
   },
 };
