@@ -448,7 +448,7 @@ window.ARC_TRANSLATIONS = {
     "gs.andy.role": "<em>ARC lead / Partner Simmonds Mills</em>",
 
     // Shared subpage strings
-    "gs.sub.back": "&#8592; ARC Greenspace Initiative",
+    "gs.sub.back": "← ARC Greenspace Initiative",
     "gs.sub.back.gallery": "<strong>Back to Gallery of Inspiration</strong>",
     "gs.sub.key-images": "Key Images",
     "gs.sub.key-aims": "Key Aims:",
@@ -984,7 +984,7 @@ window.ARC_TRANSLATIONS = {
     "gs.andy.role": "<em>Mkuu wa ARC / Mshirika wa Simmonds Mills</em>",
 
     // Shared subpage strings
-    "gs.sub.back": "&#8592; Mpango wa Maeneo ya Kijani wa ARC",
+    "gs.sub.back": "← Mpango wa Maeneo ya Kijani wa ARC",
     "gs.sub.back.gallery": "<strong>Rudi kwenye Gallery ya Msukumo</strong>",
     "gs.sub.key-images": "Picha Muhimu",
     "gs.sub.key-aims": "Malengo Makuu:",
