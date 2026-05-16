@@ -198,5 +198,25 @@
   "gdpr": false,
   "imageUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQG9hrzDweJMpQ/company-logo_200_200/B4DZh4EbjBH8AI-/0/1754361084409/meer_mirrors_for_earth_s_energy_rebalancing_logo?e=2147483647&v=beta&t=xsaL8ccok0wCPZfIMjuh7uEQ_qp1SgF9aeYFcRRWPPg",
   "colour": "#6db80d"
+},
+{
+  "id": "apc-tz",
+  "type": "Organisation",
+  "title": "APC Architectural Pioneering Consultants Ltd.",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Dar es Salaam, Tanzania",
+  "zones": [
+    {
+      "code": "Aw",
+      "text": "Tropical savanna (Aw)",
+      "colour": "#45aafa"
+    }
+  ],
+  "latitude": -6.760742,
+  "longitude": 39.270307,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://images.squarespace-cdn.com/content/v1/5e1aff07dce55f319aa56bea/1579289761331-1FZI3JZU7MM24MBRENQU/logo-sw.jpg",
+  "colour": "#e6b800"
 }
 ]
