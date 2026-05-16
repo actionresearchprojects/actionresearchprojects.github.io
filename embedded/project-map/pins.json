@@ -84,7 +84,7 @@
   "type": "Person",
   "title": "Toby Cambray",
   "link": "https://actionresearchprojects.net/people",
-  "address": "UCL, London",
+  "address": "UCL",
   "zones": [
     {
       "code": "Cfb",
@@ -92,31 +92,11 @@
       "colour": "#65ff51"
     }
   ],
-  "latitude": 51.5108,
+  "latitude": 51.5072,
   "longitude": -0.1276,
   "radiusKm": 0,
   "gdpr": false,
   "imageUrl": "https://media.licdn.com/dms/image/v2/C4D03AQFz3wiKjGvJyw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1581769682036?e=1779926400&v=beta&t=HtGO0QKcNYiVIa2SpQwzLMFQ21LLsUBGCqjuQSGx614",
-  "colour": "#0db8b8"
-},
-{
-  "id": "hectoraltamarinomedina",
-  "type": "Person",
-  "title": "Dr Hector Altamirano-Medina",
-  "link": "https://actionresearchprojects.net/people",
-  "address": "UCL, London",
-  "zones": [
-    {
-      "code": "Cfb",
-      "text": "Temperate oceanic (Cfb)",
-      "colour": "#65ff51"
-    }
-  ],
-  "latitude": 51.5036,
-  "longitude": -0.1276,
-  "radiusKm": 0,
-  "gdpr": false,
-  "imageUrl": "https://media.licdn.com/dms/image/v2/C5603AQEg5hBUgtvf9Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1568803853627?e=1780531200&v=beta&t=1SEuGGc7Uwe5Cx5hC_SxLuCZo0wnf6kSY7S5zJdn5s4",
   "colour": "#0db8b8"
 },
 {
@@ -213,7 +193,7 @@
     }
   ],
   "latitude": 34.1383,
-  "longitude": -118.6608,
+  "longitude": 118.6608,
   "radiusKm": 0,
   "gdpr": false,
   "imageUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQG9hrzDweJMpQ/company-logo_200_200/B4DZh4EbjBH8AI-/0/1754361084409/meer_mirrors_for_earth_s_energy_rebalancing_logo?e=2147483647&v=beta&t=xsaL8ccok0wCPZfIMjuh7uEQ_qp1SgF9aeYFcRRWPPg",
