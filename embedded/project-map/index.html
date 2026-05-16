@@ -249,7 +249,28 @@
             }
           });
 
-          // Clustered GeoJSON source
+          // Pre-build popup HTML for each pin (avoids needing all data in GeoJSON properties)
+          const popupHtmlMap = {};
+          points.forEach(pt => {
+            let zoneLines = '';
+            if (pt.zones && pt.zones.length) {
+              zoneLines = pt.zones.map(z => {
+                const bright = brightnessFromHex(z.colour) >= BRIGHTNESS_THRESHOLD;
+                const cls = bright ? 'zone-text stroke' : 'zone-text';
+                return `<span class="${cls}" style="color:${z.colour};">${z.text}</span>`;
+              }).join('<br>');
+            }
+            popupHtmlMap[pt.id] =
+              `<a href="${pt.link || ''}" target="_blank" rel="noopener noreferrer">` +
+              `<div style="font-weight:700; text-align:center; font-size:17px; margin-bottom:4px;">${pt.title}</div>` +
+              (pt.address ? `${pt.address}<br>` : '') +
+              (zoneLines ? `${zoneLines}<br>` : '') +
+              (pt.gdpr ? '<em>Location is not exact.</em><br>' : '') +
+              (pt.imageUrl ? `<div style="text-align:center;"><img class="popup-image" src="${pt.imageUrl}" /></div>` : '') +
+              `</a>`;
+          });
+
+          // Clustered GeoJSON source — only needs id + colour for marker rendering
           map.addSource('pins', {
             type: 'geojson',
             data: {
@@ -257,15 +278,7 @@
               features: points.map(pt => ({
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: [pt.longitude, pt.latitude] },
-                properties: {
-                  title: pt.title,
-                  link: pt.link || '',
-                  address: pt.address || '',
-                  colour: pt.colour || '#006400',
-                  gdpr: pt.gdpr || false,
-                  imageUrl: pt.imageUrl || '',
-                  zones: JSON.stringify(pt.zones || [])
-                }
+                properties: { id: pt.id, colour: pt.colour || '#006400' }
               }))
             },
             cluster: true,
@@ -301,18 +314,35 @@
             paint: { 'text-color': '#ffffff' }
           });
 
-          // Unclustered pins as coloured circles
-          map.addLayer({
-            id: 'unclustered-pin',
-            type: 'circle',
-            source: 'pins',
-            filter: ['!', ['has', 'point_count']],
-            paint: {
-              'circle-color': ['get', 'colour'],
-              'circle-radius': 9,
-              'circle-stroke-width': 2,
-              'circle-stroke-color': '#ffffff'
+          // Dynamic native Marker objects for unclustered pins — preserves the teardrop pin look
+          const markers = {};
+          const markersOnScreen = {};
+
+          function updateMarkers() {
+            const newMarkersOnScreen = {};
+            const features = map.querySourceFeatures('pins');
+            for (const feature of features) {
+              if (feature.properties.cluster) continue;
+              const id = feature.properties.id;
+              if (!id) continue;
+              let marker = markers[id];
+              if (!marker) {
+                marker = markers[id] = new mapboxgl.Marker({ color: feature.properties.colour || '#006400' })
+                  .setLngLat(feature.geometry.coordinates)
+                  .setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupHtmlMap[id] || ''));
+              }
+              newMarkersOnScreen[id] = marker;
+              if (!markersOnScreen[id]) marker.addTo(map);
             }
+            for (const id in markersOnScreen) {
+              if (!newMarkersOnScreen[id]) markersOnScreen[id].remove();
+            }
+            for (const id of Object.keys(markersOnScreen)) delete markersOnScreen[id];
+            Object.assign(markersOnScreen, newMarkersOnScreen);
+          }
+
+          map.on('render', () => {
+            if (map.isSourceLoaded('pins')) updateMarkers();
           });
 
           // Click cluster → zoom in
@@ -325,38 +355,9 @@
             });
           });
 
-          // Click unclustered pin → show popup
-          map.on('click', 'unclustered-pin', e => {
-            const props = e.features[0].properties;
-            const coords = e.features[0].geometry.coordinates.slice();
-            const zones = JSON.parse(props.zones);
-            let zoneLines = '';
-            if (zones.length) {
-              zoneLines = zones.map(z => {
-                const bright = brightnessFromHex(z.colour) >= BRIGHTNESS_THRESHOLD;
-                const cls = bright ? 'zone-text stroke' : 'zone-text';
-                return `<span class="${cls}" style="color:${z.colour};">${z.text}</span>`;
-              }).join('<br>');
-            }
-            const popupHtml =
-              `<a href="${props.link}" target="_blank" rel="noopener noreferrer">` +
-              `<div style="font-weight:700; text-align:center; font-size:17px; margin-bottom:4px;">${props.title}</div>` +
-              (props.address ? `${props.address}<br>` : '') +
-              (zoneLines ? `${zoneLines}<br>` : '') +
-              (props.gdpr ? '<em>Location is not exact.</em><br>' : '') +
-              (props.imageUrl ? `<div style="text-align:center;"><img class="popup-image" src="${props.imageUrl}" /></div>` : '') +
-              `</a>`;
-            new mapboxgl.Popup()
-              .setLngLat(coords)
-              .setHTML(popupHtml)
-              .addTo(map);
-          });
-
-          // Cursor changes
+          // Cursor pointer over clusters
           map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
           map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
-          map.on('mouseenter', 'unclustered-pin', () => { map.getCanvas().style.cursor = 'pointer'; });
-          map.on('mouseleave', 'unclustered-pin', () => { map.getCanvas().style.cursor = ''; });
 
           // Load weather stations AFTER pins so they appear on top
           fetch('weather_stations.json')
