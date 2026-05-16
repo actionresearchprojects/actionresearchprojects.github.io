@@ -178,5 +178,25 @@
   "gdpr": false,
   "imageUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGqDluWiIpB6w/profile-displayphoto-shrink_800_800/B4DZawqn3kHQAg-/0/1746720686009?e=1780531200&v=beta&t=_wamYShAqNaghglUJ00whyztjeCneyVGxa3M14PzisI",
   "colour": "#0db8b8"
+},
+{
+  "id": "meer",
+  "type": "Organisation",
+  "title": "MEER (Mirrors for Earth's Energy Rebalancing)",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Calabasas, California",
+  "zones": [
+    {
+      "code": "Csb",
+      "text": "Warm-summer Mediterranean (Csb)",
+      "colour": "#c7c800"
+    }
+  ],
+  "latitude": 34.1383,
+  "longitude": 118.6608,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQG9hrzDweJMpQ/company-logo_200_200/B4DZh4EbjBH8AI-/0/1754361084409/meer_mirrors_for_earth_s_energy_rebalancing_logo?e=2147483647&v=beta&t=xsaL8ccok0wCPZfIMjuh7uEQ_qp1SgF9aeYFcRRWPPg",
+  "colour": "#6db80d"
 }
 ]
