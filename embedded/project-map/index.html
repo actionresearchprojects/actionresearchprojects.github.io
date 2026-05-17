@@ -215,6 +215,7 @@
     map.on('style.load', () => map.setFog({}));
 
     map.on('load', () => {
+      console.log('Map loaded successfully');
       map.addSource('koppen', { type: 'geojson', data: './koppen.json' });
       map.addLayer({
         id: 'koppen-layer',
@@ -224,9 +225,15 @@
       });
 
       // Load regular pins with clustering
+      console.log('About to fetch pins.json');
       fetch('pins.json')
-        .then(res => res.json())
+        .then(res => {
+          console.log('pins.json fetch response:', res);
+          return res.json();
+        })
         .then(points => {
+          console.log('Loaded pins:', points.length, 'pins');
+          console.log('First pin:', points[0]);
           // GDPR radius circles are independent of clustering
           points.forEach(pt => {
             if (pt.gdpr) {
@@ -480,6 +487,10 @@
               });
             })
             .catch(err => console.log('Weather stations file not found or error loading:', err));
+        })
+        .catch(err => {
+          console.error('Error loading pins.json:', err);
+        });
         });
 
       map.addControl(
