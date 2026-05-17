@@ -286,6 +286,14 @@
             clusterRadius: 30
           });
 
+          // Hidden layer so Mapbox processes the source (required for querySourceFeatures to work)
+          map.addLayer({
+            id: 'pins-invisible',
+            type: 'circle',
+            source: 'pins',
+            paint: { 'circle-radius': 0, 'circle-opacity': 0 }
+          });
+
           // Dynamic native Marker objects for unclustered pins — preserves the teardrop pin look
           const markers = {};
           const markersOnScreen = {};
