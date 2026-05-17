@@ -298,5 +298,45 @@
     "gdpr": false,
     "imageUrl": "https://images.squarespace-cdn.com/content/v1/5e1aff07dce55f319aa56bea/1579289761331-1FZI3JZU7MM24MBRENQU/logo-sw.jpg",
     "colour": "#e6b800"
-  }
+  },
+  {
+  "id": "andysimmonds",
+  "type": "Person",
+  "title": "Andrew Simmonds",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Hereford, UK",
+  "zones": [
+    {
+      "code": "Cfb",
+      "text": "Temperate oceanic (Cfb)",
+      "colour": "#65ff51"
+    }
+  ],
+  "latitude": 52.0565,
+  "longitude": 2.716,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "",
+  "colour": "#0db8b8"
+  },
+  {
+  "id": "archiew",
+  "type": "Person",
+  "title": "Archie Worthington",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Manchester, UK",
+  "zones": [
+    {
+      "code": "Cfb",
+      "text": "Temperate oceanic (Cfb)",
+      "colour": "#65ff51"
+    }
+  ],
+  "latitude": 53.4808,
+  "longitude": 2.2426,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://media.licdn.com/dms/image/v2/D4D03AQFP_bv728G23g/profile-displayphoto-shrink_800_800/B4DZwiDkznIgAc-/0/1770097889422?e=1780531200&v=beta&t=h0Ujr2p0EbAxrkzj8rMSbEslX9UF3Ilci4LHsLN6I4E",
+  "colour": "#0db8b8"
+}
 ]
