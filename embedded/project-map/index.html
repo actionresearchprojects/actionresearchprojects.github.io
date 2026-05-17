@@ -286,48 +286,6 @@
             clusterRadius: 30
           });
 
-          // Cluster halo (soft outer ring)
-          map.addLayer({
-            id: 'clusters-halo',
-            type: 'circle',
-            source: 'pins',
-            filter: ['has', 'point_count'],
-            paint: {
-              'circle-color': '#e6b800',
-              'circle-radius': ['step', ['get', 'point_count'], 27, 5, 34, 15, 41],
-              'circle-opacity': 0.25,
-              'circle-stroke-width': 0
-            }
-          });
-
-          // Cluster circles
-          map.addLayer({
-            id: 'clusters',
-            type: 'circle',
-            source: 'pins',
-            filter: ['has', 'point_count'],
-            paint: {
-              'circle-color': '#e6b800',
-              'circle-radius': ['step', ['get', 'point_count'], 18, 5, 24, 15, 30],
-              'circle-stroke-width': 2,
-              'circle-stroke-color': '#ffffff'
-            }
-          });
-
-          // Cluster count labels
-          map.addLayer({
-            id: 'cluster-count',
-            type: 'symbol',
-            source: 'pins',
-            filter: ['has', 'point_count'],
-            layout: {
-              'text-field': '{point_count_abbreviated}',
-              'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-              'text-size': 13
-            },
-            paint: { 'text-color': '#ffffff' }
-          });
-
           // Dynamic native Marker objects for unclustered pins — preserves the teardrop pin look
           const markers = {};
           const markersOnScreen = {};
@@ -355,27 +313,44 @@
             Object.assign(markersOnScreen, newMarkersOnScreen);
           }
 
-          map.on('render', () => {
-            if (map.isSourceLoaded('pins')) updateMarkers();
-          });
+          // Custom HTML cluster markers — allows Ubuntu font and full styling
+          const clusterMarkers = {};
+          const clusterMarkersOnScreen = {};
 
-          // Click cluster → zoom in (works on both inner circle and halo)
-          function zoomToCluster(e) {
-            const features = map.queryRenderedFeatures(e.point, { layers: ['clusters', 'clusters-halo'] });
-            if (!features.length) return;
-            const clusterId = features[0].properties.cluster_id;
-            map.getSource('pins').getClusterExpansionZoom(clusterId, (err, zoom) => {
-              if (err) return;
-              map.easeTo({ center: features[0].geometry.coordinates, zoom });
-            });
+          function updateClusters() {
+            const newOnScreen = {};
+            const features = map.querySourceFeatures('pins');
+            for (const feature of features) {
+              if (!feature.properties.cluster) continue;
+              const id = feature.properties.cluster_id;
+              let marker = clusterMarkers[id];
+              if (!marker) {
+                const count = feature.properties.point_count;
+                const size = count < 5 ? 36 : count < 15 ? 44 : 52;
+                const el = document.createElement('div');
+                el.style.cssText = `width:${size}px;height:${size}px;background:#e6b800;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-family:Ubuntu,sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 0 0 7px rgba(230,184,0,0.25);`;
+                el.textContent = feature.properties.point_count_abbreviated || count;
+                el.addEventListener('click', () => {
+                  map.getSource('pins').getClusterExpansionZoom(id, (err, zoom) => {
+                    if (err) return;
+                    map.easeTo({ center: feature.geometry.coordinates, zoom });
+                  });
+                });
+                marker = clusterMarkers[id] = new mapboxgl.Marker({ element: el })
+                  .setLngLat(feature.geometry.coordinates);
+              }
+              newOnScreen[id] = marker;
+              if (!clusterMarkersOnScreen[id]) marker.addTo(map);
+            }
+            for (const id in clusterMarkersOnScreen) {
+              if (!newOnScreen[id]) clusterMarkersOnScreen[id].remove();
+            }
+            for (const id of Object.keys(clusterMarkersOnScreen)) delete clusterMarkersOnScreen[id];
+            Object.assign(clusterMarkersOnScreen, newOnScreen);
           }
-          map.on('click', 'clusters', zoomToCluster);
-          map.on('click', 'clusters-halo', zoomToCluster);
 
-          // Cursor pointer over clusters
-          ['clusters', 'clusters-halo'].forEach(layer => {
-            map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
-            map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
+          map.on('render', () => {
+            if (map.isSourceLoaded('pins')) { updateMarkers(); updateClusters(); }
           });
 
           // Load weather stations AFTER pins so they appear on top
