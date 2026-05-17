@@ -283,7 +283,12 @@
             },
             cluster: true,
             clusterMaxZoom: 16,
-            clusterRadius: 4
+            clusterRadius: [
+              'interpolate', ['linear'], ['zoom'],
+              0, 20,    // At zoom 0 (planet view), radius 20
+              8, 10,    // At zoom 8 (country view), radius 10
+              16, 4     // At zoom 16 (city view), radius 4
+            ]
           });
 
           // Hidden layer so Mapbox processes the source (required for querySourceFeatures to work)
