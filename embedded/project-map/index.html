@@ -286,6 +286,20 @@
             clusterRadius: 30
           });
 
+          // Cluster halo (soft outer ring)
+          map.addLayer({
+            id: 'clusters-halo',
+            type: 'circle',
+            source: 'pins',
+            filter: ['has', 'point_count'],
+            paint: {
+              'circle-color': '#0db8b8',
+              'circle-radius': ['step', ['get', 'point_count'], 27, 5, 34, 15, 41],
+              'circle-opacity': 0.25,
+              'circle-stroke-width': 0
+            }
+          });
+
           // Cluster circles
           map.addLayer({
             id: 'clusters',
@@ -293,7 +307,7 @@
             source: 'pins',
             filter: ['has', 'point_count'],
             paint: {
-              'circle-color': '#555555',
+              'circle-color': '#0db8b8',
               'circle-radius': ['step', ['get', 'point_count'], 18, 5, 24, 15, 30],
               'circle-stroke-width': 2,
               'circle-stroke-color': '#ffffff'
@@ -345,19 +359,24 @@
             if (map.isSourceLoaded('pins')) updateMarkers();
           });
 
-          // Click cluster → zoom in
-          map.on('click', 'clusters', e => {
-            const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+          // Click cluster → zoom in (works on both inner circle and halo)
+          function zoomToCluster(e) {
+            const features = map.queryRenderedFeatures(e.point, { layers: ['clusters', 'clusters-halo'] });
+            if (!features.length) return;
             const clusterId = features[0].properties.cluster_id;
             map.getSource('pins').getClusterExpansionZoom(clusterId, (err, zoom) => {
               if (err) return;
               map.easeTo({ center: features[0].geometry.coordinates, zoom });
             });
-          });
+          }
+          map.on('click', 'clusters', zoomToCluster);
+          map.on('click', 'clusters-halo', zoomToCluster);
 
           // Cursor pointer over clusters
-          map.on('mouseenter', 'clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
-          map.on('mouseleave', 'clusters', () => { map.getCanvas().style.cursor = ''; });
+          ['clusters', 'clusters-halo'].forEach(layer => {
+            map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
+            map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
+          });
 
           // Load weather stations AFTER pins so they appear on top
           fetch('weather_stations.json')
