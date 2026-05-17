@@ -193,10 +193,70 @@
     }
   ],
   "latitude": 34.1383,
-  "longitude": 118.6608,
+  "longitude": -118.6608,
   "radiusKm": 0,
   "gdpr": false,
   "imageUrl": "https://media.licdn.com/dms/image/v2/D4D0BAQG9hrzDweJMpQ/company-logo_200_200/B4DZh4EbjBH8AI-/0/1754361084409/meer_mirrors_for_earth_s_energy_rebalancing_logo?e=2147483647&v=beta&t=xsaL8ccok0wCPZfIMjuh7uEQ_qp1SgF9aeYFcRRWPPg",
   "colour": "#6db80d"
+},
+{
+  "id": "muhammadumerkarim",
+  "type": "Person",
+  "title": "Muhammad Umer Karim",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Hyderabad District, Sindh, Pakistan",
+  "zones": [
+    {
+      "code": "BSh",
+      "text": "Hot semi-arid (BSh)",
+      "colour": "#f4a500"
+    }
+  ],
+  "latitude": 25.25,
+  "longitude": 68.75,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://media.licdn.com/dms/image/v2/D4D03AQGuqekh11xaYA/profile-displayphoto-crop_800_800/B4DZ4qbhfFH4AI-/0/1778828318953?e=1780531200&v=beta&t=ocYxe3DtuEMMfhA6EKqrSjrLMPugrduj0CuMXGeR2g8",
+  "colour": "#0db8b8"
+},
+{
+  "id": "naseermemon",
+  "type": "Person",
+  "title": "Naseer Memon",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Isl\u0101m\u0101b\u0101d, Pakistan",
+  "zones": [
+    {
+      "code": "Cwa",
+      "text": "Humid subtropical (dry winter) (Cwa)",
+      "colour": "#96ff96"
+    }
+  ],
+  "latitude": 33.738,
+  "longitude": 73.084,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://media.licdn.com/dms/image/v2/C4D03AQHBaOGTQSDiGw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1662177273449?e=1780531200&v=beta&t=ey4KCQOhpMORWcmdcLibjyIakzC9WbgCzX5Liye1B0Y",
+  "colour": "#0db8b8"
+},
+{
+  "id": "ehsanleghari",
+  "type": "Person",
+  "title": "Ehsan Leghari",
+  "link": "https://actionresearchprojects.net/people",
+  "address": "Pakistan",
+  "zones": [
+    {
+      "code": "BWh",
+      "text": "Hot desert (BWh)",
+      "colour": "#fe0000"
+    }
+  ],
+  "latitude": 30.3753,
+  "longitude": 69.3451,
+  "radiusKm": 0,
+  "gdpr": false,
+  "imageUrl": "https://media.licdn.com/dms/image/v2/C4D03AQHdzjoh8JE_Pw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1516888405563?e=1780531200&v=beta&t=gdLyiLRHn3mvQie_C7H_7Ea__O_1AQSdytbZ5TFutuo",
+  "colour": "#0db8b8"
 }
 ]
