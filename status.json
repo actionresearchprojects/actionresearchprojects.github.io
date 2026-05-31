@@ -1,6 +1,6 @@
 {
   "checked_at": "2026-05-30 06:50 UTC",
-  "overall": "stale",
+  "overall": "ok",
   "sources": [
     {
       "key": "omnisense",
@@ -41,14 +41,14 @@
     {
       "key": "enso",
       "label": "ENSO ONI (NOAA PSL)",
-      "status": "stale",
+      "status": "ok",
       "fetch_date": null,
       "fetch_age_hours": null,
       "fetch_status": "unknown",
       "data_date": "2026-03-01 00:00 UTC",
       "data_age_hours": 2166.8,
-      "data_status": "stale",
-      "note": "Monthly index; NOAA publishes with up to ~3 month lag \u2014 alerts only if data is >90 days old"
+      "data_status": "ok",
+      "note": "Monthly index; NOAA publishes with up to ~3 month lag \u2014 alerts only if data is >120 days old"
     },
     {
       "key": "iod",
