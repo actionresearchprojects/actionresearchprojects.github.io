@@ -3962,7 +3962,7 @@ function renderLineGraph() {
     extraAxes[yKey] = {
       overlaying: 'y', side: 'right',
       anchor: idx === 0 ? 'x' : 'free',
-      position, range,
+      position, range, autorange: false,
       showgrid: false, showline: true, linewidth: 1.5,
       linecolor: axColor, tickcolor: axColor,
       tickfont: {size: 8, color: axColor},
@@ -3986,7 +3986,7 @@ function renderLineGraph() {
       domain: [0, xRight],
       range: [toEATString(start), toEATString(end)],
       nticks:20, tickangle:-30, automargin:true},
-    yaxis:{title:yTitle, ticksuffix:ySuffix, showgrid:true, gridcolor:'#eee', range: yLo !== undefined ? [yLo, yHi] : (hasWeather ? [0, 1] : undefined)},
+    yaxis:{title:yTitle, ticksuffix:ySuffix, showgrid:true, gridcolor:'#eee', range: yLo !== undefined ? [hasWeather ? Math.min(0, yLo) : yLo, yHi] : (hasWeather ? [0, 1] : undefined)},
     ...extraAxes,
     legend:{orientation:'v', x:1.01, y:1, xanchor:'left', ...legendStyle(state.selectedLoggers.size), itemclick:false, itemdoubleclick:false},
     plot_bgcolor:'white', paper_bgcolor:'white', shapes,
