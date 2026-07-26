@@ -17,9 +17,12 @@
     <style>
       *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { height: 100%; overflow: hidden; background: url('../../assets/images/support-page-background.webp') center / cover no-repeat fixed; }
+      /* fluid-scaling.js zooms <body>; vh units resolve pre-zoom, so use its
+         --fluid-vh (viewport height in the zoomed coordinate system) instead. */
+      body { height: var(--fluid-vh, 100%); }
       body { font-family: "Ubuntu", sans-serif; -webkit-font-smoothing: antialiased; background: transparent; }
-      #main { position: fixed; inset: 0; display: flex; justify-content: center; align-items: center; }
-      .embed-wrap { width: 75%; max-width: 1080px; height: calc(100vh - 80px); }
+      #main { position: fixed; inset: 0; height: var(--fluid-vh, 100vh); display: flex; justify-content: center; align-items: center; }
+      .embed-wrap { width: 75%; max-width: 1080px; height: calc(var(--fluid-vh, 100vh) - 80px); }
       .embed-wrap iframe { width: 100%; height: 100%; border: none; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); }
       #site-footer {
         position: fixed;
