@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heatwaves: five reasons why Victorian houses are cooler than modern buildings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <style>
+    html {
+      box-sizing: border-box;
+      height: 100%;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      color: #111;
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+    /* Article body links: keep the plain look of the other reflections
+       rather than default browser blue. */
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: rgba(0, 0, 0, 0.35);
+      text-underline-offset: 2px;
+    }
+    a:hover {
+      text-decoration-color: rgba(0, 0, 0, 0.8);
+    }
+    figure {
+      margin: 10px 0 16px;
+    }
+    figure img {
+      margin: 0;
+    }
+    figcaption {
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: #555;
+      margin-top: 6px;
+    }
+    figcaption .credit {
+      color: #888;
+    }
+    .attribution {
+      font-size: 0.85rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: #555;
+      margin-top: 10px;
+    }
+    #topBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 6px 10px;
+      font-size: 18px;
+      background: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      z-index: 10;
+    }
+    #topBtn.visible {
+      opacity: 0.7;
+      pointer-events: auto;
+    }
+    #topBtn:hover {
+      opacity: 1;
+    }
+    #scrollPrompt {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      font-size: clamp(12px, 1.5vw, 16px);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      padding: 6px 10px;
+      z-index: 5;
+      user-select: none;
+      color: #000;
+      font-weight: bold;
+      line-height: 1;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    #scrollPrompt.fade-out {
+      opacity: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: 1px solid black;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .spacer {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div id="scrollPrompt" data-i18n="rg.scroll">↓ Scroll</div>
+  <h1 class="theconversation-article-title" data-i18n="rg.vic.h1" data-i18n-html="">Heatwaves: five reasons why Victorian houses are cooler than modern buildings</h1>
+
+  <div class="theconversation-article-body">
+
+  <figure>
+    <img src="images/melbourne-market.jpg" alt="A row of Victorian shops with canopies creating shade in Melbourne, Australia" />
+    <figcaption data-i18n="rg.vic.cap1" data-i18n-html="">Queen Victoria Market shopfronts in Melbourne, Australia, built in the Victorian period and featuring canopies at the front. <span class="credit"><a href="https://upload.wikimedia.org/wikipedia/commons/7/78/Queen_Victoria_Market_shopfronts.jpg" target="_blank" rel="noopener noreferrer">Jacqui Szyrpallo/Wikimedia</a>, <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY</a></span></figcaption>
+  </figure>
+
+  <p data-i18n="rg.vic.p1" data-i18n-html="">More than four million homes were built in the UK during the Victorian era.</p>
+
+  <p data-i18n="rg.vic.p2" data-i18n-html="">Victorian homes were constructed long before the <a href="https://doi.org/10.1177/0143624419847349" target="_blank" rel="noopener noreferrer">complex computer models</a> used today to design buildings were invented. Yet, these homes, built over 100 years ago, are <a href="https://doi.org/10.1016/j.buildenv.2013.03.011" target="_blank" rel="noopener noreferrer">cooler in summer than many built more recently</a>.</p>
+
+  <p data-i18n="rg.vic.p3" data-i18n-html="">Here are some fundamental <a href="https://theconversation.com/uk/search?q=buildings&amp;sort=relevancy&amp;language=en&amp;date=all&amp;date_from=&amp;date_to=&amp;commissioning_region=all" target="_blank" rel="noopener noreferrer">architectural</a> reasons why this is.</p>
+
+  <h2 data-i18n="rg.vic.s1.h" data-i18n-html="">1. Shutters</h2>
+
+  <p data-i18n="rg.vic.s1.p1" data-i18n-html="">Many Victorian homes featured <a href="https://storymaps.arcgis.com/stories/a0f7a68066c5433781b3eb914597cadf" target="_blank" rel="noopener noreferrer">external wooden shutters</a> to block the sun’s heat before it entered the building. The Victorians knew that blocking the sun’s heat before it enters the building is among <a href="https://doi.org/10.1016/j.buildenv.2026.114702" target="_blank" rel="noopener noreferrer">the best ways to reduce overheating</a>. Few homes built in the 20th century in the UK have external shutters on windows, partly because modern homes use outward-opening hinged casement windows which cannot be used with external shutters.</p>
+
+  <p data-i18n="rg.vic.s1.p2" data-i18n-html="">Homes in southern and central Europe have tended to keep their external shutters, because they have historically faced hotter summers than the UK. With a changing climate, parts of the UK are expected to have a climate similar to the <a href="https://doi.org/10.1371/journal.pone.0224120" target="_blank" rel="noopener noreferrer">Mediterranean by the middle of this century</a>.</p>
+
+  <p data-i18n="rg.vic.s1.p3" data-i18n-html="">Victorian homes were also equipped with internal shutters. <a href="https://doi.org/10.1016/j.buildenv.2026.114702" target="_blank" rel="noopener noreferrer">These are less effective than external ones</a> at reducing overheating because the sun’s heat has already passed into the building. Yet, they are still more effective than a completely unshaded window, particularly if the shutters are painted a light colour which reflects some of the heat back out.</p>
+
+  <p data-i18n="rg.vic.s1.p4" data-i18n-html="">Their main benefit, however, is <a href="https://bbsa.org.uk/wp-content/uploads/2023/03/March-2023-BBSA-Initial-Report-v2.pdf" target="_blank" rel="noopener noreferrer">keeping the heat in during winter</a>. Many Victorian internal shutters survive today as they are less likely to have been damaged due to weather exposure or have been removed when sliding sash windows were replaced with other alternatives.</p>
+
+  <h2 data-i18n="rg.vic.s2.h" data-i18n-html="">2. Canopies and awnings</h2>
+
+  <p data-i18n="rg.vic.s2.p1" data-i18n-html="">Conjure up an image of a Victorian high street, and no doubt a row of striped canopies and awnings above the shops and cafes will come to mind. These have a similar effect to <a href="https://doi.org/10.1016/j.buildenv.2026.114702" target="_blank" rel="noopener noreferrer">external shutters</a> by blocking the sun’s heat before it enters the building.</p>
+
+  <p data-i18n="rg.vic.s2.p2" data-i18n-html="">Canopies and awnings have several other benefits: they can be used alongside outward opening windows, so they don’t block ventilation; <a href="https://historicengland.org.uk/content/docs/advice/bcd-2021-awnings-and-canopies/" target="_blank" rel="noopener noreferrer">they allow a view out of the building</a>; and they provide a pleasant shady place to sit.</p>
+
+  <p data-i18n="rg.vic.s2.p3" data-i18n-html="">Although rarely seen today, <a href="https://storymaps.arcgis.com/stories/a0f7a68066c5433781b3eb914597cadf" target="_blank" rel="noopener noreferrer">many Victorian buildings featured them</a>. Even <a href="https://historicengland.org.uk/content/docs/advice/bcd-2021-awnings-and-canopies/" target="_blank" rel="noopener noreferrer">Buckingham Palace</a> once had external canopies protecting the windows from the heat of the sun.</p>
+
+  <p data-i18n="rg.vic.s2.p4" data-i18n-html="">Although it’s not entirely clear <a href="https://historicengland.org.uk/content/docs/advice/bcd-2021-awnings-and-canopies/" target="_blank" rel="noopener noreferrer">why canopies were removed</a>, there may be fewer barriers to their return than we think. The <a href="https://storymaps.arcgis.com/stories/a0f7a68066c5433781b3eb914597cadf" target="_blank" rel="noopener noreferrer">Royal Borough of Kensington and Chelsea</a> in London has spotted that many of the awning boxes, which stored the rolled up awning or retracted canopy, survive today as they are integrated into the building’s facade. With increasing pressure to keep our homes cool in summer, these could easily, and relatively cheaply, be brought back into use.</p>
+
+  <figure>
+    <img src="images/buckingham-palace-1897.jpg" alt="A crowd of people in front of Buckingham Palace in 1897" />
+    <figcaption data-i18n="rg.vic.cap2" data-i18n-html="">A Diamond Jubilee garden party at Buckingham Palace in 1897, showing the awnings in use. <span class="credit"><a href="https://commons.wikimedia.org/wiki/File:Diamond_Jubilee_Garden_Party,_Buckingham_Palace,_1897.jpg" target="_blank" rel="noopener noreferrer">Royal Collection, Public domain, via Wikimedia Commons</a>, <a href="http://creativecommons.org/licenses/by-nd/4.0/" target="_blank" rel="noopener noreferrer">CC BY-ND</a></span></figcaption>
+  </figure>
+
+  <h2 data-i18n="rg.vic.s3.h" data-i18n-html="">3. Sash windows</h2>
+
+  <p data-i18n="rg.vic.s3.p1" data-i18n-html="">Ventilation can bring in cooler outdoor air (usually at night) and <a href="https://doi.org/10.26174/thesis.lboro.13281293" target="_blank" rel="noopener noreferrer">reduce overheating</a>. The Victorians used sliding sash windows which could be operated even with the external shutters closed.</p>
+
+  <p data-i18n="rg.vic.s3.p2" data-i18n-html="">Sash windows are particularly effective because they have a separate operable upper and lower portion which allows for hot air to leave the home at the top and <a href="https://doi.org/10.1017/flo.2021.14" target="_blank" rel="noopener noreferrer">cooler air to enter at the bottom</a>. With hinging casement windows on modern homes the air coming in is often blocked by the air going out, so they don’t keep homes as cool.</p>
+
+  <h2 data-i18n="rg.vic.s4.h" data-i18n-html="">4. Leaky by design</h2>
+
+  <p data-i18n="rg.vic.s4.p1" data-i18n-html="">It is not just sash windows that makes Victorian homes better ventilated. With open fires burning in winter, the Victorians designed their homes to bring in lots of outdoor air for combustion and several open chimneys to carry the smoke away.</p>
+
+  <p data-i18n="rg.vic.s4.p2" data-i18n-html="">These types of homes, with open chimneys, suspended timber floors, and uninsulated solid brick walls, are the leakiest and <a href="https://assets.publishing.service.gov.uk/media/68db99e0dadf7616351e4be6/airtightness-in-uk-housing-stock-baseline.pdf" target="_blank" rel="noopener noreferrer">least airtight homes</a> in the British housing stock.</p>
+
+  <p data-i18n="rg.vic.s4.p3" data-i18n-html="">This allows more air to enter the building, <a href="https://doi.org/10.1108/IJBPA-06-2021-0085" target="_blank" rel="noopener noreferrer">even when windows are closed</a>, which can cool the home in summer if it is cooler outside than inside. The suspended timber floors also store cool air under the building during the day to provide a cooling effect.</p>
+
+  <p data-i18n="rg.vic.s4.p4" data-i18n-html="">Modern homes do not have these features – there is no need for open chimneys when central heating is used. To help reduce winter energy bills, suspended timber floors have been replaced by insulated slab-on-grade or beam-and-block, and modern <a href="https://assets.publishing.service.gov.uk/media/662a2e3e55e1582b6ca7e592/Approved_Document_L__Conservation_of_fuel_and_power__Volume_1_Dwellings__2021_edition_incorporating_2023_amendments.pdf" target="_blank" rel="noopener noreferrer">building regulations</a> are requiring more airtight homes to reduce heat loss in the colder months.</p>
+
+  <h2 data-i18n="rg.vic.s5.h" data-i18n-html="">5. Solid brick</h2>
+
+  <p data-i18n="rg.vic.s5.p1" data-i18n-html="">Walk into an ancient church on a hot day and you may mistakenly think they’ve installed air-conditioning. The real reason for the instant cool feeling is in the huge amounts of thermal mass – the ability of the building to store heat within the building fabric.</p>
+
+  <p data-i18n="rg.vic.s5.p2" data-i18n-html="">There has been a fundamental shift in the way houses are constructed in the UK. Victorian homes had solid brick or stone external and internal partition walls – so high thermal mass.</p>
+
+  <p data-i18n="rg.vic.s5.p3" data-i18n-html="">These walls were able to <a href="https://doi.org/10.1016/j.energy.2020.116984" target="_blank" rel="noopener noreferrer">soak up and store the heat of the day</a> to keep the indoor temperature cool.</p>
+
+  <p data-i18n="rg.vic.s5.p4" data-i18n-html="">Modern homes are constructed of lightweight timber frame and plasterboard (lower thermal mass) because they are cheaper and quicker to build. These walls are less able to absorb heat during the day, but they do have the benefit of <a href="https://doi.org/10.1016/j.buildenv.2018.05.062" target="_blank" rel="noopener noreferrer">cooling down faster at night</a>.</p>
+
+  <h2 data-i18n="rg.vic.s6.h" data-i18n-html="">What goes wrong?</h2>
+
+  <p data-i18n="rg.vic.s6.p1" data-i18n-html="">So why are some Victorian properties not particularly cool during summer heatwaves today? Often the way they have been adapted introduced an overheating problem. When wooden sash windows reach the end of their life, they are often replaced with cheaper outward-opening casement windows. This prevents them from being used with external shutters or ventilating as efficiently.</p>
+
+  <p data-i18n="rg.vic.s6.p2" data-i18n-html="">External shading itself is also being <a href="https://historicengland.org.uk/advice/technical-advice/retrofit-and-energy-efficiency-in-historic-buildings/upgrading-thermal-elements-installing-insulation/overheating-historic-buldings/" target="_blank" rel="noopener noreferrer">discouraged in some conservation areas</a>, despite it <a href="https://storymaps.arcgis.com/stories/a0f7a68066c5433781b3eb914597cadf" target="_blank" rel="noopener noreferrer">featuring on heritage buildings in the past</a>.</p>
+
+  <p data-i18n="rg.vic.s6.p3" data-i18n-html="">Conversion of Victorian single homes into multiple flats can further cause problems as the once free cross-ventilation may now be blocked and those in converted loft spaces are exposed to <a href="https://goodhomes.org.uk/wp-content/uploads/2017/08/REPORT-GHA-Preventing-Overheating-FINAL-140217-2.pdf" target="_blank" rel="noopener noreferrer">high internal roof surface temperatures</a>.</p>
+
+  <p data-i18n="rg.vic.s6.p4" data-i18n-html="">Victorian building design has lessons for today. If sash windows are removed, inward opening windows can be combined with external shutters or blinds instead. Victorian-style awnings and canopies are compatible with outward opening windows, so these could help too.</p>
+
+  <p data-i18n="rg.vic.s6.p5" data-i18n-html="">Most homes standing today will still be around <a href="https://www.iea.org/reports/breakthrough-agenda-report-2025" target="_blank" rel="noopener noreferrer">in decades to come</a>, so they must be planned or adapted to cope with whatever the future climate has to throw at them.</p>
+
+  <!-- The Conversation page counter. Please do not remove. Kept outside the
+       translated paragraph above so switching language can't strip it. --><img src="https://counter.theconversation.com/content/283934/count.gif?distributor=republish-lightbox-basic" alt="The Conversation" width="1" height="1" style="border: none !important; box-shadow: none !important; margin: 0 !important; max-height: 1px !important; max-width: 1px !important; min-height: 1px !important; min-width: 1px !important; opacity: 0 !important; outline: none !important; padding: 0 !important" referrerpolicy="no-referrer-when-downgrade" /><!-- End of code. -->
+
+  <br>
+  <p data-i18n="rg.vic.byline" data-i18n-html=""><strong>By <a href="https://theconversation.com/profiles/ben-roberts-2695456" target="_blank" rel="noopener noreferrer">Ben Roberts</a>, Senior Lecturer in School of Architecture, Building and Civil Engineering, <a href="https://theconversation.com/institutions/loughborough-university-1336" target="_blank" rel="noopener noreferrer">Loughborough University</a></strong></p>
+
+  <p class="attribution" data-i18n="rg.vic.attribution" data-i18n-html="">This article is republished from <a href="https://theconversation.com" target="_blank" rel="noopener noreferrer">The Conversation</a> under a Creative Commons license. Read the <a href="https://theconversation.com/heatwaves-five-reasons-why-victorian-houses-are-cooler-than-modern-buildings-283934" target="_blank" rel="noopener noreferrer">original article</a>.</p>
+
+  </div>
+
+  <div class="spacer"></div>
+  <button id="topBtn">▲</button>
+  <script>
+    const topBtn = document.getElementById('topBtn');
+    const scrollPrompt = document.getElementById('scrollPrompt');
+
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 100;
+      topBtn.classList.toggle('visible', scrolled);
+      scrollPrompt.classList.toggle('fade-out', scrolled);
+    });
+
+    topBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+  <script src="/i18n-translations.js"></script>
+  <script src="/i18n.js"></script>
+</body>
+</html>
