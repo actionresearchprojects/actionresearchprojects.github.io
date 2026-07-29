@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heatwaves: expert tips on redesigning UK homes to cope with hotter temperatures</title>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+  <style>
+    html {
+      box-sizing: border-box;
+      height: 100%;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      padding: 20px;
+      line-height: 1.6;
+      color: #111;
+      background: #fff;
+      max-width: 700px;
+      margin: auto;
+      position: relative;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 1.4rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    img {
+      width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+    /* Article body links: keep the plain look of the other reflections
+       rather than default browser blue. */
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: rgba(0, 0, 0, 0.35);
+      text-underline-offset: 2px;
+    }
+    a:hover {
+      text-decoration-color: rgba(0, 0, 0, 0.8);
+    }
+    figure {
+      margin: 10px 0 16px;
+    }
+    figure img {
+      margin: 0;
+    }
+    figcaption {
+      font-size: 0.85rem;
+      line-height: 1.45;
+      color: #555;
+      margin-top: 6px;
+    }
+    figcaption .credit {
+      color: #888;
+    }
+    /* 16:9 holder so the YouTube embed scales with the 700px column
+       instead of the fixed 440x260 from the source markup. */
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+    }
+    .video-wrap iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .attribution {
+      font-size: 0.85rem;
+      font-style: italic;
+      line-height: 1.5;
+      color: #555;
+      margin-top: 10px;
+    }
+    #topBtn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 6px 10px;
+      font-size: 18px;
+      background: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
+      z-index: 10;
+    }
+    #topBtn.visible {
+      opacity: 0.7;
+      pointer-events: auto;
+    }
+    #topBtn:hover {
+      opacity: 1;
+    }
+    #scrollPrompt {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      font-size: clamp(12px, 1.5vw, 16px);
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 999px;
+      padding: 6px 10px;
+      z-index: 5;
+      user-select: none;
+      color: #000;
+      font-weight: bold;
+      line-height: 1;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    #scrollPrompt.fade-out {
+      opacity: 0;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: 1px solid black;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .spacer {
+      height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div id="scrollPrompt" data-i18n="rg.scroll">↓ Scroll</div>
+  <h1 class="theconversation-article-title" data-i18n="rg.heat.h1" data-i18n-html="">Heatwaves: expert tips on redesigning UK homes to cope with hotter temperatures</h1>
+
+  <div class="theconversation-article-body">
+
+  <figure>
+    <img src="images/test-houses.jpg" alt="Two semi-detached houses used by Loughborough University to test how they respond to heat" />
+    <figcaption data-i18n="rg.heat.cap1" data-i18n-html="">Two semi-detached houses used by Loughborough University to test how they respond to heat. <span class="credit">Ben Roberts, Author provided</span></figcaption>
+  </figure>
+
+  <p data-i18n="rg.heat.p1" data-i18n-html="">As the UK prepares for the third heatwave of 2026, most people will be hoping to try and keep cool at home.</p>
+
+  <p data-i18n="rg.heat.p2" data-i18n-html=""><a href="https://assets.publishing.service.gov.uk/media/6218c5aad3bf7f4f0b29b624/ADO.pdf" target="_blank" rel="noopener noreferrer">Building regulations</a> to protect homes from <a href="https://theconversation.com/uk/search?q=heatwaves" target="_blank" rel="noopener noreferrer">overheating</a> were introduced in 2022. These require all new homes to be <a href="https://doi.org/10.1177/0143624419847349" target="_blank" rel="noopener noreferrer">checked</a> at the design stage to see if they might be at risk of overheating. If the overheating risk is high, the architect has to make changes to the design.</p>
+
+  <p data-i18n="rg.heat.p3" data-i18n-html="">Given that the UK government plans to build <a href="https://www.gov.uk/government/news/housing-sec-pledges-to-go-further-than-ever-before-to-hit-15-million-homes" target="_blank" rel="noopener noreferrer">1.5 million homes by 2029</a> and the climate is predicted to continue to <a href="https://www.metoffice.gov.uk/research/climate/understanding-climate/uk-and-global-extreme-events-heatwaves" target="_blank" rel="noopener noreferrer">warm</a>, reducing overheating in new homes is essential. Around <a href="https://doi.org/10.1016/j.buildenv.2021.107986" target="_blank" rel="noopener noreferrer">4.6 million</a> bedrooms (19% of the stock) and 3.6 million living rooms (15%) in homes in England were found to have overheated during the summer of 2018.</p>
+
+  <p data-i18n="rg.heat.p4" data-i18n-html="">At Loughborough University we have been experimenting with a pair of semi-detached houses, each fitted with different shading devices, to see what might work to reduce overheating. A lot more needs to be done to make sure UK homes are able to cope with the high temperatures they are likely to experience more often in the future.</p>
+
+  <h2 data-i18n="rg.heat.s1.h" data-i18n-html="">1. External shading</h2>
+
+  <p data-i18n="rg.heat.s1.p1" data-i18n-html="">If you live in the UK, count the number of window shades you can see on a street. While these were <a href="https://theconversation.com/heatwaves-five-reasons-why-victorian-houses-are-cooler-than-modern-buildings-283934" target="_blank" rel="noopener noreferrer">previously quite common in the Victorian period</a>, for instance, most new homes don’t have external shading. But they are one of the <a href="https://doi.org/10.1016/j.buildenv.2026.114702" target="_blank" rel="noopener noreferrer">most effective</a> passive cooling measures (methods to lower indoor temperatures without air conditioning), as well as being relatively cheap to install.</p>
+
+  <p data-i18n="rg.heat.s1.p2" data-i18n-html="">Ongoing experiments in our pair of <a href="https://www.lboro.ac.uk/media-centre/press-releases/2025/august/sun-shield-could-be-key-to-keeping-homes-cool/" target="_blank" rel="noopener noreferrer">test houses</a> have shown that external shading can reduce indoor temperatures by over 6°C, which can make a meaningful improvement to people’s health and wellbeing at home. <a href="https://hdl.handle.net/2134/29438480.v1" target="_blank" rel="noopener noreferrer">Other research</a> is looking at how acceptable and affordable shading devices, like awnings, are to householders.</p>
+
+  <p data-i18n="rg.heat.s1.p3" data-i18n-html="">If included at design-stage, some form of external window shading could be applied to almost any new home – even high-rise flats, which are at <a href="https://doi.org/10.1016/j.buildenv.2021.107986" target="_blank" rel="noopener noreferrer">highest risk of overheating</a>. Tall blocks of flats in countries like France and Italy often incorporate shading on balconies.</p>
+
+  <figure>
+    <img src="images/awnings.jpg" alt="Loughborough University test houses with external awnings applied to one house" />
+    <figcaption data-i18n="rg.heat.cap2" data-i18n-html="">Loughborough University test houses with external awnings applied to one house. The other is left unshaded. <span class="credit">Ben Roberts, Author provided</span></figcaption>
+  </figure>
+
+  <h2 data-i18n="rg.heat.s2.h" data-i18n-html="">2. Insulated and airtight</h2>
+
+  <p data-i18n="rg.heat.s2.p1" data-i18n-html="">Some people believe that higher levels of insulation are increasing overheating risk – but this is <a href="https://doi.org/10.1016/j.buildenv.2021.107986" target="_blank" rel="noopener noreferrer">not correct</a>. Research shows that energy efficiency measures <a href="https://doi.org/10.1016/j.enpol.2024.114108" target="_blank" rel="noopener noreferrer">do not increase overheating</a>. They do make rooms warmer, but not so much that they cause overheating discomfort or health risks to people. Increased temperatures from <a href="https://doi.org/10.1016/j.buildenv.2018.05.062" target="_blank" rel="noopener noreferrer">internal wall insulation can be counteracted with ventilation through windows</a>.</p>
+
+  <p data-i18n="rg.heat.s2.p2" data-i18n-html="">Insulation works to ensure that heat does not flow in either direction – in or out of a building. A <a href="https://doi.org/10.1016/j.buildenv.2021.107986" target="_blank" rel="noopener noreferrer">large national survey</a> of homes in England found that loft insulation reduces overheating, probably because it protects the room below from the high temperatures that can be experienced in loft spaces. Higher levels of airtightness <a href="https://doi.org/10.1108/IJBPA-06-2021-0085" target="_blank" rel="noopener noreferrer">reduces infiltration of hot air from outside during heatwaves</a>.</p>
+
+  <p data-i18n="rg.heat.s2.p3" data-i18n-html=""><a href="https://assets.publishing.service.gov.uk/media/662a2e3e55e1582b6ca7e592/Approved_Document_L__Conservation_of_fuel_and_power__Volume_1_Dwellings__2021_edition_incorporating_2023_amendments.pdf" target="_blank" rel="noopener noreferrer">Building regulations</a> in the past have only focused on reducing wintertime heating demand and for good reason – in the last 25 years, <a href="https://doi.org/10.1016/S2542-5196(22)00138-3" target="_blank" rel="noopener noreferrer">77 times more people died due to cold homes than hot homes</a>. But combined with <a href="https://assets.publishing.service.gov.uk/media/6218c5aad3bf7f4f0b29b624/ADO.pdf" target="_blank" rel="noopener noreferrer">new regulations for overheating</a> which limits the sun’s heat entering through windows, high levels of insulation and airtightness can be a positive thing for our buildings all year round.</p>
+
+  <figure>
+    <div class="video-wrap">
+      <iframe src="https://www.youtube.com/embed/JE-45ndkQZw?wmode=transparent&amp;start=0" title="Another heatwave is expected in the UK" frameborder="0" allowfullscreen=""></iframe>
+    </div>
+    <figcaption data-i18n="rg.heat.vidcap" data-i18n-html="">Another heatwave is expected in the UK.</figcaption>
+  </figure>
+
+  <h2 data-i18n="rg.heat.s3.h" data-i18n-html="">3. Secure ventilation and sensors</h2>
+
+  <p data-i18n="rg.heat.s3.p1" data-i18n-html="">Research in our test houses also investigated the effect of behaviour on overheating. To do this we used <a href="https://doi.org/10.21427/D70N8S" target="_blank" rel="noopener noreferrer">synthetic occupants</a> – these are automated devices which can open windows, doors, curtains, and blinds. These controlled <a href="https://doi.org/10.26174/thesis.lboro.13281293" target="_blank" rel="noopener noreferrer">tests</a> showed that the way people use windows and shading affects how much their home overheats. I spent a lot of time during recent heatwaves <a href="https://inews.co.uk/inews-lifestyle/mistakes-people-make-trying-keep-home-cool-heatwave-4483986?srsltid=AfmBOoqn5WVjMtW5FBZ5Rj7cnYZ4kxt8TpYLguu1caWrBycUkDarKgRG" target="_blank" rel="noopener noreferrer">advising people</a> when to open or close their windows. But this ignores the fact that poor building design is often the cause of overheating in many cases – no matter when you open your windows.</p>
+
+  <p data-i18n="rg.heat.s3.p2" data-i18n-html="">If homes could incorporate a cheap and simple temperature sensor which connects to the internet and tells you when to open or close a window it could <a href="https://doi.org/10.26174/thesis.lboro.13281293" target="_blank" rel="noopener noreferrer">significantly reduce</a> indoor temperatures. Placed in multiple rooms, they could encourage householders to use cross-ventilation (opening windows on opposite sides of the building) or stack-ventilation (opening ground and first-floor windows), if available.</p>
+
+  <p data-i18n="rg.heat.s3.p3" data-i18n-html="">The issue remains that people are <a href="https://assets.publishing.service.gov.uk/media/68db9a16dadf7616351e4be7/airtightness-in-uk-housing-stock-practices-and-consequences.pdf" target="_blank" rel="noopener noreferrer">unwilling</a> or <a href="https://doi.org/10.1016/j.buildenv.2026.114327" target="_blank" rel="noopener noreferrer">unable</a> to open their windows at night or in polluted, noisy areas near main roads. Instead we need a secure means of ventilation which encourages people to keep windows open at night without worrying about security or being woken up by noise.</p>
+
+  <figure>
+    <img src="images/secure-grille.jpg" alt="A window with a grey sliding grille in front of it" />
+    <figcaption data-i18n="rg.heat.cap3" data-i18n-html="">Example of a sliding grille as secure ventilation taken at the BRE Innovation Park, near Watford. <span class="credit">Ben Roberts, Author provided</span></figcaption>
+  </figure>
+
+  <h2 data-i18n="rg.heat.s4.h" data-i18n-html="">4. Ceiling fans</h2>
+
+  <p data-i18n="rg.heat.s4.p1" data-i18n-html="">Fans don’t cool the air, but they reduce the skin’s surface temperature by <a href="https://doi.org/10.1016/S2542-5196(24)00030-5" target="_blank" rel="noopener noreferrer">increasing sweat evaporation and carrying away heat</a>. They also use considerably less electricity compared to air-conditioning.</p>
+
+  <p data-i18n="rg.heat.s4.p2" data-i18n-html="">Ceiling fans are <a href="https://doi.org/10.1111/jgs.70109" target="_blank" rel="noopener noreferrer">effective at reducing people’s core body temperature</a> and could be installed in all new-build homes. <a href="https://assets.publishing.service.gov.uk/media/6218c5aad3bf7f4f0b29b624/ADO.pdf" target="_blank" rel="noopener noreferrer">Building regulations on overheating</a> require any window coverings used to pass the assessment to be installed during construction. Ceiling fans should be installed at the same time.</p>
+
+  <p data-i18n="rg.heat.s4.p3" data-i18n-html="">If new-build homes are to incorporate ceiling fans, ceiling heights may need to increase, which adds to building costs. Ceiling heights in UK homes have dropped over time. In <a href="https://theconversation.com/heatwaves-five-reasons-why-victorian-houses-are-cooler-than-modern-buildings-283934" target="_blank" rel="noopener noreferrer">Victorian homes</a>, ceilings were often three metres from the floor, but in newly built UK homes they are commonly 2.4 metres, with 2.3 metres being the standard <a href="https://www.nhbc.co.uk/technical/nhbc-standards" target="_blank" rel="noopener noreferrer">minimum</a>.</p>
+
+  <h2 data-i18n="rg.heat.s5.h" data-i18n-html="">5. A cool refuge</h2>
+
+  <p data-i18n="rg.heat.s5.p1" data-i18n-html="">Having a <a href="https://doi.org/10.5334/bc.152" target="_blank" rel="noopener noreferrer">cool room to retreat</a> to in your home can help. In two-storey houses this might be a <a href="https://doi.org/10.5334/bc.152" target="_blank" rel="noopener noreferrer">ground floor</a> or <a href="https://doi.org/10.26174/thesis.lboro.13281293" target="_blank" rel="noopener noreferrer">north-facing room</a>. New-build homes could incorporate such a space – highly shaded, on the north-side of the home, and perhaps built with high thermal mass (such as stone walls which keep cool longer during the day).</p>
+
+  <p data-i18n="rg.heat.s5.p2" data-i18n-html="">Mechanically cooling whole houses in the UK should be avoided due to <a href="https://commonslibrary.parliament.uk/research-briefings/cbp-9714/" target="_blank" rel="noopener noreferrer">high electricity prices</a>. It also creates pressure on the <a href="https://doi.org/10.1080/17583004.2025.2525932" target="_blank" rel="noopener noreferrer">electricity grid</a>, and <a href="https://ourworldindata.org/air-conditioning-causes-around-greenhouse-gas-emissions-will-change-future" target="_blank" rel="noopener noreferrer">creates greenhouse gases</a>. But the Committee on Climate Change, a UK body that advises the government, <a href="https://www.theccc.org.uk/publication/a-well-adapted-uk/" target="_blank" rel="noopener noreferrer">recently suggested</a> creating one cool room with active cooling (air-conditioning) for use during long heatwaves could be an option.</p>
+
+  <p data-i18n="rg.heat.s5.p3" data-i18n-html="">As more heatwaves hit the UK, residents will increasingly want more information about how to stay cool. Retrofits can be expensive. We need to create housing that works in these increasingly high temperatures to best protect people and avoid expensive energy bills.</p>
+
+  <!-- The Conversation page counter. Please do not remove. Kept outside the
+       translated paragraph above so switching language can't strip it. --><img src="https://counter.theconversation.com/content/286103/count.gif?distributor=republish-lightbox-basic" alt="The Conversation" width="1" height="1" style="border: none !important; box-shadow: none !important; margin: 0 !important; max-height: 1px !important; max-width: 1px !important; min-height: 1px !important; min-width: 1px !important; opacity: 0 !important; outline: none !important; padding: 0 !important" referrerpolicy="no-referrer-when-downgrade" /><!-- End of code. -->
+
+  <br>
+  <p data-i18n="rg.heat.byline" data-i18n-html=""><strong>By <a href="https://theconversation.com/profiles/ben-roberts-2695456" target="_blank" rel="noopener noreferrer">Ben Roberts</a>, Senior Lecturer in Healthy Buildings, <a href="https://theconversation.com/institutions/loughborough-university-1336" target="_blank" rel="noopener noreferrer">Loughborough University</a></strong></p>
+
+  <p class="attribution" data-i18n="rg.heat.attribution" data-i18n-html="">This article is republished from <a href="https://theconversation.com" target="_blank" rel="noopener noreferrer">The Conversation</a> under a Creative Commons license. Read the <a href="https://theconversation.com/heatwaves-expert-tips-on-redesigning-uk-homes-to-cope-with-hotter-temperatures-286103" target="_blank" rel="noopener noreferrer">original article</a>. Images reproduced with the permission of the author.</p>
+
+  </div>
+
+  <div class="spacer"></div>
+  <button id="topBtn">▲</button>
+  <script>
+    const topBtn = document.getElementById('topBtn');
+    const scrollPrompt = document.getElementById('scrollPrompt');
+
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY > 100;
+      topBtn.classList.toggle('visible', scrolled);
+      scrollPrompt.classList.toggle('fade-out', scrolled);
+    });
+
+    topBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+  <script src="/i18n-translations.js"></script>
+  <script src="/i18n.js"></script>
+</body>
+</html>
