@@ -193,6 +193,7 @@ window.ARC_TRANSLATIONS = {
     'rg.scroll': '↓ Scroll',
     // victorian houses case study — republished from The Conversation (CC BY-ND; images CC BY / public domain)
     'rg.victorian': 'Ben Roberts: Why Victorian Houses Stay Cooler',
+    'rg.vic.cover': 'A Victorian terrace on North End Road, north London. <span class="credit"><a href="https://www.geograph.org.uk/photo/3013293" target="_blank" rel="noopener noreferrer">Mike Quinn/Geograph</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 2.0</a></span>',
     'rg.vic.h1': 'Heatwaves: five reasons why Victorian houses are cooler than modern buildings',
     'rg.vic.cap1': 'Queen Victoria Market shopfronts in Melbourne, Australia, built in the Victorian period and featuring canopies at the front. <span class="credit"><a href="https://upload.wikimedia.org/wikipedia/commons/7/78/Queen_Victoria_Market_shopfronts.jpg" target="_blank" rel="noopener noreferrer">Jacqui Szyrpallo/Wikimedia</a>, <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY</a></span>',
     'rg.vic.p1': 'More than four million homes were built in the UK during the Victorian era.',
@@ -858,6 +859,7 @@ window.ARC_TRANSLATIONS = {
     'rg.scroll': '↓ Sogeza',
     // victorian houses case study — tafsiri ya Kiswahili
     'rg.victorian': 'Ben Roberts: Kwa Nini Nyumba za Enzi ya Victoria Hubaki Baridi',
+    'rg.vic.cover': 'Safu ya nyumba za enzi ya Victoria katika North End Road, kaskazini mwa London. <span class="credit"><a href="https://www.geograph.org.uk/photo/3013293" target="_blank" rel="noopener noreferrer">Mike Quinn/Geograph</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 2.0</a></span>',
     'rg.vic.h1': 'Mawimbi ya joto: sababu tano zinazofanya nyumba za enzi ya Victoria kuwa baridi zaidi kuliko majengo ya kisasa',
     'rg.vic.cap1': 'Maduka ya Queen Victoria Market huko Melbourne, Australia, yaliyojengwa katika kipindi cha Victoria na yenye vivuli mbele. <span class="credit"><a href="https://upload.wikimedia.org/wikipedia/commons/7/78/Queen_Victoria_Market_shopfronts.jpg" target="_blank" rel="noopener noreferrer">Jacqui Szyrpallo/Wikimedia</a>, <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY</a></span>',
     'rg.vic.p1': 'Zaidi ya nyumba milioni nne zilijengwa nchini Uingereza katika enzi ya Victoria.',
