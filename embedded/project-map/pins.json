@@ -180,7 +180,6 @@
     "imageUrl": "./images/suleimandauda.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link"
     ]
@@ -205,7 +204,6 @@
     "imageUrl": "./images/marwamohabe.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -229,7 +227,6 @@
     "imageUrl": "./images/hudsonlambert.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -253,7 +250,6 @@
     "imageUrl": "./images/adelemills.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -262,7 +258,7 @@
     "type": "Person",
     "title": "Innocent Peter",
     "link": "",
-    "address": "Dar es Salaam, Tanzania",
+    "address": "Tazara, Dar es Salaam, Tanzania",
     "zones": [
       {
         "code": "Aw",
@@ -270,14 +266,13 @@
         "colour": "#45aafa"
       }
     ],
-    "latitude": -6.8024,
-    "longitude": 39.1909,
+    "latitude": -6.8697,
+    "longitude": 39.2447,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
@@ -303,7 +298,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
@@ -329,7 +323,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
@@ -355,7 +348,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
@@ -381,7 +373,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
@@ -407,7 +398,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image",
@@ -434,7 +424,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
@@ -460,7 +449,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "image"
     ]
@@ -485,7 +473,6 @@
     "imageUrl": "./images/archiew.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -509,7 +496,6 @@
     "imageUrl": "./images/kamranshezad.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -533,7 +519,6 @@
     "imageUrl": "./images/hudaelsherif.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -557,7 +542,6 @@
     "imageUrl": "./images/benroberts.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -581,7 +565,6 @@
     "imageUrl": "./images/shelybegum.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -605,7 +588,6 @@
     "imageUrl": "./images/ericrirsch.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone"
     ]
   },
@@ -629,7 +611,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "location",
       "zone",
       "link",
       "image"
