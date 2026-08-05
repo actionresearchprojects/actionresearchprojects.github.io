@@ -266,7 +266,7 @@
               (pt.address ? `${pt.address}<br>` : '') +
               (zoneLines ? `${zoneLines}<br>` : '') +
               (pt.gdpr ? '<em>Location is not exact.</em><br>' : '') +
-              (pt.imageUrl ? `<div style="text-align:center;"><img class="popup-image" src="${pt.imageUrl}" /></div>` : '') +
+              (pt.imageUrl ? `<div style="text-align:center;"><img class="popup-image" src="${pt.imageUrl}" onerror="this.parentNode.remove()" /></div>` : '') +
               `</a>`;
           });
 
@@ -386,7 +386,7 @@
                   `${zoneLines}<br>` +
                   (st.gdpr ? '<em>Location is not exact.</em><br>' : '') +
                   (st.imageUrl
-                    ? `<div style="text-align:center;"><img class="popup-image" src="${st.imageUrl}" /></div>`
+                    ? `<div style="text-align:center;"><img class="popup-image" src="${st.imageUrl}" onerror="this.parentNode.remove()" /></div>`
                     : '') +
                   `</a>`;
 
