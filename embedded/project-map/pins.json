@@ -96,8 +96,9 @@
     "longitude": -0.1276,
     "radiusKm": 0,
     "gdpr": false,
-    "imageUrl": "./images/tobycambray.webp",
-    "colour": "#0db8b8"
+    "imageUrl": "./images/tobycambray.jpg",
+    "colour": "#0db8b8",
+    "needsReview": []
   },
   {
     "id": "otissloanwood",
@@ -176,20 +177,19 @@
     "longitude": 39.2083,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/suleimandauda.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
       "zone",
-      "link",
-      "image"
+      "link"
     ]
   },
   {
     "id": "marwamohabe",
     "type": "Person",
     "title": "Marwa Mohabe",
-    "link": "",
+    "link": "https://www.linkedin.com/in/marwa-mohabe-5455a021a",
     "address": "Dar es Salaam, Tanzania",
     "zones": [
       {
@@ -202,21 +202,19 @@
     "longitude": 39.2257,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/marwamohabe.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image"
+      "zone"
     ]
   },
   {
     "id": "hudsonlambert",
     "type": "Person",
     "title": "Hudson Lambert",
-    "link": "",
-    "address": "UK",
+    "link": "https://www.linkedin.com/in/hudson-lambert-245a28157/",
+    "address": "Brighton and Hove, UK",
     "zones": [
       {
         "code": "Cfb",
@@ -224,26 +222,23 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 54.45,
-    "longitude": -2.0,
+    "latitude": 50.8225,
+    "longitude": -0.1372,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/hudsonlambert.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image",
-      "city"
+      "zone"
     ]
   },
   {
     "id": "adelemills",
     "type": "Person",
     "title": "Adele Mills",
-    "link": "",
-    "address": "UK",
+    "link": "https://www.linkedin.com/in/adele-mills-b6213526/",
+    "address": "Telford, UK",
     "zones": [
       {
         "code": "Cfb",
@@ -251,18 +246,15 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 54.225,
-    "longitude": -1.337,
+    "latitude": 52.6784,
+    "longitude": -2.4453,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/adelemills.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image",
-      "city"
+      "zone"
     ]
   },
   {
@@ -296,7 +288,7 @@
     "type": "Person",
     "title": "Jeff Colley",
     "link": "",
-    "address": "Ireland",
+    "address": "Dublin, Ireland",
     "zones": [
       {
         "code": "Cfb",
@@ -304,8 +296,8 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 53.8629,
-    "longitude": -8.2439,
+    "latitude": 53.3498,
+    "longitude": -6.2603,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
@@ -314,8 +306,7 @@
       "location",
       "zone",
       "link",
-      "image",
-      "city"
+      "image"
     ]
   },
   {
@@ -401,7 +392,7 @@
     "type": "Person",
     "title": "Lenny Antonelli",
     "link": "",
-    "address": "Ireland",
+    "address": "West of Ireland",
     "zones": [
       {
         "code": "Cfb",
@@ -409,8 +400,8 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 52.9629,
-    "longitude": -8.2439,
+    "latitude": 53.2707,
+    "longitude": -9.0568,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
@@ -428,7 +419,7 @@
     "type": "Person",
     "title": "Gareth Jones",
     "link": "",
-    "address": "UK",
+    "address": "Bagshot, UK",
     "zones": [
       {
         "code": "Cfb",
@@ -436,8 +427,8 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 53.775,
-    "longitude": -1.337,
+    "latitude": 51.362,
+    "longitude": -0.69,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
@@ -446,15 +437,14 @@
       "location",
       "zone",
       "link",
-      "image",
-      "city"
+      "image"
     ]
   },
   {
     "id": "andysimmonds",
     "type": "Person",
     "title": "Andrew Simmonds",
-    "link": "",
+    "link": "https://www.linkedin.com/in/andrew-simmonds-69799a1b/",
     "address": "Hereford, UK",
     "zones": [
       {
@@ -472,7 +462,6 @@
     "needsReview": [
       "location",
       "zone",
-      "link",
       "image"
     ]
   },
@@ -480,7 +469,7 @@
     "id": "archiew",
     "type": "Person",
     "title": "Archie Worthington",
-    "link": "",
+    "link": "https://www.linkedin.com/in/archie-worthington/",
     "address": "Liverpool, UK",
     "zones": [
       {
@@ -493,21 +482,19 @@
     "longitude": -2.9916,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/archiew.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image"
+      "zone"
     ]
   },
   {
     "id": "kamranshezad",
     "type": "Person",
     "title": "Kamran Shezad",
-    "link": "",
-    "address": "UK",
+    "link": "https://x.com/climatekam",
+    "address": "Birmingham, UK",
     "zones": [
       {
         "code": "Cfb",
@@ -515,25 +502,22 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 53.55,
-    "longitude": -2.0,
+    "latitude": 52.4982,
+    "longitude": -1.8904,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/kamranshezad.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image",
-      "city"
+      "zone"
     ]
   },
   {
     "id": "hudaelsherif",
     "type": "Person",
     "title": "Huda Elsherif",
-    "link": "",
+    "link": "https://www.linkedin.com/in/hudaelsherif123/",
     "address": "Kent, UK",
     "zones": [
       {
@@ -546,20 +530,18 @@
     "longitude": 0.5217,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/hudaelsherif.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image"
+      "zone"
     ]
   },
   {
     "id": "benroberts",
     "type": "Person",
     "title": "Ben Roberts",
-    "link": "",
+    "link": "https://www.linkedin.com/in/dr-ben-roberts/",
     "address": "Loughborough, UK",
     "zones": [
       {
@@ -572,20 +554,18 @@
     "longitude": -1.2062,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/benroberts.jpg",
     "colour": "#0db8b8",
     "needsReview": [
       "location",
-      "zone",
-      "link",
-      "image"
+      "zone"
     ]
   },
   {
     "id": "shelybegum",
     "type": "Person",
     "title": "Shely Begum",
-    "link": "",
+    "link": "https://www.linkedin.com/in/shelybegum/",
     "address": "Birmingham, UK",
     "zones": [
       {
@@ -594,8 +574,56 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 52.4862,
+    "latitude": 52.4742,
     "longitude": -1.8904,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "./images/shelybegum.jpg",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone"
+    ]
+  },
+  {
+    "id": "ericrirsch",
+    "type": "Person",
+    "title": "Eric Rirsch",
+    "link": "https://uk.linkedin.com/in/eric-rirsch-74744a15",
+    "address": "Horsham, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 51.0629,
+    "longitude": -0.326,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "./images/ericrirsch.jpg",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone"
+    ]
+  },
+  {
+    "id": "johnbutler",
+    "type": "Person",
+    "title": "John Butler",
+    "link": "",
+    "address": "Bridport, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 50.7333,
+    "longitude": -2.758,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
@@ -605,60 +633,6 @@
       "zone",
       "link",
       "image"
-    ]
-  },
-  {
-    "id": "ericrirsch",
-    "type": "Person",
-    "title": "Eric Rirsch",
-    "link": "",
-    "address": "UK",
-    "zones": [
-      {
-        "code": "Cfb",
-        "text": "Temperate oceanic (Cfb)",
-        "colour": "#65ff51"
-      }
-    ],
-    "latitude": 53.775,
-    "longitude": -2.663,
-    "radiusKm": 5,
-    "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "location",
-      "zone",
-      "link",
-      "image",
-      "city"
-    ]
-  },
-  {
-    "id": "johnbutler",
-    "type": "Person",
-    "title": "John Butler",
-    "link": "",
-    "address": "UK",
-    "zones": [
-      {
-        "code": "Cfb",
-        "text": "Temperate oceanic (Cfb)",
-        "colour": "#65ff51"
-      }
-    ],
-    "latitude": 54.225,
-    "longitude": -2.663,
-    "radiusKm": 5,
-    "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "location",
-      "zone",
-      "link",
-      "image",
-      "city"
     ]
   }
 ]
