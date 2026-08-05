@@ -158,5 +158,508 @@
     "gdpr": false,
     "imageUrl": "./images/meer.jpg",
     "colour": "#6db80d"
+  },
+  {
+    "id": "suleimandauda",
+    "type": "Person",
+    "title": "Suleiman Dauda",
+    "link": "",
+    "address": "Dar es Salaam, Tanzania",
+    "zones": [
+      {
+        "code": "Aw",
+        "text": "Tropical savanna (Aw)",
+        "colour": "#45aafa"
+      }
+    ],
+    "latitude": -6.7624,
+    "longitude": 39.2083,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "marwamohabe",
+    "type": "Person",
+    "title": "Marwa Mohabe",
+    "link": "",
+    "address": "Dar es Salaam, Tanzania",
+    "zones": [
+      {
+        "code": "Aw",
+        "text": "Tropical savanna (Aw)",
+        "colour": "#45aafa"
+      }
+    ],
+    "latitude": -6.8224,
+    "longitude": 39.2083,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "hudsonlambert",
+    "type": "Person",
+    "title": "Hudson Lambert",
+    "link": "",
+    "address": "UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 54.45,
+    "longitude": -2.0,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "adelemills",
+    "type": "Person",
+    "title": "Adele Mills",
+    "link": "",
+    "address": "UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 54.225,
+    "longitude": -1.337,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "innocentpeter",
+    "type": "Person",
+    "title": "Innocent Peter",
+    "link": "",
+    "address": "Tanzania",
+    "zones": [
+      {
+        "code": "Aw",
+        "text": "Tropical savanna (Aw)",
+        "colour": "#45aafa"
+      }
+    ],
+    "latitude": -6.369,
+    "longitude": 34.8888,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "jeffcolley",
+    "type": "Person",
+    "title": "Jeff Colley",
+    "link": "",
+    "address": "Ireland",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 53.8629,
+    "longitude": -8.2439,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "timhulse",
+    "type": "Person",
+    "title": "Tim Hulse",
+    "link": "",
+    "address": "Greater Cheshire West and Chester Area, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 53.1934,
+    "longitude": -2.8931,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "bethwilliams",
+    "type": "Person",
+    "title": "Beth Williams",
+    "link": "",
+    "address": "Bath, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 51.3811,
+    "longitude": -2.359,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "ianmawditt",
+    "type": "Person",
+    "title": "Ian Mawditt",
+    "link": "",
+    "address": "Bristol, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 51.4545,
+    "longitude": -2.5879,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "lennyantonelli",
+    "type": "Person",
+    "title": "Lenny Antonelli",
+    "link": "",
+    "address": "Ireland",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 52.9629,
+    "longitude": -8.2439,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "garethjones",
+    "type": "Person",
+    "title": "Gareth Jones",
+    "link": "",
+    "address": "UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 53.775,
+    "longitude": -1.337,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "andysimmonds",
+    "type": "Person",
+    "title": "Andrew Simmonds",
+    "link": "",
+    "address": "Hereford, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 52.0565,
+    "longitude": -2.716,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "archiew",
+    "type": "Person",
+    "title": "Archie Worthington",
+    "link": "",
+    "address": "Liverpool, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 53.4084,
+    "longitude": -2.9916,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "kamranshezad",
+    "type": "Person",
+    "title": "Kamran Shezad",
+    "link": "",
+    "address": "UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 53.55,
+    "longitude": -2.0,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "hudaelsherif",
+    "type": "Person",
+    "title": "Huda Elsherif",
+    "link": "",
+    "address": "Kent, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 51.2787,
+    "longitude": 0.5217,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "benroberts",
+    "type": "Person",
+    "title": "Ben Roberts",
+    "link": "",
+    "address": "Loughborough, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 52.7721,
+    "longitude": -1.2062,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "shelybegum",
+    "type": "Person",
+    "title": "Shely Begum",
+    "link": "",
+    "address": "Birmingham, UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 52.4862,
+    "longitude": -1.8904,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image"
+    ]
+  },
+  {
+    "id": "ericrirsch",
+    "type": "Person",
+    "title": "Eric Rirsch",
+    "link": "",
+    "address": "UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 53.775,
+    "longitude": -2.663,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
+  },
+  {
+    "id": "johnbutler",
+    "type": "Person",
+    "title": "John Butler",
+    "link": "",
+    "address": "UK",
+    "zones": [
+      {
+        "code": "Cfb",
+        "text": "Temperate oceanic (Cfb)",
+        "colour": "#65ff51"
+      }
+    ],
+    "latitude": 54.225,
+    "longitude": -2.663,
+    "radiusKm": 5,
+    "gdpr": true,
+    "imageUrl": "",
+    "colour": "#0db8b8",
+    "needsReview": [
+      "location",
+      "zone",
+      "link",
+      "image",
+      "city"
+    ]
   }
 ]

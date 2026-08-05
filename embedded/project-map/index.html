@@ -77,6 +77,25 @@
       margin-top: 6px;
     }
 
+    /* Placeholder pins still awaiting a manual check carry a small red mark in
+       the popup's top-left corner. Driven by the `needsReview` array in
+       pins.json — clear that array and the mark disappears. */
+    .popup-body {
+      position: relative;
+    }
+
+    .review-flag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e02020;
+      box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+      cursor: help;
+    }
+
     .zone-text {
       line-height: 1.25;
       display: inline-block;
@@ -188,6 +207,29 @@
 
     const BRIGHTNESS_THRESHOLD = 0.75;
 
+    // Human-readable labels for the `needsReview` codes used in pins.json.
+    const REVIEW_LABELS = {
+      location: 'Latitude/longitude is approximate',
+      zone: 'Climate zone was estimated, not verified',
+      link: 'No link yet',
+      image: 'No photo yet',
+      city: 'Only a country was given — needs the actual city',
+      consent: 'Consent to appear on the map is unconfirmed',
+      address: 'Address is vague or missing',
+      duplicate: 'Possible duplicate entry',
+      name: 'Name spelling unconfirmed'
+    };
+
+    // Renders the small red corner mark for any pin with outstanding manual
+    // checks. Hovering it lists what still needs doing.
+    function reviewFlagHtml(pt) {
+      if (!Array.isArray(pt.needsReview) || !pt.needsReview.length) return '';
+      const items = pt.needsReview.map(code => REVIEW_LABELS[code] || code);
+      const tooltip = `Needs manual check:\n• ${items.join('\n• ')}`;
+      const safe = tooltip.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      return `<span class="review-flag" title="${safe}"></span>`;
+    }
+
     function createGeoJSONCircle(center, radiusKm, points = 64) {
       const lat = center[1], lon = center[0];
       const coords = [];
@@ -261,13 +303,16 @@
               }).join('<br>');
             }
             popupHtmlMap[pt.id] =
+              `<div class="popup-body">` +
+              reviewFlagHtml(pt) +
               `<a href="${pt.link || ''}" target="_blank" rel="noopener noreferrer">` +
               `<div style="font-weight:700; text-align:center; font-size:17px; margin-bottom:4px;">${pt.title}</div>` +
               (pt.address ? `${pt.address}<br>` : '') +
               (zoneLines ? `${zoneLines}<br>` : '') +
               (pt.gdpr ? '<em>Location is not exact.</em><br>' : '') +
               (pt.imageUrl ? `<div style="text-align:center;"><img class="popup-image" src="${pt.imageUrl}" onerror="this.parentNode.remove()" /></div>` : '') +
-              `</a>`;
+              `</a>` +
+              `</div>`;
           });
 
           // Clustered GeoJSON source — only needs id + colour for marker rendering
