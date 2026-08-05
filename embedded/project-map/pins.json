@@ -172,7 +172,7 @@
         "colour": "#45aafa"
       }
     ],
-    "latitude": -6.7624,
+    "latitude": -6.7724,
     "longitude": 39.2083,
     "radiusKm": 5,
     "gdpr": true,
@@ -198,8 +198,8 @@
         "colour": "#45aafa"
       }
     ],
-    "latitude": -6.8224,
-    "longitude": 39.2083,
+    "latitude": -6.8024,
+    "longitude": 39.2257,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
@@ -270,7 +270,7 @@
     "type": "Person",
     "title": "Innocent Peter",
     "link": "",
-    "address": "Tanzania",
+    "address": "Dar es Salaam, Tanzania",
     "zones": [
       {
         "code": "Aw",
@@ -278,8 +278,8 @@
         "colour": "#45aafa"
       }
     ],
-    "latitude": -6.369,
-    "longitude": 34.8888,
+    "latitude": -6.8024,
+    "longitude": 39.1909,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "",
@@ -288,8 +288,7 @@
       "location",
       "zone",
       "link",
-      "image",
-      "city"
+      "image"
     ]
   },
   {
