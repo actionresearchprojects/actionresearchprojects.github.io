@@ -446,11 +446,10 @@
     "longitude": -2.716,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/andysimmonds.jpg",
     "colour": "#0db8b8",
     "needsReview": [
-      "zone",
-      "image"
+      "zone"
     ]
   },
   {
