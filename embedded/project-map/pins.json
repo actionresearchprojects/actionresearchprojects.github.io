@@ -97,14 +97,13 @@
     "radiusKm": 0,
     "gdpr": false,
     "imageUrl": "./images/tobycambray.jpg",
-    "colour": "#0db8b8",
-    "needsReview": []
+    "colour": "#0db8b8"
   },
   {
     "id": "otissloanwood",
     "type": "Person",
     "title": "Otis Sloan Wood",
-    "link": "https://actionresearchprojects.net/people",
+    "link": "https://www.linkedin.com/in/otis-sloan-wood/",
     "address": "Copenhagen, Denmark",
     "zones": [
       {
@@ -124,7 +123,7 @@
     "id": "hannahsloanwood",
     "type": "Person",
     "title": "Hannah Sloan Wood",
-    "link": "https://actionresearchprojects.net/people",
+    "link": "https://www.linkedin.com/in/hannahsloanwood/",
     "address": "Copenhagen, Denmark",
     "zones": [
       {
@@ -144,7 +143,7 @@
     "id": "meer",
     "type": "Organisation",
     "title": "MEER (Mirrors for Earth's Energy Rebalancing)",
-    "link": "https://actionresearchprojects.net/people",
+    "link": "https://www.meer.org/",
     "address": "Calabasas, California",
     "zones": [
       {
@@ -164,7 +163,7 @@
     "id": "suleimandauda",
     "type": "Person",
     "title": "Suleiman Dauda",
-    "link": "",
+    "link": "https://actionresearchprojects.net/people",
     "address": "Dar es Salaam, Tanzania",
     "zones": [
       {
@@ -179,16 +178,12 @@
     "gdpr": true,
     "imageUrl": "./images/suleimandauda.jpg",
     "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link"
-    ]
   },
   {
     "id": "marwamohabe",
     "type": "Person",
     "title": "Marwa Mohabe",
-    "link": "https://www.linkedin.com/in/marwa-mohabe-5455a021a",
+    "link": "https://actionresearchprojects.net/people",
     "address": "Dar es Salaam, Tanzania",
     "zones": [
       {
@@ -202,16 +197,13 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/marwamohabe.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "hudsonlambert",
     "type": "Person",
     "title": "Hudson Lambert",
-    "link": "https://www.linkedin.com/in/hudson-lambert-245a28157/",
+    "link": "https://actionresearchprojects.net/people",
     "address": "Brighton and Hove, UK",
     "zones": [
       {
@@ -225,16 +217,13 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/hudsonlambert.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "adelemills",
     "type": "Person",
     "title": "Adele Mills",
-    "link": "https://www.linkedin.com/in/adele-mills-b6213526/",
+    "link": "https://actionresearchprojects.net/people",
     "address": "Telford, UK",
     "zones": [
       {
@@ -249,15 +238,12 @@
     "gdpr": true,
     "imageUrl": "./images/adelemills.jpg",
     "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
   },
   {
     "id": "innocentpeter",
     "type": "Person",
     "title": "Innocent Peter",
-    "link": "",
+    "link": "https://actionresearchprojects.net/people",
     "address": "Tazara, Dar es Salaam, Tanzania",
     "zones": [
       {
@@ -273,8 +259,6 @@
     "imageUrl": "",
     "colour": "#0db8b8",
     "needsReview": [
-      "zone",
-      "link",
       "image"
     ]
   },
@@ -282,7 +266,7 @@
     "id": "jeffcolley",
     "type": "Person",
     "title": "Jeff Colley",
-    "link": "",
+    "link": "https://www.linkedin.com/in/jeff-colley-11b2414/",
     "address": "Dublin, Ireland",
     "zones": [
       {
@@ -295,19 +279,14 @@
     "longitude": -6.2603,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image"
-    ]
+    "imageUrl": "./images/jeffcolley.jpg",
+    "colour": "#0db8b8"
   },
   {
     "id": "timhulse",
     "type": "Person",
     "title": "Tim Hulse",
-    "link": "",
+    "link": "https://www.linkedin.com/in/ecovertsol/",
     "address": "Greater Cheshire West and Chester Area, UK",
     "zones": [
       {
@@ -320,19 +299,14 @@
     "longitude": -2.8931,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image"
-    ]
+    "imageUrl": "./images/timhulse.jpg",
+    "colour": "#0db8b8"
   },
   {
     "id": "bethwilliams",
     "type": "Person",
     "title": "Beth Williams",
-    "link": "",
+    "link": "https://www.linkedin.com/in/beth-williams-engineer/",
     "address": "Bath, UK",
     "zones": [
       {
@@ -345,19 +319,14 @@
     "longitude": -2.359,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image"
-    ]
+    "imageUrl": "./images/bethwilliams.jpg",
+    "colour": "#0db8b8"
   },
   {
     "id": "ianmawditt",
     "type": "Person",
     "title": "Ian Mawditt",
-    "link": "",
+    "link": "https://www.linkedin.com/in/ianmawditt/",
     "address": "Bristol, UK",
     "zones": [
       {
@@ -370,19 +339,14 @@
     "longitude": -2.5879,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image"
-    ]
+    "imageUrl": "./images/ianmawditt.jpg",
+    "colour": "#0db8b8"
   },
   {
     "id": "lennyantonelli",
     "type": "Person",
     "title": "Lenny Antonelli",
-    "link": "",
+    "link": "https://www.linkedin.com/in/lenny-antonelli-5744203b/",
     "address": "West of Ireland",
     "zones": [
       {
@@ -395,20 +359,14 @@
     "longitude": -9.0568,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image",
-      "city"
-    ]
+    "imageUrl": "./images/lennyantonelli.jpg",
+    "colour": "#0db8b8"
   },
   {
     "id": "garethjones",
     "type": "Person",
     "title": "Gareth Jones",
-    "link": "",
+    "link": "https://www.linkedin.com/in/gareth-jones-aa825938/",
     "address": "Bagshot, UK",
     "zones": [
       {
@@ -421,13 +379,8 @@
     "longitude": -0.69,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image"
-    ]
+    "imageUrl": "./images/garethjones.jpg",
+    "colour": "#0db8b8"
   },
   {
     "id": "andysimmonds",
@@ -447,10 +400,7 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/andysimmonds.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "archiew",
@@ -470,10 +420,7 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/archiew.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "kamranshezad",
@@ -493,10 +440,7 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/kamranshezad.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "hudaelsherif",
@@ -516,10 +460,7 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/hudaelsherif.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "benroberts",
@@ -539,10 +480,7 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/benroberts.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "shelybegum",
@@ -562,10 +500,7 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/shelybegum.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "ericrirsch",
@@ -585,16 +520,13 @@
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/ericrirsch.jpg",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone"
-    ]
+    "colour": "#0db8b8"
   },
   {
     "id": "johnbutler",
     "type": "Person",
     "title": "John Butler",
-    "link": "",
+    "link": "https://www.linkedin.com/in/johnsustainablebuild/",
     "address": "Bridport, UK",
     "zones": [
       {
@@ -607,12 +539,7 @@
     "longitude": -2.758,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
-    "colour": "#0db8b8",
-    "needsReview": [
-      "zone",
-      "link",
-      "image"
-    ]
+    "imageUrl": "./images/johnbutler.jpg",
+    "colour": "#0db8b8"
   }
 ]
