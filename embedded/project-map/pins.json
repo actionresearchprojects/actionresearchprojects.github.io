@@ -367,7 +367,7 @@
     "type": "Person",
     "title": "Gareth Jones",
     "link": "https://www.linkedin.com/in/gareth-jones-aa825938/",
-    "address": "Bagshot, UK",
+    "address": "London, UK",
     "zones": [
       {
         "code": "Cfb",
@@ -375,8 +375,8 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 51.362,
-    "longitude": -0.69,
+    "latitude": 51.48,
+    "longitude": -0.1,
     "radiusKm": 5,
     "gdpr": true,
     "imageUrl": "./images/garethjones.jpg",
