@@ -271,7 +271,7 @@
         .then(points => {
           // GDPR radius circles are independent of clustering
           points.forEach(pt => {
-            if (pt.gdpr) {
+            if (pt.gdpr && pt.radiusKm > 0) {
               const coords = [pt.longitude, pt.latitude];
               const circle = createGeoJSONCircle(coords, pt.radiusKm);
               const id = `circle-${pt.id}`;
@@ -500,7 +500,7 @@
                   .setPopup(new mapboxgl.Popup({ offset: 35 }).setHTML(popupHtml))
                   .addTo(map);
 
-                if (st.gdpr) {
+                if (st.gdpr && st.radiusKm > 0) {
                   const circle = createGeoJSONCircle(coords, st.radiusKm);
                   const id = `circle-station-${st.id}`;
                   map.addSource(id, { type: 'geojson', data: circle });

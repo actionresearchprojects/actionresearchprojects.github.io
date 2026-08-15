@@ -54,7 +54,7 @@
     ],
     "latitude": 24.58159168275369,
     "longitude": 91.92809654585386,
-    "radiusKm": 5,
+    "radiusKm": 0,
     "gdpr": true,
     "imageUrl": "./images/deshhouses.jpg",
     "colour": "#b80d0d"
@@ -297,7 +297,7 @@
     ],
     "latitude": 53.1934,
     "longitude": -2.8931,
-    "radiusKm": 5,
+    "radiusKm": 0,
     "gdpr": true,
     "imageUrl": "./images/timhulse.jpg",
     "colour": "#0db8b8"
@@ -357,7 +357,7 @@
     ],
     "latitude": 53.2707,
     "longitude": -9.0568,
-    "radiusKm": 5,
+    "radiusKm": 0,
     "gdpr": true,
     "imageUrl": "./images/lennyantonelli.jpg",
     "colour": "#0db8b8"
@@ -457,7 +457,7 @@
     ],
     "latitude": 51.2787,
     "longitude": 0.5217,
-    "radiusKm": 5,
+    "radiusKm": 0,
     "gdpr": true,
     "imageUrl": "./images/hudaelsherif.jpg",
     "colour": "#0db8b8"
