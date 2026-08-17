@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Adaptive Comfort</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
+
+/* Paragraphs */
+p { margin: 0 0 16px; }
+
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
+
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
+</style>
+</head>
+<body>
+<h1>Adaptive Comfort: Acceptability Limits and Air Speed</h1>
+<p>This document records how the adaptive comfort chart's boundaries are defined, what
+the ASHRAE 55 acceptability limits mean, how the elevated-air-speed allowance works,
+and which decisions were taken when both were added to the dashboard in August 2026.</p>
+<p>It is written to be read by someone who has not seen the code.</p>
+<blockquote>
+<p><strong>Method is applicable only for occupant-controlled naturally conditioned spaces that meet all of the following criteria:</strong>
+<strong>(a)</strong> There is no mechanical cooling system installed. No heating system is in operation;
+<strong>(b)</strong> Metabolic rates ranging from 1.0 to 1.5 met; and
+<strong>(c)</strong> Occupants are free to adapt their clothing to the indoor and/or outdoor thermal conditions within a range at least as wide as 0.5-1.0 clo.</p>
+</blockquote>
+<hr />
+<h2>1. The single idea behind every comfort band</h2>
+<p>Every adaptive comfort band on the chart, whichever model is selected, has the same shape:</p>
+<pre><code>upper = (slope × running mean outdoor temp) + intercept + half-width
+lower = (slope × running mean outdoor temp) + intercept - half-width
+</code></pre>
+<p>A centre line, and a distance either side of it. Nothing more. The models differ only
+in what those three numbers are.</p>
+<p>This matters because "80% acceptability" and "90% acceptability" are <strong>not different
+models</strong>. They are two different half-widths around the same centre line.</p>
+<hr />
+<h2>2. ASHRAE 55 acceptability limits</h2>
+<p>ANSI/ASHRAE Standard 55-2020, Section 5.4.2.2, gives the 80% limits directly:</p>
+<pre><code>Upper 80% acceptability limit (°C) = 0.31 × Tpma + 21.3
+Lower 80% acceptability limit (°C) = 0.31 × Tpma + 14.3
+</code></pre>
+<p>where <code>Tpma</code> is the prevailing mean outdoor air temperature — the x-axis of the chart.</p>
+<p>Rearranged into the form above, that is a centre line of <code>0.31 × Tpma + 17.8</code> with a
+half-width of <strong>3.5</strong>. The 90% limits share the same centre line with a half-width of
+<strong>2.5</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Centre line</th>
+<th>Half-width</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>80%</td>
+<td>0.31·Tpma + 17.8</td>
+<td>±3.5</td>
+<td>80% of occupants expected to find conditions acceptable</td>
+</tr>
+<tr>
+<td>90%</td>
+<td>0.31·Tpma + 17.8</td>
+<td>±2.5</td>
+<td>90% expected to find them acceptable — a stricter test, so a narrower band</td>
+</tr>
+</tbody>
+</table>
+<p><strong>80% is the compliance figure.</strong> Section 5.4.2 states that allowable temperatures
+"shall be determined from Figure 5-8 using the 80% acceptability limits", and its
+informative note adds that "the 90% acceptability limits are included for information
+only". The dashboard offers both, but 80% is the one to quote.</p>
+<h3>Applicability range</h3>
+<p>Section 5.4.1(d) restricts the method to a prevailing mean outdoor temperature
+<strong>above 10 °C and below 33.5 °C</strong>. Mkuranga sits comfortably inside that window
+(see section 7); some other programme sites may not.</p>
+<hr />
+<h2>3. The elevated air speed allowance</h2>
+<p>Moving air makes a warm room feel cooler. ASHRAE 55 allows for this by permitting a
+<strong>higher</strong> indoor temperature to still count as acceptable when air speed is raised.</p>
+<p>Table 5-13 gives the allowance, relative to a baseline of 0.3 m/s:</p>
+<table>
+<thead>
+<tr>
+<th>Average air speed</th>
+<th>Increase in the upper limit (Δt₀)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.3 m/s (baseline)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>0.6 m/s</td>
+<td>+1.2 °C</td>
+</tr>
+<tr>
+<td>0.9 m/s</td>
+<td>+1.8 °C</td>
+</tr>
+<tr>
+<td>1.2 m/s</td>
+<td>+2.2 °C</td>
+</tr>
+</tbody>
+</table>
+<p>Three rules govern it:</p>
+<ol>
+<li><strong>It raises the upper boundary only.</strong> The lower boundary never moves. Air movement
+   cannot make a cold room comfortable.</li>
+<li><strong>It applies only above 25 °C.</strong> Section 5.4.2.4: "If t₀ &gt; 25 °C, then it shall be
+   permitted to increase the upper acceptability temperature limits".</li>
+<li><strong>Only these three speeds exist.</strong> The standard gives no basis for interpolating
+   between them, which is why the dashboard uses a dropdown rather than a numeric field.</li>
+</ol>
+<h3>Why the boundary steps</h3>
+<p>Because the allowance switches on at a fixed temperature rather than fading in, the
+upper boundary jumps vertically at the point where it crosses 25 °C. That crossing sits at:</p>
+<pre><code>Tpma = (25 - intercept - half-width) / slope
+</code></pre>
+<p>which for the ASHRAE models is <strong>11.9 °C</strong> for the 80% band and <strong>15.2 °C</strong> for the 90%
+band. Below those points the boundary is unchanged; above them it is raised by the full
+Δt₀. This is the same discontinuity visible in the CBE Thermal Comfort Tool's adaptive
+chart, and the dashboard reproduces it exactly.</p>
+<p>The step is an artefact of the standard, not of the physics. The underlying relationship
+is smooth — the benefit of air movement grows gradually with temperature, and the Δt₀
+values are derived from continuous equal-SET contours. ASHRAE flattened that into an
+on/off threshold and three discrete speeds so the rule could be checked simply.</p>
+<h3>The 25 °C gate is an indoor temperature</h3>
+<p>A common misreading. <code>t₀</code> is <strong>operative temperature</strong> — the indoor value, the chart's
+y-axis. The outdoor variable is written <code>Tpma</code>. Table 5-13's own title refers to
+"Acceptable Operative Temperature Limits", and both <code>t₀</code> and <code>Δt₀</code> mean operative
+temperature throughout.</p>
+<p>So the gate is a <strong>horizontal</strong> threshold at y = 25 °C, not a vertical one at x = 25 °C.
+The step appears at a particular position along the x-axis only because the boundary
+rises with x and therefore crosses that horizontal line somewhere. The two ASHRAE bands
+step at <em>different</em> x positions, which would be impossible if the gate were on outdoor
+temperature.</p>
+<p>Physically the threshold marks where a breeze stops being a nuisance and starts being
+relief. Below about 25 °C you are not sweating much, so there is little evaporation for
+moving air to accelerate, and the convective loss is heat you wanted to keep — a draught,
+not cooling. ASHRAE treats this seriously elsewhere: Section 5.3.2.4 actively <em>caps</em> air
+speed at 0.2 m/s below 23 °C.</p>
+<h3>Which readings the allowance can affect</h3>
+<p>Only readings above 25 °C, and this follows automatically rather than needing a separate rule.</p>
+<p>The allowance can only change the verdict for readings in the gap between the old ceiling
+and the new one — anything below the old ceiling was already acceptable, anything above
+the new one is still too warm. Since the ceiling is only raised where it already exceeds
+25 °C, everything in that gap is above 25 °C too. A reading of 23 °C gains nothing from
+the air speed setting, which is the right answer physically.</p>
+<hr />
+<h2>4. The Vellei et al. humidity models</h2>
+<p>The dashboard's default band comes from Vellei, Herrera, Fosas and Natarajan, <em>The
+influence of relative humidity on adaptive thermal comfort</em>, Building and Environment
+124 (2017) 171–185. Equations 4–6 of that paper:</p>
+<pre><code>RH &gt; 60%        Top = 0.53 × Tout + 12.85  (±2.84)   R² = 0.84
+40% &lt; RH ≤ 60%  Top = 0.53 × Tout + 14.16  (±3.70)   R² = 0.76
+RH ≤ 40%        Top = 0.52 × Tout + 15.23  (±4.40)   R² = 0.66
+</code></pre>
+<h3>The ± values are not acceptability percentages</h3>
+<p>This was the question that decided the interface design. The paper states that "the
+temperature bands in the above equations are given by the prediction intervals", defined
+as the range in which future observations fall with 0.95 probability. That is a
+statistical spread around a fitted line — a different kind of quantity from "80% of people
+find this acceptable".</p>
+<p><strong>However, 80% acceptability is applied one step earlier.</strong> When assembling the data, the
+authors discarded any grid bin in which fewer than 80% of votes were neutral, explicitly
+"in order to meet the 80% acceptability criterion incorporated in the current model". The
+paper also notes that the medium-humidity band comes out equal to the acceptability range
+of the ASHRAE model.</p>
+<p>The conclusion, and the reason the dashboard's acceptability toggle applies only to the
+ASHRAE bands:</p>
+<blockquote>
+<p>The Vellei bands are already the 80% bands. No 90% variant exists in the paper, and none
+can be derived by scaling, because the width is a prediction interval rather than a
+proportion of occupants.</p>
+</blockquote>
+<h3>Running mean</h3>
+<p>The paper's equations are written against outdoor mean temperature, while the dashboard
+supplies an exponentially weighted running mean (α = 0.8). The authors tested both
+formulations and found "little difference in whether monthly mean or running mean outdoor
+temperature is used in computing either adaptive model", so the substitution is sound.</p>
+<h3>Air speed and the Vellei bands</h3>
+<p>Vellei deliberately excluded air velocity as a predictor, on the grounds that occupants
+control it directly and it therefore cannot be treated as an independent variable. The
+consequence is that the field data behind these bands already contains whatever fans and
+open windows those occupants were using — and much of the sample comes from hot climates
+where fan use is routine.</p>
+<p>Some of the benefit of air movement is therefore probably inside the band already.
+Applying the Table 5-13 allowance on top of a Vellei band risks counting the same fan
+twice. The dashboard permits the combination, because it is useful for scenario work, but
+warns about it in the air speed tooltip.</p>
+<hr />
+<h2>5. What was wrong before</h2>
+<p>The dashboard's previous "Default comfort model" was:</p>
+<pre><code>0.31 × Tpma + 17.3 ± 3.0
+</code></pre>
+<p>which expands to a band running from <code>0.31·Tpma + 14.3</code> to <code>0.31·Tpma + 20.3</code>. Those are
+the ASHRAE <strong>80% lower</strong> limit and the ASHRAE <strong>90% upper</strong> limit — a band that exists in
+no standard, pairing a permissive floor with a strict ceiling.</p>
+<p>Because the comfort statistic defaults to "percentage below the upper boundary", every
+overheating figure that model ever produced was measured against the stricter 90% line
+while being presented as the default. It has been replaced by two correct entries built on
+the real Section 5.4.2.2 centre line.</p>
+<p><strong>Anyone comparing new figures against old should expect the 80% option to read roughly
+one degree more permissive</strong>, and therefore to report a higher percentage within comfort.</p>
+<hr />
+<h2>6. Decisions taken</h2>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Choice</th>
+<th>Reasoning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Replace the broken default</td>
+<td>Two correct ASHRAE entries, 80% and 90%</td>
+<td>80% is the compliance limit; 90% kept because the standard publishes it as informative</td>
+</tr>
+<tr>
+<td>Acceptability toggle on Vellei bands</td>
+<td>Not offered</td>
+<td>Their half-widths are prediction intervals, and no 90% variant exists to offer</td>
+</tr>
+<tr>
+<td>Air speed input</td>
+<td>Dropdown of the three tabulated speeds</td>
+<td>The standard defines no values between them and no method of interpolation</td>
+</tr>
+<tr>
+<td>Air speed default</td>
+<td>0.3 m/s</td>
+<td>Applies no adjustment, so existing figures are unaffected unless the setting is deliberately moved</td>
+</tr>
+<tr>
+<td>Air speed on Vellei bands</td>
+<td>Permitted, with a warning</td>
+<td>Useful for scenarios; the double-counting risk is real but is a caveat rather than a prohibition</td>
+</tr>
+<tr>
+<td>Air speed scope</td>
+<td>One value for the whole chart</td>
+<td>Air speed moves the <em>boundary</em>, not the reading. Per-room values would make a single drawn band wrong for most loggers on it</td>
+</tr>
+<tr>
+<td>Nested 80/90 display</td>
+<td>Optional checkbox, ASHRAE only</td>
+<td>Matches the CBE chart when wanted; Vellei has no second band to nest</td>
+</tr>
+<tr>
+<td>Gate interpretation</td>
+<td>Raise the boundary where the <em>unraised</em> boundary exceeds 25 °C</td>
+<td>Section 5.4.2.4 is circular as written; this is the reading the CBE reference tool uses</td>
+</tr>
+</tbody>
+</table>
+<h3>Per-room air speed</h3>
+<p>This was considered and set aside. Air speed shifts the comfort boundary rather than the
+measured point, so different values per room would mean several different ceilings on one
+chart, and a single drawn band could not represent them.</p>
+<p>The idea is not lost — it belongs to a future model that evaluates each reading against
+its own conditions (including its own recorded humidity) instead of reading a band off a
+graph. That approach has no drawn band to contradict, so per-room air speed works
+naturally within it.</p>
+<hr />
+<h2>7. Verification</h2>
+<p>The implementation was checked against the published standard rather than against
+expectations:</p>
+<ul>
+<li>Both ASHRAE boundaries reproduce the Section 5.4.2.2 equations exactly, upper and lower.</li>
+<li>The Table 5-13 increments are applied to the upper boundary only; the lower boundary is
+  unaffected at every air speed.</li>
+<li>The step positions compute to <strong>11.935 °C</strong> and <strong>15.161 °C</strong>, matching the CBE tool.</li>
+<li>The chart and the statistics panel apply the same gate, so the picture and the reported
+  percentages cannot disagree.</li>
+<li>The band is sampled at 80 evenly spaced points, so a step falling between two samples
+  would render as a diagonal ramp. The crossing is injected into the sample array twice —
+  once carrying the unelevated value, once the raised one — and the rendered vector output
+  was measured to confirm a genuine vertical edge of exactly Δt₀ at exactly the computed
+  crossing.</li>
+<li>The 80% band fully encloses the 90% band when both are drawn.</li>
+</ul>
+<h3>The step will not be visible in the Tanzania data</h3>
+<p>Over the full Open-Meteo record for Mkuranga (March 2023 to August 2026), the running mean
+outdoor temperature spans <strong>23.2 °C to 28.9 °C</strong>. Every model's crossing point sits below
+that range:</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Step at Tpma</th>
+<th>Visible in Mkuranga data?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ASHRAE 80%</td>
+<td>11.9 °C</td>
+<td>no</td>
+</tr>
+<tr>
+<td>ASHRAE 90%</td>
+<td>15.2 °C</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Vellei RH &gt; 60%</td>
+<td>17.6 °C</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Vellei 40–60%</td>
+<td>13.5 °C</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Vellei RH ≤ 40%</td>
+<td>10.3 °C</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+<p>The comfort ceiling is already above 25 °C everywhere on the chart, so raising air speed
+lifts the whole band uniformly with no visible step. Because that makes the rule invisible,
+a dashed reference line is drawn at 25 °C whenever air speed is above baseline, to show why
+the band moved. The step itself is a cool-climate feature and would only appear in a
+dataset dipping below roughly 18 °C running mean.</p>
+<hr />
+<h2>8. Known limitations</h2>
+<p><strong>The chart's y-axis is air temperature; ASHRAE's is operative temperature.</strong> Operative
+temperature combines air temperature with radiant temperature, and in these buildings the
+two differ — the metal roof surface has been recorded 10 °C above the air temperature
+beneath it. The readings tested against these limits are therefore systematically lower
+than the quantity the standard intends. Adding formal acceptability tiers makes the chart
+<em>look</em> more precise without making it so. This is a property of the instrumentation, not
+of the calculation.</p>
+<p><strong>Air speed is assumed, never measured.</strong> No air speed is recorded at any site. Whatever
+value is selected is a scenario. It is written into the chart caption whether or not it is
+the baseline, and into the exported filename when it is not, so that two exports cannot be
+mistaken for one another.</p>
+<p><strong>The air speed allowance is likely optimistic in humid conditions.</strong> Δt₀ is derived
+assuming ordinary humidity. In humid air, sweat evaporates less readily, so a breeze cools
+less than the table implies. For coastal Tanzania the true benefit of 1.2 m/s is probably
+below +2.2 °C.</p>
+<p><strong>The double-counting caveat on the Vellei bands is documented, not resolved.</strong> See
+section 4.</p>
+<hr />
+<h2>9. Sources</h2>
+<ul>
+<li>ANSI/ASHRAE Standard 55-2020, <em>Thermal Environmental Conditions for Human Occupancy</em> —
+  Sections 5.3.2.4, 5.4.1, 5.4.2, 5.4.2.2, 5.4.2.4; Figure 5-8; Table 5-13.</li>
+<li>M. Vellei, M. Herrera, D. Fosas, S. Natarajan, "The influence of relative humidity on
+  adaptive thermal comfort", <em>Building and Environment</em> 124 (2017) 171–185.
+  <a href="https://doi.org/10.1016/j.buildenv.2017.08.005">https://doi.org/10.1016/j.buildenv.2017.08.005</a></li>
+<li>CBE Thermal Comfort Tool, Center for the Built Environment, University of California
+  Berkeley — used as the reference implementation for the adaptive chart.</li>
+</ul>
+</body>
+</html>

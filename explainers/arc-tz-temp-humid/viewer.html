@@ -178,7 +178,7 @@ blockquote {
 <h2>Dashboard Features</h2>
 <ul>
 <li><strong>Interactive line graphs</strong> for temperature and humidity over time</li>
-<li><strong>Adaptive comfort scatter plot</strong> showing indoor temperature vs the EN16798-1 running mean, with comfort band overlays</li>
+<li><strong>Adaptive comfort scatter plot</strong> showing indoor temperature vs the EN16798-1 running mean, with comfort band overlays (see the applicability note below)</li>
 <li><strong>Density heatmap</strong> showing how indoor temperatures are distributed</li>
 <li><strong>32C thermal threshold marker</strong> for quick visual reference</li>
 <li><strong>Climate cycle overlays</strong> showing ENSO, IOD, and MJO phases alongside the data</li>
@@ -189,6 +189,14 @@ blockquote {
 <li><strong>PNG export</strong> for use in reports and presentations</li>
 <li><strong>Admin config page</strong> (<code>config.html</code>) for renaming loggers and changing categories without rebuilding</li>
 </ul>
+<h3>Adaptive comfort: applicability</h3>
+<blockquote>
+<p><strong>Method is applicable only for occupant-controlled naturally conditioned spaces that meet all of the following criteria:</strong>
+<strong>(a)</strong> There is no mechanical cooling system installed. No heating system is in operation;
+<strong>(b)</strong> Metabolic rates ranging from 1.0 to 1.5 met; and
+<strong>(c)</strong> Occupants are free to adapt their clothing to the indoor and/or outdoor thermal conditions within a range at least as wide as 0.5-1.0 clo.</p>
+</blockquote>
+<p>This applies to the adaptive comfort scatter plot, its comfort band, and the running mean on its x-axis. The dashboard shows the same note beside the comfort band selector and in every info tooltip that explains the method.</p>
 <hr />
 <h2>Project Structure</h2>
 <pre><code>arc_tz_temp_humid/
@@ -209,7 +217,7 @@ blockquote {
 |   |-- cycles/              Climate index data (tracked)
 |   |-- hist_proj/           Long-term climate projection data (tracked)
 |   |-- house5/              TinyTag Excel files for House 5 (local only)
-|   |-- schoolteacher/       TinyTag Excel files for Schoolteacher's House (local only)
+|   |-- schoolteacher/               TinyTag Excel files for Schoolteacher's House (local only)
 |
 |-- .github/workflows/      GitHub Actions automation
 |-- UPDATE.md                Instructions for data updates and git workflow

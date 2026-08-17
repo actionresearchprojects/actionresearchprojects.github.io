@@ -108,6 +108,13 @@ blockquote {
 <body>
 <h1>Running Mean &amp; Fallback Logic - Code Explainer</h1>
 <p>This document explains exactly how the adaptive comfort running mean is calculated and how the external data source fallback works, relating each part of the code to the underlying maths.</p>
+<blockquote>
+<p><strong>Method is applicable only for occupant-controlled naturally conditioned spaces that meet all of the following criteria:</strong>
+<strong>(a)</strong> There is no mechanical cooling system installed. No heating system is in operation;
+<strong>(b)</strong> Metabolic rates ranging from 1.0 to 1.5 met; and
+<strong>(c)</strong> Occupants are free to adapt their clothing to the indoor and/or outdoor thermal conditions within a range at least as wide as 0.5-1.0 clo.</p>
+<p>The adaptive comfort band is meaningless outside these conditions, so it should not be read as a comfort assessment for any space that fails one of them.</p>
+</blockquote>
 <hr />
 <h2>1. The EN16798-1 Formula</h2>
 <p>The running mean external temperature is defined in EN 16798-1 as:</p>

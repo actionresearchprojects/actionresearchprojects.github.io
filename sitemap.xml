@@ -64,6 +64,7 @@
   <url><loc>https://actionresearchprojects.net/graphs/arc-tz-weather</loc></url>
 
   <!-- Explainers -->
+  <url><loc>https://actionresearchprojects.net/explainers/adaptive-comfort/</loc></url>
   <url><loc>https://actionresearchprojects.net/explainers/arc-tz-temp-humid/</loc></url>
   <url><loc>https://actionresearchprojects.net/explainers/data-flow/</loc></url>
   <url><loc>https://actionresearchprojects.net/explainers/running-mean/</loc></url>
