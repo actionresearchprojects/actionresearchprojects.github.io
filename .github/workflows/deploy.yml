@@ -30,12 +30,20 @@ jobs:
 
       - name: Inject hash into HTML
         run: |
-          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-weather.html
-          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-temp-humid/index.html
-          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" graphs/arc-tz-temp-humid/config.html
-          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" explainers/arc-tz-temp-humid/index.html
-          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" explainers/data-flow/index.html
-          sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g" explainers/running-mean/index.html
+          # Substitute in every page that carries the placeholder, rather than a
+          # hand-maintained list. The list had drifted in both directions: two
+          # entries no longer contained the placeholder, while two pages that did
+          # were missing from it, leaving their password permanently unmatchable.
+          FILES=$(grep -rl PLACEHOLDER_HASH --include='*.html' .)
+          if [ -z "$FILES" ]; then echo "No PLACEHOLDER_HASH found - nothing to inject."; exit 0; fi
+          echo "$FILES"
+          echo "$FILES" | xargs sed -i "s/PLACEHOLDER_HASH/${{ steps.hash.outputs.value }}/g"
+          # Fail the deploy rather than publish a page nobody can unlock.
+          if grep -rq PLACEHOLDER_HASH --include='*.html' .; then
+            echo "PLACEHOLDER_HASH still present after substitution:" >&2
+            grep -rl PLACEHOLDER_HASH --include='*.html' . >&2
+            exit 1
+          fi
 
       - uses: actions/configure-pages@v5
 
