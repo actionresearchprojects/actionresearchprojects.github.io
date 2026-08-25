@@ -422,7 +422,7 @@ window.ARC_TRANSLATIONS = {
     // reflections case study: Shely Begum — Desh Houses (Sylhet, Bangladesh)
     'rg.shely.h1': 'Twin Passive Solar Courtyard Houses, Sylhet, Bangladesh',
     'rg.shely.intro.h': 'Intro & Design Concept',
-    'rg.shely.intro.p1': "I've undertaken the design and remote construction of two homes for my mum and aunty in the village of Mushibazar, Sylhet, Bangladesh. The project is rooted in local materials, craftsmanship, and traditions, with construction led by village-based contractors and subcontractors.",
+    'rg.shely.intro.p1': "I've undertaken the design and remote construction of two homes for my mum and aunty in the village of Munshibazar, Sylhet, Bangladesh. The project is rooted in local materials, craftsmanship, and traditions, with construction led by village-based contractors and subcontractors.",
     'rg.shely.intro.p2': "Drawing inspiration from traditional Bengali village homes, the design is centred around a south-facing courtyard space known as the ‘Utan’. This courtyard serves as both a passive design element and a vibrant social hub, fostering community interaction and daily rituals.",
     'rg.shely.intro.p3': "To harmonise the buildings with the surrounding landscape, I’ve incorporated a variety of outdoor spaces including terraces, balconies, and verandahs; each with unique orientations and shading strategies. These spaces offer comfort throughout the day and across seasons, providing shelter from intense heat or opportunities to enjoy it.",
     'rg.shely.future.h': 'Future Climate & Passive Solar Design',
@@ -1089,7 +1089,7 @@ window.ARC_TRANSLATIONS = {
     // reflections case study: Shely Begum — Desh Houses
     'rg.shely.h1': 'Nyumba Pacha za Ua zenye Nguvu ya Jua, Sylhet, Bangladesh',
     'rg.shely.intro.h': 'Utangulizi & Dhana ya Muundo',
-    'rg.shely.intro.p1': 'Nimebuni na kusimamia kwa mbali ujenzi wa nyumba mbili kwa ajili ya mama yangu na shangazi yangu katika kijiji cha Mushibazar, Sylhet, Bangladesh. Mradi huu umejikita katika malighafi za kienyeji, ufundi, na desturi za kienyeji, huku ujenzi ukiongozwa na wakandarasi na wakandarasi wadogo wa kijijini.',
+    'rg.shely.intro.p1': 'Nimebuni na kusimamia kwa mbali ujenzi wa nyumba mbili kwa ajili ya mama yangu na shangazi yangu katika kijiji cha Munshibazar, Sylhet, Bangladesh. Mradi huu umejikita katika malighafi za kienyeji, ufundi, na desturi za kienyeji, huku ujenzi ukiongozwa na wakandarasi na wakandarasi wadogo wa kijijini.',
     'rg.shely.intro.p2': "Ukichukua msukumo kutoka kwa nyumba za jadi za vijiji vya Bengali, muundo umejikita katika nafasi ya ua inayoelekea kusini ijulikanayo kama 'Utan'. Ua hili linatumika kama kipengele cha muundo wa asili na pia kitovu cha kijamii chenye uchangamfu, kikikuza ushirikiano wa jamii na taratibu za kila siku.",
     'rg.shely.intro.p3': 'Ili kuoanisha majengo na mazingira yake, nimejumuisha aina mbalimbali za nafasi za nje ikiwa ni pamoja na matuta, balcony, na veranda; kila moja ikiwa na mwelekeo wa kipekee na mikakati ya kivuli. Nafasi hizi hutoa faraja mchana kutwa na katika misimu yote, zikitoa hifadhi dhidi ya joto kali au fursa za kulifurahia.',
     'rg.shely.future.h': 'Tabianchi ya Siku Zijazo & Muundo wa Nguvu ya Jua bila Umeme',
