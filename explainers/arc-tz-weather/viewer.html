@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Tanzania Weather Station</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
+
+/* Paragraphs */
+p { margin: 0 0 16px; }
+
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
+
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
+</style>
+</head>
+<body>
+<h1>ARC Tanzania Weather Station Dashboard</h1>
+<p>A self-contained, static HTML dashboard for wind, solar radiation and precipitation
+data from the Omnisense weather station at the ARC ecovillage near Mkuranga, Tanzania.</p>
+<h2>What This Project Does</h2>
+<p>The ecovillage site has a weather station (Omnisense sensor <code>30B40014</code>) recording wind
+speed, wind direction, solar radiation and rainfall at five-minute intervals. This
+project turns that raw record into a browsable dashboard of charts covering the site's
+wind, solar and rainfall climate, with a particular emphasis on what the data means for
+naturally ventilated buildings.</p>
+<p>It is a sibling of the temperature and humidity dashboard and shares its architecture:
+a single build script processes the data and writes one self-contained <code>index.html</code>.</p>
+<h2>Data Source</h2>
+<p>Everything on this dashboard comes from one sensor. There is no external weather data,
+no reanalysis product and no forecast; where a figure is derived rather than measured,
+the dashboard says so.</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Unit</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>avg_wind_speed_kph</code></td>
+<td>km/h</td>
+<td>Five-minute average wind speed</td>
+</tr>
+<tr>
+<td><code>peak_wind_kph</code></td>
+<td>km/h</td>
+<td>Peak gust within the five-minute interval</td>
+</tr>
+<tr>
+<td><code>wind_direction</code></td>
+<td>degrees</td>
+<td>Compass bearing, 0 = North</td>
+</tr>
+<tr>
+<td><code>solar_radiation</code></td>
+<td>W/m2</td>
+<td>Global horizontal irradiance</td>
+</tr>
+<tr>
+<td><code>total_percipitation_mm</code></td>
+<td>mm</td>
+<td>Cumulative rainfall, with periodic resets</td>
+</tr>
+<tr>
+<td><code>rate_percipitation_mm_h</code></td>
+<td>mm/h</td>
+<td>Instantaneous rainfall rate</td>
+</tr>
+<tr>
+<td><code>battery_voltage</code></td>
+<td>V</td>
+<td>Sensor battery voltage</td>
+</tr>
+</tbody>
+</table>
+<h2>How It Works</h2>
+<h3>Build Process</h3>
+<p><code>build.py</code> loads the CSV, passes the cleaned data through four analysis modules, and
+writes a single <code>index.html</code> with all chart data embedded as JSON. The output needs
+nothing at runtime except Plotly from a CDN.</p>
+<pre><code class="language-bash">python build.py                      # standard build
+python build.py --csv path/to/file   # build from a specific CSV
+</code></pre>
+<p><code>index.html</code> is generated output and is overwritten on every build. All changes to the
+dashboard are made in <code>build.py</code>.</p>
+<h3>Automation</h3>
+<p>A GitHub Action runs daily at 05:00 UTC (08:00 EAT), one hour after the temperature and
+humidity project fetches the sensor CSV. It copies the latest CSV from that repository
+by sparse checkout, rebuilds the dashboard, and if anything changed, commits and pushes,
+then triggers a sync to the main site.</p>
+<h2>Dashboard Features</h2>
+<p>The dashboard is organised into four modules.</p>
+<p><strong>Wind.</strong> Wind rose, speed time series, diurnal pattern, speed distribution, gust factor
+analysis, calm period analysis and ventilation availability.</p>
+<p><strong>Solar.</strong> Radiation time series, daily insolation profile, diurnal pattern, distribution
+histogram, clearness index and peak solar hours. The clearness index compares measured
+radiation against clear-sky radiation computed from latitude and day of year, so no
+external dataset is required.</p>
+<p><strong>Precipitation.</strong> Cumulative rainfall, daily rainfall, intensity distribution, diurnal
+pattern, dry spell analysis and a rain event summary.</p>
+<p><strong>Cross-variable.</strong> Driving rain index, wind and rain coincidence, solar and wind
+correlation, pre-storm signatures and ventilation window analysis. These combine two or
+more channels to answer questions that no single channel can.</p>
+<h3>Wind speed categories</h3>
+<p>Wind speeds can be classified on four scales: Beaufort, Lawson, Davenport, or a set of
+ARC-calibrated categories derived from this station's own record. The standard scales
+were each calibrated for a different purpose and place, so none of them describes a
+humid tropical coastal site especially well. The ARC categories are computed from the
+site's own distribution instead. See <code>ARC_WIND_CATEGORIES.md</code>.</p>
+<h3>Indoor ventilation calculator</h3>
+<p>Outdoor wind speed is not what building occupants feel. The calculator estimates likely
+indoor air speeds from the measured outdoor record given a room's dimensions, window
+areas and mosquito mesh, and overlays the result on the wind speed categories chart.
+Mesh in particular can reduce indoor air movement substantially, which matters directly
+for thermal comfort in a naturally ventilated building. See <code>INDOOR_VENTILATION_CALC.md</code>.</p>
+<h2>Data Quality</h2>
+<p>The station uses a cup anemometer with a reed switch counter, which produces two
+characteristic artefacts: switch bounce on the peak gust channel, and isolated spikes on
+the average channel. Three filters are applied, uniformly across every project that uses
+this sensor:</p>
+<ul>
+<li><strong>Average spike filter</strong>: values above three times the rolling median, ceiling 60 km/h.</li>
+<li><strong>Peak bounce filter</strong>: peak to average ratio above 8, ceiling 100 km/h.</li>
+<li><strong>Physical impossibility filter</strong>: where average exceeds peak, both channels are
+  discarded rather than just the peak.</li>
+</ul>
+<p>Flagged values become gaps rather than being replaced by estimates. Cumulative
+precipitation resets are detected and corrected automatically. The reasoning behind each
+filter is set out in <code>WIND_QC.md</code>.</p>
+<h2>Project Structure</h2>
+<pre><code>arc_tz_weather/
+  build.py                    Orchestrator: loads data, calls modules, writes index.html
+  modules/common.py           CSV parsing, time helpers, palettes, quality filters
+  modules/wind.py             Wind analyses
+  modules/solar.py            Solar analyses
+  modules/precipitation.py    Rainfall analyses
+  modules/cross_variable.py   Analyses combining two or more channels
+  fetch_omnisense.py          Copied from arc_tz_temp_humid, not modified here
+  index.html                  Generated output, never edited directly
+  data/omnisense/             Sensor CSVs, copied from the sibling repository
+</code></pre>
+<h2>How Data Flows</h2>
+<pre><code>Omnisense sensor 30B40014
+    v
+omnisense.com
+    v   arc_tz_temp_humid daily workflow fetches the CSV
+arc_tz_temp_humid/data/omnisense/
+    v   arc_tz_weather daily workflow copies it across
+arc_tz_weather/data/omnisense/
+    v   build.py processes and generates
+index.html
+    v   push triggers a main site sync
+actionresearchprojects.github.io
+</code></pre>
+<h2>Key Technical Details</h2>
+<ul>
+<li><strong>Timezone</strong>: all timestamps are East African Time (UTC+3). Charts use a helper that
+  prevents the plotting library from converting to the viewer's local time.</li>
+<li><strong>Single source</strong>: only the Omnisense CSV. No TinyTag, no Open-Meteo, no forecast data.</li>
+<li><strong>Self-contained output</strong>: chart data is embedded in the HTML rather than fetched.</li>
+</ul>
+<h2>Technologies Used</h2>
+<p>Python with pandas and numpy for processing; Plotly for charts; GitHub Actions for the
+daily rebuild; GitHub Pages for hosting.</p>
+<h2>Documentation</h2>
+<ul>
+<li><code>ARC_WIND_CATEGORIES.md</code>: how the site-calibrated wind categories are derived, and why
+  the standard scales do not fit this site.</li>
+<li><code>WIND_QC.md</code>: the anemometer artefacts and the filters that correct them.</li>
+<li><code>INDOOR_VENTILATION_CALC.md</code>: how indoor air speed is estimated from outdoor wind.</li>
+<li><code>dataflow.md</code>: the automated pipeline from sensor to published dashboard.</li>
+<li><code>WEATHER_SPEC.md</code>: the full build specification.</li>
+<li><code>CLAUDE.md</code>: project conventions.</li>
+</ul>
+</body>
+</html>

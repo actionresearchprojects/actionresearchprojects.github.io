@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Indoor Ventilation</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
+
+/* Paragraphs */
+p { margin: 0 0 16px; }
+
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
+
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
+</style>
+</head>
+<body>
+<h1>Indoor Ventilation Calculator: Technical Reference</h1>
+<h2>Purpose</h2>
+<p>The indoor ventilation calculator estimates likely indoor air speeds from the measured outdoor wind speed dataset, using the physical properties of a specific room and its windows. It overlays the resulting indoor speed distribution on the Wind Speed Categories chart, allowing direct comparison between the outdoor wind climate and the indoor air movement that occupants of a building can expect.</p>
+<p>The primary application is assessing natural cross-ventilation potential in low-rise dwellings in tropical climates, where adequate indoor air speed is critical for thermal comfort and is frequently compromised by mosquito mesh on windows.</p>
+<hr />
+<h2>Equation Summary</h2>
+<p>The calculator chains four equations to convert an outdoor wind speed into an estimated indoor air speed. The table below shows each equation, its source, and why it is used.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Equation</th>
+<th>Source</th>
+<th>Why this equation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Wind pressure</td>
+<td><code>ΔP = ΔCp × ½ρv²</code></td>
+<td>AIVC TN44 (Orme et al. 1998), Ch. 3; also ASHRAE Fundamentals Ch. 16</td>
+<td>Bernoulli: moving air converts kinetic energy to pressure when it strikes a surface. ΔCp from TN44 Tables 3.5(i)-(iii): wind-tunnel-derived pressure coefficients for low-rise buildings under three shielding conditions.</td>
+</tr>
+<tr>
+<td>2. Airflow rate</td>
+<td><code>Q = Cd × Ao × √(2ΔP/ρ)</code></td>
+<td>AIVC TN44 Ch. 3; EN 15242:2007 Annex B</td>
+<td>Standard orifice-flow equation derived from Bernoulli. Cd = 0.6 is the accepted value for a sharp-edged rectangular opening (accounts for vena contracta and edge losses).</td>
+</tr>
+<tr>
+<td>3. Indoor speed</td>
+<td><code>v_indoor = Q / (√A_floor × h)</code></td>
+<td>Continuity equation (conservation of mass); room geometry simplification</td>
+<td>Divides the volumetric flow rate by the room cross-section area perpendicular to flow. Assumes square floor plan so width = √A_floor.</td>
+</tr>
+<tr>
+<td>4. Layer reduction</td>
+<td><code>v_final = v_indoor × f₁ × f₂ × ... × fₙ</code></td>
+<td>Multiple reduction layers applied sequentially</td>
+<td>Each active layer applies its reduction factor to the result of the previous layer, not to the original indoor speed. Factors compound multiplicatively rather than additively.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Background: Why Indoor Air Speed Matters</h2>
+<p>In hot, humid tropical climates without mechanical cooling, indoor air movement is one of the few reliable routes to thermal comfort. Moving air increases the rate of convective and evaporative heat loss from the skin, lowering the perceived temperature even when the air itself is warm.</p>
+<p>The relevant thresholds for occupant perception and comfort are approximately:</p>
+<table>
+<thead>
+<tr>
+<th>Indoor air speed</th>
+<th>Effect on occupant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 0.1 m/s</td>
+<td>Imperceptible; no comfort benefit</td>
+</tr>
+<tr>
+<td>0.1 to 0.2 m/s</td>
+<td>Barely perceptible; marginally beneficial</td>
+</tr>
+<tr>
+<td>0.2 to 0.5 m/s</td>
+<td>Noticeable; meaningful comfort benefit in warm conditions</td>
+</tr>
+<tr>
+<td>0.5 to 1.0 m/s</td>
+<td>Effective; significant cooling effect; typical of open windows in moderate wind</td>
+</tr>
+<tr>
+<td>&gt; 1.0 m/s</td>
+<td>Strong; may feel draughty for sedentary occupants</td>
+</tr>
+</tbody>
+</table>
+<p>These thresholds are drawn from ASHRAE Standard 55 (Thermal Environmental Conditions for Human Occupancy) and the work of Fanger and Christensen on draught ratings, and are widely used in tropical building design guidance.</p>
+<p>At the ARC Tanzania site, the outdoor wind climate is exceptionally calm: the median outdoor speed is around 1.2 km/h and the 99th percentile is around 7.6 km/h. Even at the best case (no mesh, direct wind, exposed shielding), the mean indoor speed for a typical room rarely exceeds 0.05 to 0.08 m/s. This is below the perceptible threshold for most occupants, which is a significant finding for the site: natural cross-ventilation alone is insufficient for meaningful thermal comfort benefit on most days.</p>
+<hr />
+<h2>The Physical Model: Cross-Ventilation</h2>
+<p>The calculator models simple cross-ventilation: outdoor wind creates a pressure difference between the windward and leeward faces of a building; air flows in through the inlet window, crosses the room, and exits through the outlet window.</p>
+<p>The model has four steps:</p>
+<ol>
+<li>Convert outdoor wind speed to a wind pressure difference across the building.</li>
+<li>Convert that pressure difference to a volumetric airflow rate through the windows.</li>
+<li>Convert that airflow rate to a mean indoor air speed.</li>
+<li>Reduce by the mesh factor (if mosquito mesh is present).</li>
+</ol>
+<p>Each step is described in full below, with the physical reasoning behind every parameter choice.</p>
+<hr />
+<h2>The Calculation Chain</h2>
+<h3>Step 1: Wind pressure difference across the building</h3>
+<pre><code>ΔP = ΔCp × ½ρv²
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>ΔP</code> = wind-induced pressure difference between the windward (inlet) and leeward (outlet) faces of the building, in Pascals (Pa)</li>
+<li><code>ΔCp</code> = dimensionless pressure coefficient difference (see table below)</li>
+<li><code>ρ</code> = air density = <strong>1.2 kg/m³</strong></li>
+<li><code>v</code> = outdoor wind speed in m/s (converted from the station's km/h measurement by dividing by 3.6)</li>
+</ul>
+<p><strong>Physical meaning:</strong> Moving air has kinetic energy proportional to ½ρv². When wind hits a building, it decelerates and converts some of that kinetic energy into pressure on the windward face (positive pressure). On the leeward face, the flow separates and creates a suction zone (negative pressure). The net pressure difference ΔP drives air through any openings in the envelope.</p>
+<p><strong>Why ρ = 1.2 kg/m³:</strong> This is the standard value for air at sea level and around 20°C. For the ARC Tanzania site (approximately 700 m altitude, mean temperature around 26°C), the true density is closer to 1.13 kg/m³. The difference is small relative to other uncertainties in the model, so the standard value is retained for simplicity and comparability with published tables (which are calibrated to this value).</p>
+<p><strong>Why ΔCp rather than Cp:</strong> Individual face pressure coefficients Cp describe the pressure on one face relative to free-stream dynamic pressure. To drive cross-ventilation, what matters is the difference between the inlet face Cp and the outlet face Cp. A high positive Cp on the windward face and a high negative Cp on the leeward face both contribute to a large ΔCp and thus a large driving pressure. See the Cp table section below for specific values and sources.</p>
+<hr />
+<h3>Step 2: Airflow rate through the window opening</h3>
+<pre><code>Q = Cd × Ao × √(2ΔP/ρ)
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>Q</code> = volumetric airflow rate through the room, in m³/s</li>
+<li><code>Cd</code> = discharge coefficient = <strong>0.6</strong></li>
+<li><code>Ao</code> = effective opening area (m²)</li>
+</ul>
+<p><strong>Physical meaning:</strong> This is derived from Bernoulli's equation applied to flow through an orifice. If air flows through a hole of area Ao under a pressure difference ΔP, the theoretical flow velocity is √(2ΔP/ρ). Multiplying by the area gives the theoretical flow rate. The discharge coefficient Cd accounts for the fact that real flow through a sharp-edged rectangular opening is less than the theoretical maximum.</p>
+<p><strong>Why Cd = 0.6:</strong> When air flows through a sharp-edged rectangular opening (a window frame), the flow contracts as it passes through (the "vena contracta" effect) and there are viscous losses at the edges. Measured values of Cd for rectangular openings in buildings consistently fall in the range 0.57 to 0.65. The value 0.6 is the standard in building ventilation engineering (used in EN 15242, AIVC TN44, and ASHRAE Fundamentals) and is appropriate for a window without any internal obstruction. The mosquito mesh, if present, is handled separately in Step 4 rather than by reducing Cd, because the mesh effect is a multiplier on the final indoor speed and is derived from empirical measurements rather than from orifice theory.</p>
+<p><strong>Effective area Ao:</strong> The implementation uses the series correction formula <code>1/Aeff² = 1/Ainlet² + 1/Aoutlet²</code>, which rearranges to <code>Aeff = (Ainlet × Aoutlet) / √(Ainlet² + Aoutlet²)</code>. This is the physically correct result for two orifices in series: each opening imposes an independent pressure drop, and the combined resistance is the sum of the individual resistances. For equal openings it reduces to Ao = A. For unequal openings it gives a lower effective area than the simpler <code>min(Ainlet, Aoutlet)</code> approach. For example, with a 2 m² inlet and a 1.5 m² outlet: Aeff = (2.0 × 1.5) / √(4.0 + 2.25) = 3.0 / 2.5 = <strong>1.2 m²</strong>.</p>
+<hr />
+<h3>Step 3: Mean indoor air speed</h3>
+<pre><code>v_indoor = Q / (√A_floor × h_room)
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>v_indoor</code> = mean indoor air speed through the room cross-section, in m/s</li>
+<li><code>A_floor</code> = room floor area, in m²</li>
+<li><code>h_room</code> = room ceiling height, in m</li>
+</ul>
+<p><strong>Physical meaning:</strong> The airflow rate Q (m³/s) passes through the cross-sectional area of the room perpendicular to the direction of flow. Dividing a flow rate (m³/s) by an area (m²) gives a speed (m/s). This is correct dimensional analysis.</p>
+<p><strong>Why √A_floor × h_room for the cross-section:</strong> The room is assumed to be square in plan (width = depth = √A_floor). The face of the room perpendicular to the dominant airflow direction then has dimensions √A_floor (width) by h_room (height), giving a cross-section area of √A_floor × h_room m².</p>
+<p>For example, a 25 m² room is treated as 5 m × 5 m. With a ceiling height of 3.0 m, the cross-section area is 5 × 3.0 = 15 m².</p>
+<p><strong>Interpretation:</strong> This is a cross-section mean speed, not a local speed. In reality, air entering through a window does not fill the room uniformly. Speeds near the window are much higher; speeds in corners far from both windows may be near zero. The mean is a useful single-number summary for comparing sites and configurations, but occupant experience will vary strongly with position in the room.</p>
+<hr />
+<h3>Step 4: Multi-layer reduction system</h3>
+<p>Multiple reduction layers can be applied sequentially to model the cumulative effect of different airflow-reducing elements such as mosquito mesh, perforated screens, and ventilation blinds. Each layer's reduction is applied multiplicatively to the result of the previous layer, not to the original outdoor speed.</p>
+<p><strong>Compounding logic:</strong> If mosquito mesh reduces airflow by 52–64% (multiplier 0.48–0.36) and a perforated screen reduces by an additional 35–55% (multiplier 0.65–0.45), the combined effect is:</p>
+<p><code>v_final = v_indoor × 0.48 × 0.65 = v_indoor × 0.312</code> (optimistic)<br />
+<code>v_final = v_indoor × 0.36 × 0.45 = v_indoor × 0.162</code> (conservative)</p>
+<p>This approach reflects the physical reality that each obstruction reduces the already-reduced airflow from upstream layers.</p>
+<h4>Supported reduction layers</h4>
+<table>
+<thead>
+<tr>
+<th>Layer Type</th>
+<th>Optimistic</th>
+<th>Conservative</th>
+<th>Empirical Support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Mosquito Mesh</strong></td>
+<td>0.48</td>
+<td>0.36</td>
+<td><strong>Yes</strong> — von Seidlein et al. (2012)</td>
+</tr>
+<tr>
+<td><strong>Perforated Screen</strong></td>
+<td>0.65</td>
+<td>0.45</td>
+<td><strong>No</strong> — indicative only</td>
+</tr>
+<tr>
+<td><strong>Ventilation Blind</strong></td>
+<td>0.70</td>
+<td>0.50</td>
+<td><strong>No</strong> — indicative only</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mosquito mesh values</strong> are derived from von Seidlein et al. (2012) — "Airflow attenuation and bed net utilization: observations from Africa and Asia", <em>Malaria Journal</em> 11:200. Field measurements in 20 real households found mean 52% reduction (0.48 transmission). Wind tunnel experiments with 11 bed nets found mean 64% reduction (0.36 transmission, range 55–71%).</p>
+<p><strong>Other layer values</strong> are illustrative placeholders based on typical porosity and obstruction patterns. These require empirical validation before use in production applications.</p>
+<h4>Layer management</h4>
+<ul>
+<li><strong>Active layers</strong> contribute to the reduction calculation</li>
+<li><strong>Muted layers</strong> are temporarily excluded from calculations without being deleted</li>
+<li><strong>Layer ordering</strong> follows the interface sequence; early layers affect the airflow experienced by later layers</li>
+<li><strong>Empty layer set</strong> applies no reduction (multiplier = 1.0), showing unobstructed indoor speed</li>
+</ul>
+<hr />
+<h2>Source of Cp Values: AIVC Technical Note 44</h2>
+<p>The pressure coefficient difference ΔCp is the most influential single parameter in the calculation. Values are taken from Tables 3.5 (i)-(iii) of:</p>
+<blockquote>
+<p>Orme, M., Liddament, M.W., and Wilson, A. (1998). <em>Numerical Data for Air Infiltration and Natural Ventilation Calculations.</em> Air Infiltration and Ventilation Centre, Technical Note AIVC 44. Coventry, UK. (Originally published 1994; reprinted and updated 1998.)</p>
+</blockquote>
+<p>TN44 provides single-face wind pressure coefficients for low-rise buildings (up to 3 storeys) under three shielding conditions, derived from wind tunnel measurements by Wiren (1985) and Bowen (1976). These are among the most widely cited empirical Cp tables in building ventilation engineering.</p>
+<p>The implementation uses a 3x3 lookup table of ΔCp values (three shielding conditions x three wind direction categories):</p>
+<table>
+<thead>
+<tr>
+<th>Shielding</th>
+<th>Direct (0°)</th>
+<th>Diagonal (45°)</th>
+<th>Side-on (90°)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Exposed</strong> (open countryside, no nearby obstructions)</td>
+<td>1.20</td>
+<td>0.75</td>
+<td>0.30</td>
+</tr>
+<tr>
+<td><strong>Suburban</strong> (semi-sheltered; surrounding obstructions roughly half the building height)</td>
+<td>0.70</td>
+<td>0.45</td>
+<td>0.10</td>
+</tr>
+<tr>
+<td><strong>Urban</strong> (sheltered; surrounding obstructions roughly equal to building height)</td>
+<td>0.45</td>
+<td>0.35</td>
+<td>0.05</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Derivation from TN44:</strong></p>
+<p><em>Direct (0° wind angle):</em> Windward face (face 1 at 0°) minus leeward face (face 3 at 0°).</p>
+<ul>
+<li>Exposed (Table 3.5 i): +0.70 minus (−0.50) = <strong>1.20</strong></li>
+<li>Suburban (Table 3.5 ii): +0.40 minus (−0.30) = <strong>0.70</strong></li>
+<li>Urban (Table 3.5 iii): +0.20 minus (−0.25) = <strong>0.45</strong></li>
+</ul>
+<p><em>Diagonal (45° wind angle):</em> Windward face (face 1 at 45°) minus the adjacent side face (face 4 at 45°). With wind at 45°, the outlet is the side face most nearly leeward.</p>
+<ul>
+<li>Exposed: +0.35 minus (−0.40) = <strong>0.75</strong></li>
+<li>Suburban: +0.10 minus (−0.35) = <strong>0.45</strong></li>
+<li>Urban: +0.05 minus (−0.30) = <strong>0.35</strong></li>
+</ul>
+<p><em>Side-on (90° to the inlet window):</em> Wind blows parallel to the inlet window plane. Pressure differences arise from the separation of flow around the building corners, creating a small but non-zero ΔP between the two side faces.</p>
+<ul>
+<li>Exposed: −0.20 minus (−0.50) = <strong>0.30</strong></li>
+<li>Suburban: −0.20 minus (−0.30) = <strong>0.10</strong></li>
+<li>Urban: −0.25 minus (−0.25) = approximately 0 (clamped to <strong>0.05</strong> to avoid numerical collapse)</li>
+</ul>
+<p>The TN44 tables assume a 1:1 building length-to-width ratio. All Cp values are referenced to the wind speed at building height (not at the standard 10 m meteorological measurement height).</p>
+<hr />
+<h2>Wind Speed Categories</h2>
+<p>The outdoor wind speed data is classified into categories for display on the chart. The calculator supports four category systems:</p>
+<h3>Beaufort Scale</h3>
+<p>The Beaufort scale was originally developed for maritime observations by Sir Francis Beaufort in 1805 and extended to land use in the 20th century. It describes wind conditions by their observable effects, with each level corresponding to a range of wind speeds at 10 m height.</p>
+<table>
+<thead>
+<tr>
+<th>Force</th>
+<th>Description</th>
+<th>km/h range</th>
+<th>Typical land effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Calm</td>
+<td>0 to 1</td>
+<td>Smoke rises vertically</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Light air</td>
+<td>1 to 5</td>
+<td>Smoke drift shows direction; wind vanes unaffected</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Light breeze</td>
+<td>6 to 11</td>
+<td>Wind felt on face; leaves rustle</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Gentle breeze</td>
+<td>12 to 19</td>
+<td>Leaves and small twigs in constant motion</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Moderate breeze</td>
+<td>20 to 28</td>
+<td>Raises dust; small branches move</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Fresh breeze</td>
+<td>29 to 38</td>
+<td>Small trees sway; wavelets on inland water</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Strong breeze</td>
+<td>39 to 49</td>
+<td>Large branches in motion; umbrellas difficult to use</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Near gale</td>
+<td>50 to 61</td>
+<td>Whole trees in motion; walking against wind difficult</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Gale</td>
+<td>62 to 74</td>
+<td>Breaks twigs off trees; impedes walking</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Strong gale</td>
+<td>75 to 88</td>
+<td>Slight structural damage (chimney pots, slates)</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Storm</td>
+<td>89 to 102</td>
+<td>Trees uprooted; considerable structural damage</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Violent storm</td>
+<td>103 to 117</td>
+<td>Very rarely experienced; widespread damage</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Hurricane</td>
+<td>≥ 118</td>
+<td>Devastation</td>
+</tr>
+</tbody>
+</table>
+<p>At the ARC Tanzania site, almost all observations fall in Beaufort 0 to 2 (calm to light breeze), with occasional Force 3 readings and very rare Force 4 or above.</p>
+<h3>Lawson Criteria</h3>
+<p>The Lawson criteria (Lawson, 1978; revised by LDDC/BRE) assess pedestrian wind comfort for urban outdoor spaces. They are widely used in wind microclimate assessments for planning applications in the UK and internationally. Each criterion is named for the activity it describes, with a threshold frequency: wind conditions are "acceptable" if speeds above the threshold occur for less than the stated percentage of the time.</p>
+<p>The Lawson L1 to L5 thresholds used in this chart are:</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Description</th>
+<th>Threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1 Sitting</td>
+<td>Outdoor seating comfort</td>
+<td>1.8 m/s (6.5 km/h) exceeded &lt; 5% of time</td>
+</tr>
+<tr>
+<td>L2 Standing</td>
+<td>Outdoor standing comfort</td>
+<td>3.6 m/s (13 km/h) exceeded &lt; 5% of time</td>
+</tr>
+<tr>
+<td>L3 Walking</td>
+<td>Pedestrian walking comfort</td>
+<td>5.3 m/s (19 km/h) exceeded &lt; 5% of time</td>
+</tr>
+<tr>
+<td>L4 Unpleasant</td>
+<td>Uncomfortable; business disrupted</td>
+<td>7.6 m/s (27 km/h) exceeded &lt; 2% of time</td>
+</tr>
+<tr>
+<td>L5 Dangerous</td>
+<td>Unsafe for pedestrians</td>
+<td>15.3 m/s (55 km/h) exceeded &lt; 0.1% of time</td>
+</tr>
+</tbody>
+</table>
+<p>These criteria are for outdoor pedestrian comfort, not indoor ventilation, but they provide a useful reference frame for interpreting wind speed distributions relative to human activity.</p>
+<h3>ARC Categories</h3>
+<p>The ARC (Action Research Centre) categories are a custom set of wind speed bands developed for this project, calibrated to the specific wind climate of the ARC Tanzania site. They are designed to spread the observed data distribution more evenly across the categories than the Beaufort scale does at this calm site, where Beaufort 0 and 1 together account for the majority of observations.</p>
+<h3>Custom Thresholds</h3>
+<p>A custom category system allows the user to define their own threshold values in km/h, creating bands tailored to any specific analysis requirement.</p>
+<hr />
+<h2>Interpreting the Overlay</h2>
+<p>The indoor ventilation overlay shows, for each outdoor wind speed category, the mean indoor air speed (in m/s) calculated from all the actual measured outdoor wind readings that fall within that category. A vertical line or pair of lines is drawn at the horizontal position corresponding to that mean indoor speed.</p>
+<p>When reduction layers are active, two bounds are shown:</p>
+<ul>
+<li>A solid line for the optimistic bound (best-case transmission through all active layers)</li>
+<li>A dotted line for the conservative bound (worst-case transmission through all active layers)  </li>
+<li>A hatched green fill between the two bounds</li>
+</ul>
+<p>When no layers are active, a single red line is shown representing unobstructed indoor airflow.</p>
+<p>The secondary x-axis at the top of the chart shows indoor air speed in m/s. This axis is independent of the outdoor category axis; its scale is set automatically to accommodate the calculated indoor speeds.</p>
+<p><strong>A note on the expected magnitudes:</strong> At the ARC Tanzania site, with default settings (suburban shielding, direct wind, 2 m² inlet and outlet, 25 m² floor, 3.2 m ceiling, mosquito mesh), typical calculated indoor speeds are in the range 0.01 to 0.05 m/s. These values are well below the 0.1 m/s threshold for perceptible air movement. This is not a calculation error; it reflects the physical reality of a very calm outdoor wind climate combined with the substantial attenuation of mosquito mesh. The calculator correctly predicts that natural cross-ventilation at this site provides little or no thermal comfort benefit on most days.</p>
+<hr />
+<h2>Worked Example</h2>
+<p><strong>Settings:</strong> 2 m² inlet window, 1.5 m² outlet window, 25 m² floor area, 3.2 m ceiling height, suburban shielding, direct wind (0°), mosquito mesh present.</p>
+<p><strong>Outdoor wind speed:</strong> 10 km/h = 2.78 m/s</p>
+<p><strong>Step 1:</strong> ΔCp (suburban, direct) = 0.70. ΔP = 0.70 × 0.5 × 1.2 × 2.78² = 0.70 × 4.63 = <strong>3.24 Pa</strong></p>
+<p><strong>Step 2:</strong> Aeff = (2.0 × 1.5) / √(2.0² + 1.5²) = 3.0 / √6.25 = 3.0 / 2.5 = 1.2 m². Q = 0.6 × 1.2 × √(2 × 3.24 / 1.2) = 0.72 × √5.40 = 0.72 × 2.32 = <strong>1.67 m³/s</strong></p>
+<p><strong>Step 3:</strong> Cross-section = √25 × 3.2 = 5 × 3.2 = 16 m². v_indoor = 1.67 / 16 = <strong>0.104 m/s</strong></p>
+<p><strong>Step 4 (layers):</strong> Assuming mosquito mesh + perforated screen are active:</p>
+<ul>
+<li>Optimistic: 0.104 × 0.48 × 0.65 = <strong>0.032 m/s</strong></li>
+<li>Conservative: 0.104 × 0.36 × 0.45 = <strong>0.017 m/s</strong></li>
+</ul>
+<p>At 10 km/h outdoor wind (a moderate reading for this site), a room with these characteristics and two reduction layers would experience roughly 0.017 to 0.032 m/s of mean indoor air speed — well below the 0.1 m/s perceptibility threshold.</p>
+<hr />
+<h2>Known Limitations</h2>
+<p><strong>1. Single-zone, single-opening model.</strong> The calculation assumes simple cross-ventilation: air enters through one opening and exits through another in steady state. Real buildings have multiple openings, corridors, internal partitions, and complex flow paths that this model cannot represent.</p>
+<p><strong>2. Mean wind speed, not instantaneous.</strong> The outdoor wind speed data is a 5-minute average. Real ventilation is driven by fluctuating, gusty wind; instantaneous indoor air speed varies considerably around the calculated mean. The model gives a time-averaged estimate only.</p>
+<p><strong>3. No wind profile correction.</strong> The calculation uses the measured wind speed at the 10 m station height directly, without adjusting for the difference between 10 m and the actual building height. For a single-storey building, this overestimates the wind at eave height by a factor that depends on terrain roughness (typically 10 to 20%). TN44 Section 3.2.1 provides correction procedures that are not implemented here.</p>
+<p><strong>4. No thermal buoyancy.</strong> The model is wind-driven only. In practice, temperature differences between inside and outside also drive airflow through the stack effect. In the daytime tropical climate of the ARC site, wind tends to dominate; but at night or in calm conditions, stack ventilation may contribute meaningfully. Including the stack effect would require temperature data at every timestep.</p>
+<p><strong>5. Cp values are for standard low-rise geometry.</strong> The TN44 tables assume a rectangular building up to 3 storeys with a 1:1 plan ratio. Buildings with very different proportions, complex plan shapes, or significant roof overhangs will have different Cp distributions.</p>
+<p><strong>6. Square floor plan assumed.</strong> The formula treats the room as square in plan. A rectangular room with a narrow face toward the inlet window would have a smaller cross-section and higher actual mean speed; one with a wide face would have a larger cross-section and lower speed.</p>
+<p><strong>7. Layer reduction factors have varying empirical support.</strong> Mosquito mesh values (0.36–0.48) are derived from von Seidlein et al. (2012), but those measurements used bed nets draped over sleeping areas, not fixed window mesh screens. Values for perforated screens and ventilation blinds are indicative only and require empirical validation. Layer density, condition, installation quality, and interaction effects all affect actual attenuation.</p>
+<p><strong>8. Wind direction not modelled.</strong> The selected ΔCp is applied uniformly to all outdoor wind speed readings regardless of actual wind direction at each timestep. In reality, the ventilation effectiveness varies with wind direction relative to the window. The "wind direction to window" setting is a fixed orientation assumption applied across the entire dataset.</p>
+<p><strong>9. Calculated value is a cross-section mean.</strong> The indoor air speed is the mean across the room cross-section perpendicular to flow. Local speeds near the window can be several times higher; local speeds in corners and behind partitions may be near zero. Occupant experience depends strongly on position within the room.</p>
+<p><strong>10. Layer ordering assumes series arrangement.</strong> The calculation applies reduction factors sequentially in the order layers are added, assuming each layer encounters the reduced airflow from upstream layers. In reality, layer interaction effects, parallel flow paths, and non-uniform obstruction distributions may alter the total reduction from simple multiplicative compounding.</p>
+<hr />
+<h2>References</h2>
+<p>References marked <strong>[verified]</strong> have been checked against the primary source. Those marked <strong>[unverified — check before citing]</strong> were compiled via literature review and their details (title, volume, page numbers) should be confirmed before formal use.</p>
+<h3>Standards and technical guidance</h3>
+<p>Orme, M., Liddament, M.W., and Wilson, A. (1998). <em>Numerical Data for Air Infiltration and Natural Ventilation Calculations.</em> Air Infiltration and Ventilation Centre, Technical Note AIVC 44. Coventry, UK. <strong>[verified]</strong> — source of the ΔCp lookup table (Tables 3.5 i–iii).</p>
+<p>ASHRAE (2017). <em>ASHRAE Standard 55-2017: Thermal Environmental Conditions for Human Occupancy.</em> American Society of Heating, Refrigerating and Air-Conditioning Engineers, Atlanta. <strong>[verified]</strong> — source of indoor wind speed comfort thresholds.</p>
+<p>CIBSE (2005). <em>AM10: Natural Ventilation in Non-Domestic Buildings.</em> Chartered Institution of Building Services Engineers, London. <strong>[unverified — check before citing]</strong> — methodology for discharge coefficients and opening calculations; Cd = 0.6 for sharp-edged rectangular openings.</p>
+<p>Idelchik, I.E. (1986). <em>Handbook of Hydraulic Resistance</em>, 2nd ed. Hemisphere Publishing, Washington DC. <strong>[unverified — check before citing]</strong> — discharge coefficients for mesh types, referenced via CIBSE AM10.</p>
+<h3>Mosquito mesh attenuation</h3>
+<p>Von Seidlein, L., et al. (2012). Airflow attenuation and bed net utilization: observations from Africa and Asia. <em>Malaria Journal</em>, 11:200. <strong>[verified]</strong> — primary empirical source for the 50–65% velocity reduction (transmission 35–50%) used in Step 4.</p>
+<p>Valera, D.L., Molina-Aiz, F.D., and Álvarez, A.J. (2006). Aerodynamic analysis of several insect-proof screens used in greenhouses. <em>Spanish Journal of Agricultural Research</em>, 4(4), 273–279. <strong>[unverified — check before citing]</strong> — aerodynamic characterisation of agricultural insect screens; context for mesh pressure-loss behaviour.</p>
+<p>Peña, A., et al. (2016). Wind tunnel analysis of the airflow through insect-proof screens and comparison of their effect when installed in a Mediterranean greenhouse. <em>Sensors</em>, 16(5), 690. <strong>[unverified — check before citing]</strong> — screen aerodynamics under controlled conditions.</p>
+<p>Flores-Velázquez, J., et al. (2016). Aerodynamic characteristics of anti-insect mesh windows used in greenhouses in Mexico. <em>AGROCIENCIA</em>, 50(3), 493–510. <strong>[unverified — check before citing]</strong> — regional variation in mesh aerodynamic performance.</p>
+<p>Miguel, A.F., Van de Braak, N.J., Silva, A.M., and Bot, G.P.A. (1997). Analysis of airflow characteristics of greenhouse screening materials. <em>Journal of Agricultural Engineering Research</em>, 67, 105–112. <strong>[unverified — check before citing]</strong> — foundational study of screen pressure-loss coefficients.</p>
+<p>Linker, R., Tarnopolsky, M., and Seginer, I. (2002). Increased resistance to flow and improved visual properties of insect-proof screens achieved by inclining them from the vertical. <em>Transactions of the ASAE</em>, 45(5). <strong>[unverified — check before citing]</strong> — screen pressure-loss coefficient as affected by dust and flow direction.</p>
+<h3>Comfort and draught</h3>
+<p>Fanger, P.O. and Christensen, N.K. (1986). Perception of draught in ventilated spaces. <em>Ergonomics</em>, 29(2), 215–235. <strong>[unverified — check before citing]</strong> — basis for draught rating thresholds.</p>
+<p>Lawson, T.V. (1978). The wind content of the built environment. <em>Journal of Wind Engineering and Industrial Aerodynamics</em>, 3(2), 93–105. <strong>[unverified — check before citing]</strong> — original formulation of the Lawson pedestrian comfort criteria.</p>
+<h3>Wind tunnel data underlying TN44</h3>
+<p>Wiren, B.G. (1985). <em>A wind tunnel study of wind velocities in passages between and through buildings.</em> Proceedings of the 4th Colloquium on Industrial Aerodynamics, Aachen. <strong>[unverified — check before citing]</strong> — primary wind tunnel dataset used in TN44 Cp tables.</p>
+</body>
+</html>

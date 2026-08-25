@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Wind Data Quality Control</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
+
+/* Paragraphs */
+p { margin: 0 0 16px; }
+
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
+
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
+</style>
+</head>
+<body>
+<h1>Wind Data Quality Control</h1>
+<h2>Overview</h2>
+<p>The Omnisense weather station (sensor <code>30B40014</code>) at the ARC ecovillage near Mkuranga, Tanzania uses a cup anemometer with a reed switch counter. Two categories of artefact appear in the raw data: <strong>reed switch bounce</strong> on the peak gust channel, and <strong>isolated sensor spikes</strong> on the average wind channel. This document explains how each is detected and corrected, and why the chosen approach is appropriate.</p>
+<p>All three filters are applied uniformly across every project that consumes this sensor's data:</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Entry point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>arc_tz_weather</code></td>
+<td><code>modules/common.py</code> → <code>wind_qc()</code>, called by <code>modules/wind.py</code> and <code>build.py</code></td>
+</tr>
+<tr>
+<td><code>arc_tz_line</code></td>
+<td>inline in <code>load_weather_station_csv()</code> in <code>build.py</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Filter 1: avg_wind_kph isolated spike detection (rolling median ratio)</h2>
+<p><strong>What it catches:</strong> Single-reading sensor errors on the average wind channel — for example, a jump to 70 km/h at 12:22 EAT on 13 April 2026 while all surrounding readings were near 5 km/h.</p>
+<p><strong>Why not a hard ceiling:</strong> A fixed ceiling (e.g. 60 km/h) would silently discard genuine extreme events. If a real storm builds the wind to 60+ km/h over several readings, that data is valuable and should be kept. A hard ceiling cannot distinguish "one bad reading" from "sustained high wind".</p>
+<p><strong>The approach — rolling median ratio:</strong> For each reading, compute the median of the surrounding <code>AVG_SPIKE_WINDOW</code> (12) readings using a centred window (~1 hour at 5-minute intervals). Flag the reading if:</p>
+<pre><code>reading &gt; AVG_SPIKE_RATIO * local_median   AND   reading &gt; AVG_SPIKE_MIN_KPH
+</code></pre>
+<ul>
+<li><strong>Why ratio 3x:</strong> Gust spikes that are real events typically raise neighbouring readings too, so the local median rises with them and the ratio stays well below 3. An isolated single-point error (neighbours at 5 km/h, spike at 70 km/h) gives a ratio of ~14, caught easily.</li>
+<li><strong>Why 12-reading window:</strong> A centred window of 12 means the spike itself is 1 of 12 values. The median is the 6th–7th sorted value, so a single outlier cannot shift it materially. The window spans ~1 hour, which is long enough to reflect ambient conditions without masking short real gusts.</li>
+<li><strong>Why 20 km/h minimum:</strong> At very low wind speeds, small absolute values (e.g. avg = 1 km/h, median = 0.5 km/h) can produce large ratios from measurement noise. The minimum prevents false positives in near-calm conditions.</li>
+<li><strong>Genuine storm tolerance:</strong> If wind genuinely climbs from 10 → 30 → 60 → 70 km/h over an hour, the local median tracks upward through each step. A reading of 70 km/h against a median of 50 km/h gives ratio 1.4 — well below the threshold. Only a sudden isolated jump is flagged.</li>
+</ul>
+<p><strong>Action:</strong> Flagged readings in <code>avg_wind_kph</code> are replaced with NaN / None and marked in <code>avg_wind_flagged</code>.</p>
+<hr />
+<h2>Filter 2: Reed switch bounce on peak_wind_kph (ratio + minimum)</h2>
+<p><strong>What it catches:</strong> Mechanical bounce in the reed switch that counts anemometer cup revolutions. When the switch contacts momentarily chatter on a single closure, the firmware records a very high instantaneous peak speed even though the cup was barely moving. This produces rows where <code>peak_wind_kph</code> is many times larger than <code>avg_wind_kph</code>.</p>
+<p><strong>Two-part condition:</strong> <code>peak / avg &gt; BOUNCE_RATIO (8)</code> AND <code>peak &gt; BOUNCE_MIN_PEAK_KPH (25 km/h)</code></p>
+<ul>
+<li>The <strong>ratio threshold of 8</strong> distinguishes genuine gusty-wind events (typical gust factors of 1.5–3 in open terrain, rarely exceeding 5–6 even in convective storms) from bounce artefacts where the ratio reaches tens or hundreds.</li>
+<li>The <strong>minimum peak of 25 km/h</strong> prevents the filter from operating at near-zero speeds, where integer rounding in the firmware can create spuriously large ratios from tiny absolute values (e.g. avg = 0.1 km/h, peak = 1.0 km/h → ratio = 10, but both are essentially calm).</li>
+<li>Rows where <code>avg_wind_kph</code> is 0 or NaN (after spike filter above) are treated as an infinite ratio and flagged if <code>peak &gt; 25 km/h</code>.</li>
+</ul>
+<p><strong>Why not "avg &lt; 1.0 km/h AND peak &gt; 25 km/h":</strong> An earlier description of the bounce filter used a hard avg threshold. The ratio approach is strictly superior: it catches bounce at any average speed level (e.g. avg = 3 km/h, peak = 40 km/h → ratio 13), and the minimum-peak guard already handles the near-calm false-positive case.</p>
+<p><strong>Action:</strong> <code>peak_wind_kph</code> values satisfying the condition are replaced with NaN / None and marked in <code>peak_wind_flagged</code>. <code>avg_wind_kph</code> is not affected by this filter alone — see Filter 4.</p>
+<hr />
+<h2>Filter 3: peak_wind_kph absolute ceiling (100 km/h)</h2>
+<p><strong>What it catches:</strong> Any remaining implausibly high gust values that may not satisfy the ratio condition — for example, if both channels were simultaneously erroneous, or firmware producing very large integers.</p>
+<p><strong>Why 100 km/h:</strong> 100 km/h (~54 kn) is mid-Beaufort 10 (Storm). A genuine peak gust above this at this site would be an extraordinary event requiring independent verification. The ceiling is a safety net, not the primary filter.</p>
+<p><strong>Action:</strong> <code>peak_wind_kph</code> values above 100 km/h are replaced with NaN / None and marked in <code>peak_wind_flagged</code>.</p>
+<hr />
+<h2>Filter 4: Physical impossibility — avg &gt; peak (both channels NaN'd)</h2>
+<p><strong>What it catches:</strong> Rows where the 5-minute average wind speed exceeds the 5-minute peak gust — a physical impossibility, since a period average cannot exceed its own maximum. This is a logging error, not a sensor spike: if the average is recorded as higher than the peak, neither value can be trusted.</p>
+<p><strong>Real example:</strong> 2026-03-19 11:55 EAT — <code>avg_wind_kph = 15.5</code>, <code>peak_wind_kph = 7.6</code>. The ratio filter alone would only NaN the peak, leaving a clearly erroneous 15.5 km/h average in all downstream charts.</p>
+<p><strong>Why both channels are NaN'd:</strong> When avg &gt; peak, we cannot infer which channel is wrong. The average could be a logging artefact (value from a different interval written to the wrong row), or the peak could be a stall reading. Because the relationship between them is provably impossible, both values are unreliable and both are discarded.</p>
+<p><strong>This is distinct from Filter 2 (bounce):</strong> Bounce produces <code>peak &gt;&gt; avg</code>. This filter catches the opposite: <code>avg &gt; peak</code>. Both are sensor artefacts but arise from different mechanisms.</p>
+<p><strong>Action:</strong> Both <code>avg_wind_kph</code> and <code>peak_wind_kph</code> are replaced with NaN / None. Both <code>avg_wind_flagged</code> and <code>peak_wind_flagged</code> are set True.</p>
+<hr />
+<h2>Application order</h2>
+<p>Filters run in sequence so each step uses already-cleaned values:</p>
+<ol>
+<li><strong>avg spike filter</strong> (cleans <code>avg_wind_kph</code> first)</li>
+<li><strong>bounce ratio on peak</strong> (uses the cleaned <code>avg_wind_kph</code> as denominator — important, since a flagged avg becomes NaN and is treated as infinite ratio)</li>
+<li><strong>peak ceiling</strong> (independent, applied alongside step 2)</li>
+<li><strong>physical impossibility</strong> (avg &gt; peak — NaN's both channels; runs after steps 1-3 so it operates on already-cleaned values and catches residual logging errors not caught by earlier filters)</li>
+</ol>
+<hr />
+<h2>Constants</h2>
+<pre><code class="language-python">AVG_SPIKE_RATIO    = 3.0   # flag avg if &gt; 3x local rolling median
+AVG_SPIKE_WINDOW   = 12    # readings in rolling window (~1 hour at 5-min intervals)
+AVG_SPIKE_MIN_KPH  = 20    # minimum speed for ratio test to engage
+AVG_WIND_CEIL_KPH  = 60    # km/h: hard ceiling for avg wind (safety net for spike filter)
+PEAK_WIND_CEIL_KPH = 100   # km/h: hard ceiling for peak gust
+BOUNCE_RATIO       = 8     # peak/avg ratio threshold for reed switch bounce
+BOUNCE_MIN_PEAK_KPH = 25   # km/h: minimum peak speed for ratio filter to engage
+# Filter 4 uses no additional constant: condition is simply avg_wind_kph &gt; peak_wind_kph
+</code></pre>
+<p>Any change to these values must be mirrored in <code>arc_tz_line/build.py</code> (inline in <code>load_weather_station_csv</code>).</p>
+</body>
+</html>
