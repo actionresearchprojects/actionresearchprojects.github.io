@@ -256,11 +256,9 @@
     "longitude": 39.2447,
     "radiusKm": 5,
     "gdpr": true,
-    "imageUrl": "",
+    "imageUrl": "./images/innocentpeter.jpg",
     "colour": "#0db8b8",
-    "needsReview": [
-      "image"
-    ]
+    "needsReview": []
   },
   {
     "id": "jeffcolley",
