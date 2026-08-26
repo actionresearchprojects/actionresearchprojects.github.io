@@ -112,10 +112,10 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 55.6797,
+    "latitude": 55.6882,
     "longitude": 12.5683,
-    "radiusKm": 0,
-    "gdpr": false,
+    "radiusKm": 5,
+    "gdpr": true,
     "imageUrl": "./images/otissloanwood.jpg",
     "colour": "#0db8b8"
   },
@@ -132,10 +132,10 @@
         "colour": "#65ff51"
       }
     ],
-    "latitude": 55.6725,
+    "latitude": 55.664,
     "longitude": 12.5683,
-    "radiusKm": 0,
-    "gdpr": false,
+    "radiusKm": 5,
+    "gdpr": true,
     "imageUrl": "./images/hannahsloanwood.jpg",
     "colour": "#0db8b8"
   },
