@@ -34,12 +34,12 @@ ARC integrates robust R&D with community engagement to support innovative, scala
 
 | Section | Path | Description |
 |---|---|---|
-| **Home** | `/` | Landing page with project showcase grid |
+| **Home** | `/` | Front-page document (ARC Impact), rendered in-page as a PDF |
 | **ARC Standard** | `/arc-standard` | Overview of the ARC building standard |
 | **Cool Buildings Guide** | `/cool-buildings-guide/` | 8-part practical guide covering air movement, thermal mass, insect protection, and more |
 | **Science** | `/science/` | 7-part deep dive into the physics and research behind ARC strategies |
-| **Projects** | `/projects/` | Showcase of ARC field projects |
-| **Reflections** | `/reflections/` | 4 in-depth case studies and practitioner reflections |
+| **Projects** | `/projects/` | Project showcase grid — the page that used to be the landing page |
+| **Reflections** | `/reflections/` | 6 in-depth case studies and practitioner reflections |
 | **People** | `/people` | Team profiles and portraits |
 | **Map** | `/map` | Interactive Mapbox map of projects and climate data |
 | **Blog** | `/blog/` | News and updates (SPA with hash routing) |
@@ -190,7 +190,8 @@ Dashboard access is password-protected - the `deploy.yml` workflow injects a SHA
 ├── admin/                     Blog post editor (PAT-authenticated)
 ├── assets/
 │   ├── fonts/                 Woff2 web fonts
-│   └── images/                Site images, favicons, OG image
+│   ├── images/                Site images, favicons, OG image
+│   └── pdf/                   Front-page document + shared pdf.js viewer
 ├── blog/                      Blog SPA, post data, and images
 ├── cool-buildings-guide/      8 guide topic pages
 ├── embedded/                  Auto-synced sub-project sites
