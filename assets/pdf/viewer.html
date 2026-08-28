@@ -4,6 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ARC document</title>
+<!-- Inherits the site favicon when framed; this stops a standalone load 404ing on /favicon.ico. -->
+<link rel="icon" href="data:," />
 
 <style>
   html, body {
@@ -19,9 +21,17 @@
     color: #555;
   }
 
+  /* Measures the content width available to a page, with the vertical
+     scrollbar already subtracted. Reading #pdf.clientWidth directly would
+     feed back on itself once zooming in adds a horizontal scrollbar. */
+  #measure {
+    width: 100%;
+    height: 0;
+  }
+
   #pdf {
     height: 100%;
-    overflow-y: auto;
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -30,13 +40,12 @@
     margin: 0 auto 1.5rem auto;
     background: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,.15);
-    max-width: 100%;
   }
 
   canvas {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
   }
 
   .annotationLayer {
@@ -49,20 +58,97 @@
     position: absolute;
     display: block;
   }
+
+  /* Zoom control. Deliberately quiet: it sits at 30% opacity until the
+     pointer is over the document, so at rest it reads as a faint watermark
+     rather than a toolbar. Touch devices get no hover, so it stays at a
+     low-but-visible 70% there. */
+  #zoom-bar {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding: 3px;
+    border: 1px solid rgba(0,0,0,.10);
+    border-radius: 999px;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 1px 4px rgba(0,0,0,.16);
+    opacity: .3;
+    transition: opacity .18s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  @media (hover: hover) {
+    body:hover #zoom-bar { opacity: 1; }
+  }
+
+  @media (hover: none) {
+    #zoom-bar { opacity: .7; }
+  }
+
+  #zoom-bar:focus-within { opacity: 1; }
+
+  #zoom-bar button {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #333;
+    font: 400 17px/1 system-ui, sans-serif;
+    cursor: pointer;
+  }
+
+  #zoom-bar button:hover:not(:disabled) { background: rgba(0,0,0,.07); }
+  #zoom-bar button:disabled { opacity: .3; cursor: default; }
+  #zoom-bar button:focus-visible { outline: 2px solid #333; outline-offset: 1px; }
+
+  #zoom-level {
+    min-width: 44px;
+    height: 26px;
+    padding: 0 2px;
+    border: 0;
+    border-radius: 13px;
+    background: transparent;
+    color: #333;
+    font: 400 11px/26px system-ui, sans-serif;
+    text-align: center;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #zoom-level:hover { background: rgba(0,0,0,.07); }
+  #zoom-level:focus-visible { outline: 2px solid #333; outline-offset: 1px; }
+
+  @media print {
+    #zoom-bar { display: none; }
+  }
 </style>
 </head>
 
 <body>
 <div id="loading">Loading document…</div>
+<div id="measure"></div>
 <div id="pdf"></div>
+
+<div id="zoom-bar" hidden>
+  <button id="zoom-out" type="button" title="Zoom out (−)" aria-label="Zoom out">−</button>
+  <button id="zoom-level" type="button" title="Reset zoom (0)" aria-label="Reset zoom to fit width">100%</button>
+  <button id="zoom-in" type="button" title="Zoom in (+)" aria-label="Zoom in">+</button>
+</div>
 
 <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script>
   // Which PDF to render is passed as ?file=<name>.pdf so this viewer can be
-  // reused for any document in assets/pdf/ without editing it. Only a bare
-  // filename in this directory is accepted — anything with a slash, a scheme
-  // or a ".." falls back to the default rather than letting a crafted link
-  // point the viewer somewhere else.
+  // reused for any document in assets/pdf/. Only a bare filename in this
+  // directory is accepted — anything with a slash, a scheme or a ".." falls
+  // back to the default rather than letting a crafted link point the viewer
+  // somewhere else.
   function pdfFileFromQuery(fallback) {
     var name = new URLSearchParams(location.search).get("file");
     if (!name) return fallback;
@@ -76,69 +162,202 @@
     "https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
 
   const container = document.getElementById("pdf");
+  const measure = document.getElementById("measure");
   const loading = document.getElementById("loading");
+  const zoomBar = document.getElementById("zoom-bar");
+  const zoomLevelBtn = document.getElementById("zoom-level");
+  const zoomInBtn = document.getElementById("zoom-in");
+  const zoomOutBtn = document.getElementById("zoom-out");
+
   const DPR = Math.max(1, window.devicePixelRatio || 1);
 
+  // 1 is fit-to-width, which is the default and the size the document was
+  // designed to be read at here. Below 1 is genuinely useful in this embed:
+  // the panel is much shorter than an A4 page, so ~0.33 is what it takes to
+  // see a whole page at once.
+  const ZOOMS = [0.33, 0.5, 0.67, 0.8, 1, 1.25, 1.5, 2, 2.5, 3];
+  const FIT = ZOOMS.indexOf(1);
+
+  // The source pages are 2480px-wide raster images, so rendering a canvas
+  // wider than that only interpolates. Capping here also bounds the memory a
+  // single canvas can take, which matters because zooming in would otherwise
+  // scale the backing store quadratically.
+  const MAX_CANVAS_W = 2600;
+
   let pdfDoc = null;
-  let renderQueue = Promise.resolve();
+  let pages = [];          // one entry per page, created up front as a placeholder
+  let zoomIndex = FIT;
+  let contentW = 0;        // width one page occupies at zoom 1
 
-  function renderPage(num) {
-    renderQueue = renderQueue.then(async () => {
-      const page = await pdfDoc.getPage(num);
+  function zoom() { return ZOOMS[zoomIndex]; }
 
-      const base = page.getViewport({ scale: 1 });
-      const width = container.clientWidth || window.innerWidth;
-      const scale = width / base.width;
-      const vp = page.getViewport({ scale });
+  // ── Layout ────────────────────────────────────────────────────────────
+  // Every page gets its wrapper sized immediately, before any rendering, so
+  // the scrollbar is correct from the first paint and pages can be rendered
+  // lazily without the document jumping around underneath the reader.
 
-      const wrap = document.createElement("div");
-      wrap.className = "page";
-      wrap.style.width = vp.width + "px";
-      wrap.style.height = vp.height + "px";
-
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.floor(vp.width * DPR);
-      canvas.height = Math.floor(vp.height * DPR);
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
-
-      const ctx = canvas.getContext("2d", { alpha: false });
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-
-      wrap.appendChild(canvas);
-      container.appendChild(wrap);
-
-      await page.render({ canvasContext: ctx, viewport: vp }).promise;
-
-      const annLayer = document.createElement("div");
-      annLayer.className = "annotationLayer";
-      annLayer.style.width = vp.width + "px";
-      annLayer.style.height = vp.height + "px";
-      wrap.appendChild(annLayer);
-
-      const annotations = await page.getAnnotations({ intent: "display" });
-      for (const ann of annotations) {
-        if (ann.subtype !== "Link") continue;
-
-        const [x1, y1, x2, y2] =
-          pdfjsLib.Util.normalizeRect(vp.convertToViewportRectangle(ann.rect));
-
-        const a = document.createElement("a");
-        a.style.left = x1 + "px";
-        a.style.top = y1 + "px";
-        a.style.width = (x2 - x1) + "px";
-        a.style.height = (y2 - y1) + "px";
-
-        if (ann.url || ann.unsafeUrl) {
-          a.href = ann.url || ann.unsafeUrl;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-        }
-
-        annLayer.appendChild(a);
-      }
-    });
+  function layout() {
+    const w = contentW * zoom();
+    for (const p of pages) {
+      p.dispW = w;
+      p.dispH = w * (p.baseH / p.baseW);
+      p.wrap.style.width = p.dispW + "px";
+      p.wrap.style.height = p.dispH + "px";
+    }
   }
+
+  function releaseCanvas(p) {
+    if (p.task) { p.task.cancel(); p.task = null; }
+    p.rendered = false;
+    // Zeroing the backing store is what actually frees the memory; removing
+    // the element alone leaves it alive until GC catches up.
+    p.canvas.width = 0;
+    p.canvas.height = 0;
+    if (p.ann) { p.ann.remove(); p.ann = null; }
+  }
+
+  async function renderPage(p) {
+    if (p.rendered || p.task) return;
+
+    const page = await pdfDoc.getPage(p.num);
+    const canvasW = Math.min(p.dispW * DPR, MAX_CANVAS_W);
+    const vp = page.getViewport({ scale: canvasW / p.baseW });
+
+    p.canvas.width = Math.floor(vp.width);
+    p.canvas.height = Math.floor(vp.height);
+
+    const ctx = p.canvas.getContext("2d", { alpha: false });
+    p.task = page.render({ canvasContext: ctx, viewport: vp });
+
+    try {
+      await p.task.promise;
+    } catch (e) {
+      if (e && e.name === "RenderingCancelledException") return;
+      throw e;
+    } finally {
+      p.task = null;
+    }
+
+    p.rendered = true;
+    await addAnnotations(p, page);
+  }
+
+  // Link annotations are positioned in CSS pixels, so they are laid out
+  // against the displayed size rather than the canvas backing store.
+  async function addAnnotations(p, page) {
+    const annotations = await page.getAnnotations({ intent: "display" });
+    if (!annotations.length) return;
+
+    const vp = page.getViewport({ scale: p.dispW / p.baseW });
+    const layer = document.createElement("div");
+    layer.className = "annotationLayer";
+
+    for (const ann of annotations) {
+      if (ann.subtype !== "Link") continue;
+      if (!ann.url && !ann.unsafeUrl) continue;
+
+      const [x1, y1, x2, y2] =
+        pdfjsLib.Util.normalizeRect(vp.convertToViewportRectangle(ann.rect));
+
+      const a = document.createElement("a");
+      a.style.left = x1 + "px";
+      a.style.top = y1 + "px";
+      a.style.width = (x2 - x1) + "px";
+      a.style.height = (y2 - y1) + "px";
+      a.href = ann.url || ann.unsafeUrl;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      layer.appendChild(a);
+    }
+
+    if (!layer.children.length) return;
+    p.ann = layer;
+    p.wrap.appendChild(layer);
+  }
+
+  // Render what is on screen (plus a screen's worth either side) and drop the
+  // rest. Without this, seven full-page canvases at zoom 3 would allocate
+  // well over a gigabyte.
+  function refresh() {
+    const top = container.scrollTop - container.clientHeight;
+    const bottom = container.scrollTop + container.clientHeight * 2;
+    for (const p of pages) {
+      const pTop = p.wrap.offsetTop;
+      const pBottom = pTop + p.wrap.offsetHeight;
+      if (pBottom >= top && pTop <= bottom) {
+        renderPage(p).catch((e) => console.error("page " + p.num, e));
+      } else if (p.rendered || p.task) {
+        releaseCanvas(p);
+      }
+    }
+  }
+
+  // ── Zoom ──────────────────────────────────────────────────────────────
+
+  function setZoom(next) {
+    next = Math.max(0, Math.min(ZOOMS.length - 1, next));
+    if (next === zoomIndex) return;
+
+    // Anchor on whichever page is at the top of the viewport, and how far
+    // into it we are, so the reader stays on the same line across a resize.
+    const anchor = pages.find((p) => p.wrap.offsetTop + p.wrap.offsetHeight > container.scrollTop) || pages[0];
+    const into = anchor ? (container.scrollTop - anchor.wrap.offsetTop) / anchor.wrap.offsetHeight : 0;
+    const midX = (container.scrollLeft + container.clientWidth / 2) / Math.max(1, container.scrollWidth);
+
+    zoomIndex = next;
+    for (const p of pages) releaseCanvas(p);
+    layout();
+    updateZoomUI();
+
+    if (anchor) container.scrollTop = anchor.wrap.offsetTop + into * anchor.wrap.offsetHeight;
+    container.scrollLeft = midX * container.scrollWidth - container.clientWidth / 2;
+    refresh();
+  }
+
+  function updateZoomUI() {
+    zoomLevelBtn.textContent = Math.round(zoom() * 100) + "%";
+    zoomOutBtn.disabled = zoomIndex === 0;
+    zoomInBtn.disabled = zoomIndex === ZOOMS.length - 1;
+  }
+
+  zoomInBtn.addEventListener("click", () => setZoom(zoomIndex + 1));
+  zoomOutBtn.addEventListener("click", () => setZoom(zoomIndex - 1));
+  zoomLevelBtn.addEventListener("click", () => setZoom(FIT));
+
+  // Trackpad pinch arrives as ctrl+wheel; without this it would zoom the
+  // whole embedding page instead of the document.
+  container.addEventListener("wheel", (e) => {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    setZoom(zoomIndex + (e.deltaY < 0 ? 1 : -1));
+  }, { passive: false });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    if (e.key === "+" || e.key === "=") { e.preventDefault(); setZoom(zoomIndex + 1); }
+    else if (e.key === "-" || e.key === "_") { e.preventDefault(); setZoom(zoomIndex - 1); }
+    else if (e.key === "0") { e.preventDefault(); setZoom(FIT); }
+  });
+
+  let scrollTick = null;
+  container.addEventListener("scroll", () => {
+    if (scrollTick) return;
+    scrollTick = requestAnimationFrame(() => { scrollTick = null; refresh(); });
+  }, { passive: true });
+
+  // Only re-fit when the available width actually changes. The embedding page
+  // scales #main with CSS zoom, so a plain window resize can fire without the
+  // content box moving at all.
+  window.addEventListener("resize", () => {
+    const w = measure.clientWidth;
+    if (!w || Math.abs(w - contentW) < 1) return;
+    contentW = w;
+    for (const p of pages) releaseCanvas(p);
+    layout();
+    refresh();
+  });
+
+  // ── Boot ──────────────────────────────────────────────────────────────
 
   (async () => {
     try {
@@ -148,13 +367,31 @@
         disableRange: true
       }).promise;
 
-      loading.remove();
+      contentW = measure.clientWidth || window.innerWidth;
 
-      await renderPage(1);
+      for (let i = 1; i <= pdfDoc.numPages; i++) {
+        const page = await pdfDoc.getPage(i);
+        const base = page.getViewport({ scale: 1 });
 
-      for (let i = 2; i <= pdfDoc.numPages; i++) {
-        renderPage(i);
+        const wrap = document.createElement("div");
+        wrap.className = "page";
+
+        const canvas = document.createElement("canvas");
+        wrap.appendChild(canvas);
+        container.appendChild(wrap);
+
+        pages.push({
+          num: i, wrap: wrap, canvas: canvas, ann: null, task: null,
+          rendered: false, baseW: base.width, baseH: base.height,
+          dispW: 0, dispH: 0
+        });
       }
+
+      layout();
+      loading.remove();
+      updateZoomUI();
+      zoomBar.hidden = false;
+      refresh();
 
     } catch (e) {
       console.error(e);
