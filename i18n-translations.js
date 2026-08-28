@@ -120,8 +120,8 @@ window.ARC_TRANSLATIONS = {
     // support.html (form + headings; long-form copy in next batch)
     'support.heading': 'Support Us',
     'support.tagline': "<strong class=\"framer-text\">Help us develop cool, healthy building practices where they’re needed most urgently.</strong>",
-    'support.smaller.heading': 'For Smaller Donations',
-    'support.larger.heading': 'For Larger Donations',
+    'support.smaller.heading': 'Donate',
+    'support.larger.heading': 'Sponsor ARC',
     'support.sponsors.heading': 'Our Sponsors',
     'support.thanks': 'Thank you!',
     'support.share': 'Another way you can support us is by sharing ARC on social media.',
