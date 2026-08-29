@@ -1,106 +1,509 @@
-/* Small additions to Material. Kept short on purpose. */
+/* ============================================================================
+   ARC wiki styling.
 
-.arc-banner {
-  border-left: 4px solid var(--md-accent-fg-color);
-  padding: 0.6rem 0.9rem;
-  margin-bottom: 1.2rem;
-  background: var(--md-code-bg-color);
-  border-radius: 0.2rem;
-  font-size: 0.78rem;
+   The goal is that this reads as part of actionresearchprojects.net, while
+   still behaving like a wiki — sidebar, search, contents.
+
+   Every value below is taken from the main site's own stylesheet (see
+   about.html there), so the two stay congruent:
+
+     font            "Ubuntu", sans-serif
+     body text       14.5px / 300 / line-height 1.7 / #444
+     headings        500 weight, #111
+     secondary text  #666
+     nav links       #888, hover #222
+     accent rule     3px x 15px bar, #ccc
+     footer          10px / 300 / rgba(0,0,0,0.4)
+
+   There is no dark mode, because the rest of the site has none.
+   ========================================================================== */
+
+/* Material re-declares its colour variables on `body[data-md-color-scheme]`,
+   which is a closer ancestor than `:root` — so a `:root`-only override is
+   silently ignored everywhere inside the page. Matching its own selector is
+   what makes these stick. (Found the hard way: the footer links were coming
+   out white-on-white.) */
+:root,
+[data-md-color-scheme="default"] {
+  --arc-ink:        #111;   /* headings */
+  --arc-body:       #444;   /* body copy */
+  --arc-strong:     #222;   /* emphasis, hover states */
+  --arc-muted:      #666;   /* secondary copy */
+  --arc-quiet:      #888;   /* navigation, metadata */
+  --arc-rule:       #ccc;   /* the heading accent bar */
+  --arc-hairline:   #e6e6e6;
+  --arc-wash:       #fafafa;
+
+  /* Material's own tokens, remapped onto the ARC palette. */
+  --md-primary-fg-color:        #ffffff;
+  --md-primary-fg-color--light: #ffffff;
+  --md-primary-fg-color--dark:  #ffffff;
+  --md-primary-bg-color:        var(--arc-strong);
+  --md-primary-bg-color--light: var(--arc-quiet);
+
+  --md-accent-fg-color:         var(--arc-ink);
+  --md-accent-fg-color--transparent: rgba(0, 0, 0, 0.06);
+
+  --md-default-bg-color:        #ffffff;
+  --md-typeset-color:           var(--arc-body);
+  --md-typeset-a-color:         var(--arc-strong);
+
+  --md-text-font-family: "Ubuntu", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Footer. Material assumes a dark footer and colours its text near-white;
+     ARC's is white, so these are inverted here rather than overridden per
+     selector. */
+  --md-footer-bg-color:          #ffffff;
+  --md-footer-bg-color--dark:    #ffffff;
+  --md-footer-fg-color:          rgba(0, 0, 0, 0.7);
+  --md-footer-fg-color--light:   rgba(0, 0, 0, 0.45);
+  --md-footer-fg-color--lighter: rgba(0, 0, 0, 0.4);
 }
 
-/* --- chat page ---------------------------------------------------------- */
+/* Material sizes everything from a 20px root. ARC's body copy is 14.5px, so
+   scale the whole thing down rather than fighting each rule. */
+html { font-size: 118%; }
+
+body,
+.md-typeset {
+  font-family: var(--md-text-font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.md-typeset {
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--arc-body);
+}
+
+/* --- header ---------------------------------------------------------------
+   White, hairline-ruled, quiet. The main site's header is a logo on white
+   with grey links; this matches it. */
+
+.md-header {
+  background: #ffffff;
+  color: var(--arc-strong);
+  border-bottom: 1px solid var(--arc-hairline);
+  box-shadow: none;
+}
+.md-header--shadow { box-shadow: none; }
+
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 2rem;
+  width: auto;
+}
+.md-header__button { color: var(--arc-quiet); }
+.md-header__button:hover { color: var(--arc-strong); opacity: 1; }
+
+.md-header__title {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--arc-quiet);
+  margin-left: 0.6rem;
+}
+.md-header__topic:first-child { font-weight: 400; }
+
+/* Search box: a quiet outline rather than a filled bar. */
+.md-search__form {
+  background: #ffffff;
+  border: 1px solid var(--arc-hairline);
+  border-radius: 3px;
+  box-shadow: none;
+}
+.md-search__form:hover { background: #ffffff; border-color: var(--arc-rule); }
+.md-search__input { color: var(--arc-strong); font-weight: 300; }
+.md-search__input::placeholder { color: var(--arc-quiet); }
+.md-search__icon { color: var(--arc-quiet); }
+[data-md-toggle="search"]:checked ~ .md-header .md-search__form {
+  border-color: var(--arc-rule);
+}
+
+/* --- tabs / sidebar -------------------------------------------------------- */
+
+.md-nav {
+  font-size: 0.7rem;
+  font-weight: 300;
+}
+.md-nav__title {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--arc-quiet);
+  box-shadow: none;
+  background: transparent;
+}
+.md-nav__link {
+  color: var(--arc-quiet);
+  transition: color 0.2s;
+}
+.md-nav__link:hover,
+.md-nav__link:focus { color: var(--arc-strong); }
+.md-nav__link--active,
+.md-nav__item .md-nav__link--active {
+  color: var(--arc-ink);
+  font-weight: 400;
+}
+.md-sidebar { padding-top: 1.2rem; }
+.md-sidebar--secondary .md-nav__title { font-size: 0.6rem; }
+
+/* --- typography -----------------------------------------------------------
+   ARC's heading scale, including the 3px accent bar before every h2. */
+
+.md-typeset h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  color: var(--arc-ink);
+  margin: 0 0 0.5rem;
+}
+
+.md-typeset h2 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  color: var(--arc-ink);
+  margin: 2.2rem 0 0.6rem;
+  padding: 0;
+  border: 0;
+}
+.md-typeset h2::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 15px;
+  background: var(--arc-rule);
+  border-radius: 2px;
+  margin-right: 10px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+.md-typeset h3 {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--arc-strong);
+  margin: 1.6rem 0 0.4rem;
+}
+.md-typeset h4 {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--arc-strong);
+}
+
+.md-typeset p { margin: 0 0 0.9rem; }
+.md-typeset strong { font-weight: 500; color: var(--arc-strong); }
+.md-typeset em { font-style: italic; }
+
+.md-typeset a {
+  color: var(--arc-strong);
+  text-decoration: none;
+  border-bottom: 1px solid var(--arc-rule);
+  transition: border-color 0.2s, color 0.2s;
+}
+.md-typeset a:hover {
+  color: var(--arc-ink);
+  border-bottom-color: var(--arc-strong);
+}
+.md-typeset a.headerlink { border: 0; }
+
+.md-typeset ul, .md-typeset ol { margin-bottom: 0.9rem; }
+.md-typeset li { margin-bottom: 0.25rem; }
+.md-typeset ul li::marker { color: var(--arc-rule); }
+
+/* --- tables ---------------------------------------------------------------- */
+
+.md-typeset table:not([class]) {
+  font-size: 0.72rem;
+  font-weight: 300;
+  border: 0;
+  border-top: 1px solid var(--arc-hairline);
+  box-shadow: none;
+}
+.md-typeset table:not([class]) th {
+  background: transparent;
+  color: var(--arc-ink);
+  font-weight: 500;
+  border-bottom: 1px solid var(--arc-rule);
+}
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid var(--arc-hairline);
+}
+
+/* --- admonitions ----------------------------------------------------------
+   Flat, with a single rule on the left, in keeping with ARC's h2 accent.
+   Material colours each type (blue for note, orange for warning and so on);
+   the ARC site is near-monochrome, so those are overridden here. */
+
+.md-typeset .admonition,
+.md-typeset details {
+  font-size: 0.74rem;
+  font-weight: 300;
+  border: 0;
+  border-left: 3px solid var(--arc-rule);
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--arc-wash);
+  padding: 0.35rem 0.9rem 0.55rem;
+}
+
+/* Every admonition type, monochrome. */
+.md-typeset .admonition.note,
+.md-typeset .admonition.info,
+.md-typeset .admonition.tip,
+.md-typeset .admonition.abstract,
+.md-typeset .admonition.example,
+.md-typeset .admonition.quote,
+.md-typeset details.note,
+.md-typeset details.tip {
+  border-left-color: var(--arc-rule);
+}
+
+/* Anything cautionary gets a darker rule, so it still reads as a warning
+   without introducing a colour the rest of the site never uses. */
+.md-typeset .admonition.warning,
+.md-typeset .admonition.danger,
+.md-typeset .admonition.caution,
+.md-typeset .admonition.failure,
+.md-typeset .admonition.bug,
+.md-typeset details.warning,
+.md-typeset details.danger {
+  border-left-color: var(--arc-ink);
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+  background: transparent !important;
+  background-color: transparent !important;
+  font-weight: 500;
+  font-size: 0.74rem;
+  color: var(--arc-ink);
+  padding: 0.35rem 0 0.15rem 0;
+  margin: 0;
+  border: 0;
+}
+
+/* Material reserves 2rem on the left for a coloured icon. Take it back. */
+.md-typeset .admonition-title::before,
+.md-typeset summary::before,
+.md-typeset .admonition-title::after,
+.md-typeset summary::after {
+  display: none;
+  content: none;
+}
+
+.md-typeset .admonition > :last-child,
+.md-typeset details > :last-child { margin-bottom: 0.35rem; }
+
+/* --- code ------------------------------------------------------------------ */
+
+.md-typeset code {
+  background: var(--arc-wash);
+  border: 1px solid var(--arc-hairline);
+  border-radius: 2px;
+  padding: 0.05em 0.35em;
+  font-size: 0.86em;
+  color: var(--arc-strong);
+}
+.md-typeset pre > code { border: 0; }
+
+/* --- the draft banner ------------------------------------------------------ */
+
+.arc-banner {
+  border-left: 3px solid var(--arc-rule);
+  background: var(--arc-wash);
+  padding: 0.7rem 0.9rem;
+  margin: 0 0 1.6rem;
+  border-radius: 0;
+  font-size: 0.7rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: var(--arc-muted);
+}
+.arc-banner strong { color: var(--arc-strong); font-weight: 500; }
+
+/* --- footer ---------------------------------------------------------------
+   ARC's own footer treatment: very small, very quiet. */
+
+.md-footer { background: #ffffff; border-top: 1px solid var(--arc-hairline); }
+.md-footer-meta { background: #ffffff; }
+.md-footer-meta__inner { padding: 0.6rem 0.8rem; }
+.md-copyright,
+.md-copyright__highlight {
+  font-size: 10px;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.4);
+}
+.md-footer__link { color: var(--arc-quiet); }
+.md-footer__title { font-weight: 400; }
+.md-footer-nav__title { font-weight: 400; }
+
+.arc-site-link {
+  font-size: 10px;
+  font-weight: 300;
+  color: rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+}
+.arc-site-link:hover { color: rgba(0, 0, 0, 0.6); }
+
+/* ============================================================================
+   Chat page
+   ========================================================================== */
 
 .arc-chat { max-width: 46rem; }
 
 .arc-chat__log {
-  min-height: 12rem;
-  margin: 1rem 0;
+  min-height: 8rem;
+  margin: 1.2rem 0;
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
+  gap: 1rem;
 }
 
 .arc-chat__turn {
-  padding: 0.7rem 0.9rem;
-  border-radius: 0.4rem;
-  line-height: 1.55;
+  padding: 0.75rem 0.95rem;
+  border-radius: 3px;
+  line-height: 1.7;
+  font-size: 0.76rem;
+  font-weight: 300;
 }
 .arc-chat__turn--you {
-  background: var(--md-code-bg-color);
+  background: var(--arc-wash);
   align-self: flex-end;
   max-width: 85%;
+  color: var(--arc-strong);
 }
 .arc-chat__turn--arc {
   background: transparent;
-  border: 1px solid var(--md-default-fg-color--lightest);
+  border-left: 3px solid var(--arc-rule);
+  padding-left: 0.9rem;
 }
-.arc-chat__turn--error {
-  border: 1px solid #c0392b;
-  color: #c0392b;
-}
+.arc-chat__turn--error { border-left-color: #c0392b; color: #c0392b; }
 
 .arc-chat__who {
   display: block;
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.65;
-  margin-bottom: 0.35rem;
+  letter-spacing: 0.09em;
+  color: var(--arc-quiet);
+  margin-bottom: 0.4rem;
+  font-weight: 400;
 }
 
 .arc-chat__form { display: flex; gap: 0.5rem; align-items: flex-start; }
 .arc-chat__input {
   flex: 1;
   padding: 0.6rem 0.7rem;
-  font: inherit;
-  border: 1px solid var(--md-default-fg-color--lighter);
-  border-radius: 0.3rem;
-  background: var(--md-default-bg-color);
-  color: var(--md-default-fg-color);
+  font: 300 0.78rem/1.6 var(--md-text-font-family);
+  border: 1px solid var(--arc-hairline);
+  border-radius: 3px;
+  background: #ffffff;
+  color: var(--arc-strong);
   resize: vertical;
   min-height: 3rem;
 }
+.arc-chat__input:focus { outline: none; border-color: var(--arc-rule); }
 .arc-chat__send {
-  padding: 0.6rem 1.1rem;
-  font: inherit;
+  padding: 0.6rem 1.2rem;
+  font: 400 0.74rem var(--md-text-font-family);
   cursor: pointer;
-  border: none;
-  border-radius: 0.3rem;
-  background: var(--md-primary-fg-color);
-  color: var(--md-primary-bg-color);
+  border: 1px solid var(--arc-ink);
+  border-radius: 3px;
+  background: var(--arc-ink);
+  color: #ffffff;
+  transition: opacity 0.2s;
 }
-.arc-chat__send[disabled] { opacity: 0.5; cursor: default; }
+.arc-chat__send:hover { opacity: 0.85; }
+.arc-chat__send[disabled] { opacity: 0.35; cursor: default; }
 
-.arc-chat__count { font-size: 0.7rem; opacity: 0.65; margin-top: 0.35rem; }
-.arc-chat__count--over { color: #c0392b; opacity: 1; }
+.arc-chat__count {
+  font-size: 0.62rem;
+  font-weight: 300;
+  color: var(--arc-quiet);
+  margin-top: 0.4rem;
+}
+.arc-chat__count--over { color: #c0392b; }
 
-/* Citations: visible, clickable, numbered in order of first appearance. */
+/* Citations: small, numbered, clickable. */
 .arc-cite {
   display: inline-block;
-  font-size: 0.72em;
-  font-weight: 700;
+  font-size: 0.68em;
+  font-weight: 500;
   line-height: 1;
-  padding: 0.15em 0.4em;
-  margin: 0 0.12em;
-  border-radius: 0.5em;
-  background: var(--md-accent-fg-color);
-  color: var(--md-primary-bg-color);
+  padding: 0.2em 0.45em;
+  margin: 0 0.15em;
+  border-radius: 2px;
+  background: var(--arc-ink);
+  color: #ffffff;
   text-decoration: none;
-  vertical-align: 0.25em;
+  border: 0;
+  vertical-align: 0.3em;
 }
-.arc-cite:hover { filter: brightness(1.15); }
+.arc-cite:hover { background: var(--arc-strong); color: #ffffff; border: 0; }
 
 .arc-chat__sources {
-  margin-top: 0.75rem;
+  margin-top: 0.9rem;
   padding-top: 0.6rem;
-  border-top: 1px solid var(--md-default-fg-color--lightest);
-  font-size: 0.78rem;
+  border-top: 1px solid var(--arc-hairline);
+  font-size: 0.68rem;
+  color: var(--arc-muted);
 }
-.arc-chat__sources ol { margin: 0.3rem 0 0 1.1rem; padding: 0; }
+.arc-chat__sources ol { margin: 0.35rem 0 0 1.1rem; padding: 0; }
+.arc-chat__sources button {
+  font: 300 0.66rem var(--md-text-font-family);
+  border: 1px solid var(--arc-hairline);
+  background: #ffffff;
+  color: var(--arc-muted);
+  border-radius: 2px;
+  padding: 0.15rem 0.55rem;
+  cursor: pointer;
+  margin-left: 0.2rem;
+}
+.arc-chat__sources button:hover { color: var(--arc-strong); border-color: var(--arc-rule); }
 
 .arc-chat__cursor::after {
   content: "▍";
   animation: arc-blink 1s steps(2) infinite;
 }
 @keyframes arc-blink { 50% { opacity: 0; } }
+
+/* --- small screens --------------------------------------------------------- */
+
+@media screen and (max-width: 76.1875em) {
+  .md-nav--primary .md-nav__title { background: #ffffff; color: var(--arc-ink); }
+  .md-nav--primary .md-nav__title ~ .md-nav__list { box-shadow: none; }
+}
+
+/* Provenance lines under a page title: present, but quiet. */
+.md-typeset .arc-meta {
+  font-size: 0.66rem;
+  font-weight: 300;
+  color: var(--arc-quiet);
+  margin: 0 0 0.5rem;
+}
+.md-typeset .arc-meta code {
+  font-size: 0.9em;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--arc-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Two fixes worth spelling out.
+   ------------------------------------------------------------------------ */
+
+/* 1. `display: flex` on a class beats the browser's own [hidden] rule, so
+      el.hidden = true silently does nothing. This restores it. It is why the
+      chat form stayed on screen when the API was unreachable. */
+[hidden] { display: none !important; }
+
+/* 2. Material's footer is normally dark, so its link colour is near-white.
+      Fighting that with selectors loses: `.md-footer-meta.md-typeset a` is more
+      specific than anything sensible. Redefine the variables instead — see the
+      footer block in :root below. */
