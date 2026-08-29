@@ -1,0 +1,106 @@
+/* Small additions to Material. Kept short on purpose. */
+
+.arc-banner {
+  border-left: 4px solid var(--md-accent-fg-color);
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 1.2rem;
+  background: var(--md-code-bg-color);
+  border-radius: 0.2rem;
+  font-size: 0.78rem;
+}
+
+/* --- chat page ---------------------------------------------------------- */
+
+.arc-chat { max-width: 46rem; }
+
+.arc-chat__log {
+  min-height: 12rem;
+  margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.arc-chat__turn {
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.4rem;
+  line-height: 1.55;
+}
+.arc-chat__turn--you {
+  background: var(--md-code-bg-color);
+  align-self: flex-end;
+  max-width: 85%;
+}
+.arc-chat__turn--arc {
+  background: transparent;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+.arc-chat__turn--error {
+  border: 1px solid #c0392b;
+  color: #c0392b;
+}
+
+.arc-chat__who {
+  display: block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+  margin-bottom: 0.35rem;
+}
+
+.arc-chat__form { display: flex; gap: 0.5rem; align-items: flex-start; }
+.arc-chat__input {
+  flex: 1;
+  padding: 0.6rem 0.7rem;
+  font: inherit;
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.3rem;
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  resize: vertical;
+  min-height: 3rem;
+}
+.arc-chat__send {
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.3rem;
+  background: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}
+.arc-chat__send[disabled] { opacity: 0.5; cursor: default; }
+
+.arc-chat__count { font-size: 0.7rem; opacity: 0.65; margin-top: 0.35rem; }
+.arc-chat__count--over { color: #c0392b; opacity: 1; }
+
+/* Citations: visible, clickable, numbered in order of first appearance. */
+.arc-cite {
+  display: inline-block;
+  font-size: 0.72em;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.15em 0.4em;
+  margin: 0 0.12em;
+  border-radius: 0.5em;
+  background: var(--md-accent-fg-color);
+  color: var(--md-primary-bg-color);
+  text-decoration: none;
+  vertical-align: 0.25em;
+}
+.arc-cite:hover { filter: brightness(1.15); }
+
+.arc-chat__sources {
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  font-size: 0.78rem;
+}
+.arc-chat__sources ol { margin: 0.3rem 0 0 1.1rem; padding: 0; }
+
+.arc-chat__cursor::after {
+  content: "▍";
+  animation: arc-blink 1s steps(2) infinite;
+}
+@keyframes arc-blink { 50% { opacity: 0; } }
