@@ -1339,6 +1339,59 @@
         .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
 
+    // The model writes light Markdown - bold, bullets, the odd heading - and this
+    // page shows text, so without this you get literal ** and ## on screen.
+    //
+    // It runs on ALREADY-ESCAPED text. That order matters: anything the model
+    // sent that looked like HTML is inert by the time we get here, so the only
+    // tags in the result are the ones added below.
+    function renderMarkdown(escaped) {
+      var lines = escaped.split("\n");
+      var out = [];
+      var inList = false;
+
+      function closeList() {
+        if (inList) { out.push("</ul>"); inList = false; }
+      }
+
+      lines.forEach(function (line) {
+        var trimmed = line.trim();
+
+        if (!trimmed) { closeList(); return; }
+
+        // A bullet: "- text" or "* text".
+        var bullet = trimmed.match(/^[-*]\s+(.*)$/);
+        if (bullet) {
+          if (!inList) { out.push("<ul>"); inList = true; }
+          out.push("<li>" + inline(bullet[1]) + "</li>");
+          return;
+        }
+
+        closeList();
+
+        // A heading. The prompt asks for none, but render it rather than show
+        // the hashes if one arrives.
+        var heading = trimmed.match(/^#{1,6}\s+(.*)$/);
+        if (heading) {
+          out.push("<p><strong>" + inline(heading[1]) + "</strong></p>");
+          return;
+        }
+
+        out.push("<p>" + inline(trimmed) + "</p>");
+      });
+
+      closeList();
+      return out.join("");
+    }
+
+    // Bold and italics only. Deliberately not links or images: the only links
+    // on this page should be the citations, which are built from the corpus.
+    function inline(text) {
+      return text
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+    }
+
     // Turn [[section-id]] into a numbered chip. Numbers are assigned in order
     // of first appearance, matching what the API sends in the done event.
     function renderCitations(html, citations) {
@@ -1466,7 +1519,7 @@
       var queryId = null;
 
       function paint() {
-        target.innerHTML = renderCitations(escapeHtml(raw), citations);
+        target.innerHTML = renderCitations(renderMarkdown(escapeHtml(raw)), citations);
       }
 
       fetch(API + "/chat/stream", {
