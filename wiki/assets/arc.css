@@ -30,7 +30,9 @@
   --arc-strong:     #222;   /* emphasis, hover states */
   --arc-muted:      #666;   /* secondary copy */
   --arc-quiet:      #888;   /* navigation, metadata */
-  --arc-rule:       #ccc;   /* the heading accent bar */
+  --arc-rule:       #ccc;   /* hairline accents, minor rules */
+  --arc-mark:       #777;   /* the h2 accent bar - darker, so sections read */
+  --arc-mark-soft:  #aaa;   /* the h3 accent bar, a step lighter than h2 */
   --arc-hairline:   #e6e6e6;
   --arc-wash:       #fafafa;
 
@@ -130,12 +132,26 @@ body,
 .md-nav__title {
   font-size: 0.62rem;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--arc-quiet);
+  color: var(--arc-muted);
   box-shadow: none;
   background: transparent;
 }
+/* The tier groups - Overview, Patterns, Reference - are the wiki's structure,
+   so they get more weight than the pages listed beneath them. */
+.md-nav__item--section > .md-nav__link,
+.md-nav__item--section > label > .md-nav__link {
+  color: var(--arc-ink);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  margin-top: 0.7rem;
+}
+.md-nav__item--section .md-nav__list { border-left: 1px solid var(--arc-hairline); }
+.md-nav__item--section .md-nav__list .md-nav__link { padding-left: 0.6rem; }
+.md-nav__link--active { border-left: 2px solid var(--arc-mark); margin-left: -1px; }
+.md-nav__item--section .md-nav__list .md-nav__link--active { padding-left: 0.55rem; }
 .md-nav__link {
   color: var(--arc-quiet);
   transition: color 0.2s;
@@ -151,70 +167,89 @@ body,
 .md-sidebar--secondary .md-nav__title { font-size: 0.6rem; }
 
 /* --- typography -----------------------------------------------------------
-   ARC's heading scale, including the 3px accent bar before every h2. */
+   ARC's heading scale, with the steps between levels widened a little so the
+   hierarchy reads at a glance - a wiki is skimmed, not read start to finish.
+   The accent bar darkens as the level rises: #777 for h2, #aaa for h3. */
 
 .md-typeset h1 {
-  font-size: 1.5rem;
+  font-size: 1.62rem;
   font-weight: 500;
-  line-height: 1.25;
+  line-height: 1.22;
   letter-spacing: -0.5px;
-  color: var(--arc-ink);
+  color: #000;
   margin: 0 0 0.5rem;
 }
 
 .md-typeset h2 {
-  font-size: 0.95rem;
+  font-size: 1.06rem;
   font-weight: 500;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.1px;
   color: var(--arc-ink);
-  margin: 2.2rem 0 0.6rem;
-  padding: 0;
+  margin: 2.6rem 0 0.75rem;
+  padding: 0 0 0.4rem;
   border: 0;
+  border-bottom: 1px solid var(--arc-hairline);
 }
 .md-typeset h2::before {
   content: "";
   display: inline-block;
   width: 3px;
-  height: 15px;
-  background: var(--arc-rule);
+  height: 16px;
+  background: var(--arc-mark);
   border-radius: 2px;
-  margin-right: 10px;
+  margin-right: 11px;
   vertical-align: middle;
   position: relative;
   top: -1px;
 }
 
 .md-typeset h3 {
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   font-weight: 500;
-  color: var(--arc-strong);
-  margin: 1.6rem 0 0.4rem;
+  color: var(--arc-ink);
+  margin: 1.9rem 0 0.45rem;
 }
+.md-typeset h3::before {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 12px;
+  background: var(--arc-mark-soft);
+  border-radius: 1px;
+  margin-right: 9px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
 .md-typeset h4 {
-  font-size: 0.78rem;
+  font-size: 0.79rem;
   font-weight: 500;
   color: var(--arc-strong);
+  margin: 1.4rem 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .md-typeset p { margin: 0 0 0.9rem; }
-.md-typeset strong { font-weight: 500; color: var(--arc-strong); }
+.md-typeset strong { font-weight: 500; color: var(--arc-ink); }
 .md-typeset em { font-style: italic; }
 
 .md-typeset a {
   color: var(--arc-strong);
   text-decoration: none;
-  border-bottom: 1px solid var(--arc-rule);
+  border-bottom: 1px solid var(--arc-mark-soft);
   transition: border-color 0.2s, color 0.2s;
 }
 .md-typeset a:hover {
-  color: var(--arc-ink);
+  color: #000;
   border-bottom-color: var(--arc-strong);
 }
 .md-typeset a.headerlink { border: 0; }
 
 .md-typeset ul, .md-typeset ol { margin-bottom: 0.9rem; }
 .md-typeset li { margin-bottom: 0.25rem; }
-.md-typeset ul li::marker { color: var(--arc-rule); }
+.md-typeset ul li::marker { color: var(--arc-mark-soft); }
 
 /* --- tables ---------------------------------------------------------------- */
 
@@ -229,7 +264,7 @@ body,
   background: transparent;
   color: var(--arc-ink);
   font-weight: 500;
-  border-bottom: 1px solid var(--arc-rule);
+  border-bottom: 2px solid var(--arc-mark);
 }
 .md-typeset table:not([class]) td {
   border-bottom: 1px solid var(--arc-hairline);
@@ -245,7 +280,7 @@ body,
   font-size: 0.74rem;
   font-weight: 300;
   border: 0;
-  border-left: 3px solid var(--arc-rule);
+  border-left: 3px solid var(--arc-mark-soft);
   border-radius: 0;
   box-shadow: none;
   background: var(--arc-wash);
@@ -261,7 +296,7 @@ body,
 .md-typeset .admonition.quote,
 .md-typeset details.note,
 .md-typeset details.tip {
-  border-left-color: var(--arc-rule);
+  border-left-color: var(--arc-mark-soft);
 }
 
 /* Anything cautionary gets a darker rule, so it still reads as a warning
@@ -288,7 +323,22 @@ body,
   border: 0;
 }
 
-/* Material reserves 2rem on the left for a coloured icon. Take it back. */
+/* Material reserves 2rem on the left for a coloured icon, in a rule qualified
+   by [dir=ltr] - which outranks a plain selector, so this has to match it. */
+[dir="ltr"] .md-typeset .admonition-title,
+[dir="ltr"] .md-typeset summary,
+[dir="rtl"] .md-typeset .admonition-title,
+[dir="rtl"] .md-typeset summary {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Also removes the negative side margins Material uses to bleed the title bar
+   to the edges; there is no bar here. */
+.md-typeset .admonition-title,
+.md-typeset summary { margin: 0; }
+
+/* The icon itself. */
 .md-typeset .admonition-title::before,
 .md-typeset summary::before,
 .md-typeset .admonition-title::after,
@@ -507,3 +557,20 @@ body,
       Fighting that with selectors loses: `.md-footer-meta.md-typeset a` is more
       specific than anything sensible. Redefine the variables instead — see the
       footer block in :root below. */
+
+/* The provenance block at the foot of each page: present, easy to ignore. */
+.md-typeset small {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--arc-quiet);
+}
+.md-typeset small strong { color: var(--arc-muted); font-weight: 500; }
+.md-typeset small code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--arc-muted);
+}
+.md-typeset small a { border-bottom-color: var(--arc-rule); }
