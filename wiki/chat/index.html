@@ -1515,6 +1515,24 @@
         target.innerHTML = renderCitations(renderMarkdown(escapeHtml(raw)), citations);
       }
 
+      // On a free host the service sleeps when nobody has used it for a while,
+      // and takes about a minute to wake. Without this the page sits blank and
+      // looks broken, and people give up before the answer arrives.
+      var waking = null;
+      function sayItIsWakingUp() {
+        if (raw) { return; }                       // the answer already started
+        target.classList.remove("arc-chat__cursor");
+        target.innerHTML =
+          '<p class="arc-chat__waking">Waking the service up. This happens when ' +
+          'nobody has asked anything for a while, and takes up to a minute. ' +
+          'Your question has not been lost.</p>';
+      }
+      waking = setTimeout(sayItIsWakingUp, 4000);
+
+      function stopSayingThat() {
+        if (waking) { clearTimeout(waking); waking = null; }
+      }
+
       fetch(API + "/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1526,12 +1544,14 @@
             if (name === "meta" && data.session_id) {
               rememberSession(data.session_id);
             } else if (name === "token") {
+              if (!raw) { stopSayingThat(); target.innerHTML = ""; }
               raw += data.text;
               paint();
             } else if (name === "done") {
               citations = data.citations || [];
               queryId = data.query_id;
             } else if (name === "blocked" || name === "replace" || name === "error") {
+              stopSayingThat();
               raw = data.message || "Something went wrong.";
               citations = [];
               target.parentNode.classList.add("arc-chat__turn--error");
@@ -1539,12 +1559,14 @@
           });
         })
         .then(function () {
+          stopSayingThat();
           target.className = "arc-chat__text";
           paint();
           target.insertAdjacentHTML("beforeend", sourcesList(citations));
           target.insertAdjacentHTML("beforeend", feedbackButtons(queryId));
         })
         .catch(function () {
+          stopSayingThat();
           target.className = "arc-chat__text";
           target.parentNode.classList.add("arc-chat__turn--error");
           target.textContent =

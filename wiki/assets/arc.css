@@ -574,3 +574,11 @@ body,
   color: var(--arc-muted);
 }
 .md-typeset small a { border-bottom-color: var(--arc-rule); }
+
+/* Shown while a sleeping free-tier service wakes up, so a minute of silence
+   does not read as a broken page. */
+.arc-chat__waking {
+  color: var(--arc-quiet);
+  font-style: italic;
+  margin: 0;
+}
