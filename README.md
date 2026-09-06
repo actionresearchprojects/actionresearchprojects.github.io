@@ -85,7 +85,7 @@ Several interactive features are maintained as independent repositories and auto
 | **science-grid** | Science topic grid | Yes |
 | **arc_tz_temp_humid** | Live temperature & humidity dashboard (auto-builds twice daily) | Yes |
 | **arc_tz_weather** | Weather data dashboard | Pending |
-| **technical-criteria** | Technical criteria PDF viewer | Static |
+| **technical-criteria** | PDF viewer. **The PDF itself was removed on 2026-09-06** - it was publicly reachable at its direct URL. Only the empty viewer remains. | Static |
 
 ### How auto-sync works
 
