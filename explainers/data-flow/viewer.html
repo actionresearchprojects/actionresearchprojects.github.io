@@ -209,7 +209,7 @@ blockquote {
     curl -X POST \
       -H &quot;Authorization: Bearer ${{ secrets.MAIN_SITE_PAT }}&quot; \
       https://api.github.com/repos/actionresearchprojects/actionresearchprojects.github.io/dispatches \
-      -d '{&quot;event_type&quot;:&quot;sync-embedded&quot;,&quot;client_payload&quot;:{&quot;source_repo&quot;:&quot;arc_tz_temp_humid&quot;}}'
+      -d '{&quot;event_type&quot;:&quot;sync-embedded&quot;,&quot;client_payload&quot;:{&quot;source_repo&quot;:&quot;arc_temp_humid&quot;}}'
 </code></pre>
 <p>If data was committed, this sends a <code>repository_dispatch</code> event to the main site repo (<code>actionresearchprojects.github.io</code>), telling it to pull in the updated dashboard. This uses a Personal Access Token stored as the <code>MAIN_SITE_PAT</code> secret.</p>
 <h3>Push notification workflow</h3>
