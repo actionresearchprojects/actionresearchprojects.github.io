@@ -1264,7 +1264,10 @@
         required></textarea>
       <button class="arc-chat__send" id="arc-send" type="submit">Ask</button>
     </form>
-    <div class="arc-chat__count" id="arc-count"></div>
+    <div class="arc-chat__meta">
+      <div class="arc-chat__count" id="arc-count"></div>
+      <div class="arc-chat__count arc-chat__memory" id="arc-memory"></div>
+    </div>
   </div>
 
   <script>
@@ -1278,6 +1281,7 @@
     var send   = document.getElementById("arc-send");
     var log    = document.getElementById("arc-log");
     var count  = document.getElementById("arc-count");
+    var memory = document.getElementById("arc-memory");
 
     // The API is the single source of truth for the limits.
     var maxChars = 2000;
@@ -1304,6 +1308,7 @@
         })
         .then(function (health) {
           maxChars = health.max_input_chars || maxChars;
+          showMemoryLimit(health.history_turns);
           wikiBase = health.wiki_base_url || "";
           if (health.published_pages === 0) {
             goOffline("The service is running but has no published pages to answer from.");
@@ -1454,6 +1459,16 @@
       button.parentNode.textContent = "Thank you.";
     });
 
+    function showMemoryLimit(turns) {
+      if (!memory) { return; }
+      if (!turns) {
+        memory.textContent = "Each question is answered on its own";
+        return;
+      }
+      memory.textContent = "Chat memory limited to last " + turns +
+        (turns === 1 ? " prompt" : " prompts");
+    }
+
     function updateCount() {
       var used = input.value.length;
       count.textContent = used + " / " + maxChars + " characters";
@@ -1542,7 +1557,15 @@
       fetch(API + "/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: question, session_id: sessionId })
+        body: JSON.stringify({
+          question: question,
+          session_id: sessionId,
+          // Where the reader was before this page. The Referer header on this
+          // request is always the chat page itself, so it says nothing; this is
+          // the only place the useful answer exists. Only the site and path are
+          // kept, never a query string.
+          came_from: document.referrer || ""
+        })
       })
         .then(function (response) {
           if (!response.ok || !response.body) { throw new Error("stream failed"); }
@@ -1609,7 +1632,7 @@
 <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      <a class="arc-site-link" href="https://actionresearchprojects.net/">&larr; actionresearchprojects.net</a> &nbsp;·&nbsp; © 2026 ARC, a programme of Simmonds Mills. &nbsp;·&nbsp; <a class="arc-site-link" href="https://actionresearchprojects.net/privacy">Privacy</a> &nbsp;·&nbsp; Draft, imported 16 April 2026 - not yet reviewed.
+      <a class="arc-site-link" href="https://actionresearchprojects.net/">&larr; actionresearchprojects.net</a> &nbsp;·&nbsp; © 2026 ARC, a programme of Simmonds Mills. &nbsp;·&nbsp; <a class="arc-site-link" href="https://actionresearchprojects.net/privacy">Privacy</a> &nbsp;·&nbsp; Draft, imported 16 April 2026 - not yet reviewed. &nbsp;·&nbsp; <a class="arc-site-link" href="https://db-ip.com">IP Geolocation by DB-IP</a>
 
     </div>
   

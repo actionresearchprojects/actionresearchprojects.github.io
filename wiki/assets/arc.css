@@ -479,6 +479,17 @@ body,
 }
 .arc-chat__count--over { color: #c0392b; }
 
+/* The character count and the memory notice share a line: count on the left,
+   notice on the right. On a narrow screen they stack rather than collide. */
+.arc-chat__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.4rem 1rem;
+}
+.arc-chat__meta .arc-chat__count { margin-top: 0.4rem; }
+.arc-chat__memory { margin-left: auto; text-align: right; }
+
 /* Citations: small, numbered, clickable. */
 .arc-cite {
   display: inline-block;
