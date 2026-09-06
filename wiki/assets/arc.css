@@ -496,6 +496,17 @@ body,
 }
 .arc-cite:hover { background: var(--arc-strong); color: #ffffff; border: 0; }
 
+/* Material styles every link inside .md-typeset, and that selector is more
+   specific than .arc-cite, so a *finished* citation lost its white text and
+   went dark-on-dark - a solid black box with the number still in it, invisible.
+   Measured on the live page: #222 text on #111 background. While the answer is
+   still streaming the chip is a <span>, which that rule does not match, which
+   is why the numbers were visible right up until the answer finished. */
+.md-typeset a.arc-cite,
+.md-typeset a.arc-cite:hover,
+.md-typeset a.arc-cite:focus,
+.md-typeset a.arc-cite:visited { color: #ffffff; }
+
 .arc-chat__sources {
   margin-top: 0.9rem;
   padding-top: 0.6rem;
