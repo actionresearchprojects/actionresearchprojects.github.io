@@ -28,10 +28,18 @@ jobs:
       - name: Resolve embedded folder name
         id: resolve
         run: |
-          # Map repo names to embedded folder names where they differ
+          # Map repo names to embedded folder names where they differ.
+          #
+          # arc_tz_temp_humid is being renamed to arc_temp_humid. Both names map
+          # to the same folder so the rename is a no-op here: whichever name the
+          # dispatch arrives under, the content lands in embedded/arc_temp_humid/
+          # and the published page keeps working. Without this the first sync
+          # after the rename would quietly start filling a second folder while
+          # the page went on serving the first, frozen.
           case "$SOURCE_REPO" in
-            reflections-grid) FOLDER="reflections" ;;
-            *)                FOLDER="$SOURCE_REPO" ;;
+            reflections-grid)                    FOLDER="reflections" ;;
+            arc_tz_temp_humid|arc_temp_humid)    FOLDER="arc_temp_humid" ;;
+            *)                                   FOLDER="$SOURCE_REPO" ;;
           esac
           echo "folder=$FOLDER" >> $GITHUB_OUTPUT
 
