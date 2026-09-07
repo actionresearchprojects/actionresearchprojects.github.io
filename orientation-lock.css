@@ -3,6 +3,15 @@
  * Shows a full-screen overlay prompting the user to rotate to landscape.
  * Only applies to screens ≤1024px in portrait orientation.
  * support.html no longer uses this overlay.
+ *
+ * SIZING: the overlay always lives in a ~1440px-wide coordinate space —
+ * on mobile because <meta viewport width=1440> makes the layout viewport
+ * 1440px (the browser then scales the whole page down to the device width),
+ * on desktop because fluid-scaling.js sets the overlay to innerWidth/zoom,
+ * and zoom is innerWidth/1440. So sizes here are chosen as a fraction of
+ * 1440 and land at the same apparent size on any device. Anything sized in
+ * "normal" px (the old 18px text, 72px icon) renders at roughly a quarter
+ * of that on a phone, which is why the prompt read as fine print.
  */
 
 #orientation-overlay {
@@ -13,24 +22,24 @@
   /* width/height are overridden by fluid-scaling.js to compensate for body zoom */
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.88);
   z-index: 999999;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 24px;
+  gap: 0.75em;
   color: white;
   font-family: 'Ubuntu', sans-serif;
-  font-weight: 300;
-  font-size: 18px;
+  font-weight: 400;
+  font-size: 72px; /* 5% of the 1440px space ≈ 20px on a 390px-wide phone */
   text-align: center;
-  padding: 40px;
+  padding: 0.8em;
   box-sizing: border-box;
 }
 
 #orientation-overlay svg {
-  width: 72px;
-  height: 72px;
+  width: 4.6em;
+  height: 4.6em;
   fill: white;
   display: block;
   flex-shrink: 0;
@@ -38,8 +47,9 @@
 
 #orientation-overlay p {
   margin: 0;
-  max-width: 260px;
-  line-height: 1.5;
+  max-width: 12em;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
 }
 
 /* Overlay show/hide is handled by fluid-scaling.js via window.innerWidth/innerHeight,
