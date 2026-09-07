@@ -58,7 +58,7 @@ p:last-child{margin-bottom:0}
   overflow-x:auto;scrollbar-width:none;
 }
 #tabs::-webkit-scrollbar{display:none}
-#tabs .brand{font-weight:700;letter-spacing:.04em;font-size:var(--cap);color:var(--red);margin-right:14px;white-space:nowrap}
+#tabs .brand{flex:none;height:21px;width:auto;margin-right:16px}
 #tabs a{
   font-size:var(--cap);color:var(--muted);text-decoration:none;
   padding:4px 9px;border-radius:99px;white-space:nowrap;
@@ -101,7 +101,7 @@ h1 .h{color:var(--salmon)}
 /* ---------- pull quote / stat ---------- */
 .statbar{
   display:grid;grid-template-columns:1fr auto;gap:34px;align-items:center;
-  background:#111;color:#fff;border-radius:22px;padding:22px 30px;margin:6px 0 12px;
+  background:#111;color:#fff;border-radius:22px;padding:22px 30px;margin:6px 0 4px;
 }
 .statbar blockquote{margin:0;font-style:italic;font-size:var(--t2);line-height:1.36;font-weight:500}
 .statbar cite{display:block;margin-top:9px;font-style:normal;font-size:var(--cap);color:#bdb5ad}
@@ -247,9 +247,9 @@ h3{font-size:var(--t2);font-weight:700;margin:0 0 6px}
 <body>
 
 <nav id="tabs">
-  <span class="brand">ARC</span>
+  <img class="brand" src="images/arc-mark.png" alt="ARC" width="360" height="149">
   <a href="#top" data-i18n="impact.tab.top">Top</a>
-  <a href="#message" data-i18n="impact.tab.message">Message</a>
+  <a href="#message" data-i18n="impact.tab.message">From CEO</a>
   <a href="#people" data-i18n="impact.tab.people">People</a>
   <a href="#about" data-i18n="impact.tab.about">Who we are</a>
   <a href="#work" data-i18n="impact.tab.work">Our work</a>
@@ -298,7 +298,7 @@ h3{font-size:var(--t2);font-weight:700;margin:0 0 6px}
         <p data-i18n="impact.message.p1" data-i18n-html>For 20 years, many of you and I built the AECB and Passivhaus network together - a UK-wide community of building physics and carbon-literate designers, builders and suppliers. This community has thrived, sharing knowledge, expertise, optimism, and goodwill through the most challenging times.</p>
         <p data-i18n="impact.message.p2">In recent years, some members have applied their expertise to building designs in less wealthy, climate-vulnerable, hot and humid countries: researching, designing, building and sharing results. ARC continues that work, improving thermal safety, health and wellbeing for communities beyond the UK who urgently need it.</p>
         <p data-i18n="impact.message.p3">I invite you to support ARC's action research: Can we build effective, resilient homes that stay liveable through extreme heat without complex technologies people can't afford? How safe can naturally ventilated buildings stay as the climate destabilises and extreme weather increases? How well do passive-only measures work: orientation, reflectivity, shading, cross ventilation? Is ‘multi-mode’ energy efficient performance practical: ‘free running’ sometimes, switching to mechanically cooled, dehumidified and ventilated during periods of extreme heat? How safe are building designs when the power fails during heatwaves?</p>
-        <p data-i18n="impact.message.p4" data-i18n-html>At <a href="https://islamichelp.org.uk/" target="_blank" rel="noopener">Islamic Help</a>'s Al-Mizan Children's Ecovillage in Tanzania, our flagship building has held safe, healthy indoor conditions for 98.8% of monitored hours (2024), with no air conditioning. What particularly inspires us is the strong working relationships developing with our international friends and colleagues, such as the committed and knowledgeable staff.</p>
+        <p data-i18n="impact.message.p4" data-i18n-html>At <a href="https://islamichelp.org.uk/" target="_blank" rel="noopener">Islamic Help</a>'s <a href="https://islamichelp.org.uk/projects/environment/childrens-eco-village/" target="_blank" rel="noopener">Al-Mizan Children's Ecovillage</a> in Tanzania, our flagship building has held safe, healthy indoor conditions for 98.8% of monitored hours (2024), with no air conditioning. What particularly inspires us is the strong working relationships developing with our international friends and colleagues, such as the committed and knowledgeable staff.</p>
         <p data-i18n="impact.message.p5">Thank you to everyone who has already supported ARC - your backing has made this possible. I hope more of you will join us.</p>
         <div class="sign">
           <img src="images/signature.png" alt="Andrew Simmonds' signature" loading="lazy" decoding="async">
@@ -374,7 +374,7 @@ h3{font-size:var(--t2);font-weight:700;margin:0 0 6px}
     </div>
 
     <div class="graph">
-      <p data-i18n="impact.graph.caption" data-i18n-html>Adaptive comfort graph plotting indoor operative/air temperature for six of the rooms in House 5 in January 2024 against a weighted running mean of external temperatures. These points are plotted against an adaptive comfort band derived from a humidity-adjusted model created by Vellei et al. (2017). Assumed air speed of 0.3 m/s. <a href="/graphs/arc-temp-humid/" target="_top">See the live monitoring dashboard →</a></p>
+      <p data-i18n="impact.graph.caption" data-i18n-html>Adaptive comfort graph plotting indoor operative/air temperature for six of the rooms in House 5 in January 2024 against a weighted running mean of external temperatures. These points are plotted against an adaptive comfort band derived from a humidity-adjusted model created by Vellei et al. (2017). Assumed air speed of 0.3 m/s.</p>
       <div class="zoomwrap">
         <img class="zoom" src="images/adaptive-comfort.jpg" alt="Adaptive comfort graph for six rooms in House 5, January 2024" loading="lazy" decoding="async">
         <span class="hint" data-i18n="impact.graph.hint">Click to enlarge</span>
@@ -412,7 +412,7 @@ h3{font-size:var(--t2);font-weight:700;margin:0 0 6px}
     <h2 data-i18n="impact.numbers.heading">Our work so far, in numbers</h2>
     <div class="numbers">
       <div class="stat"><img src="images/numbers/monitored-since.jpg" alt="" loading="lazy" decoding="async"><div><b>2023</b><span data-i18n="impact.num.since">Monitored continuously since</span></div></div>
-      <div class="stat"><img src="images/numbers/weather-station.jpg" alt="" loading="lazy" decoding="async"><div><b>1</b><span data-i18n="impact.num.station" data-i18n-html><a href="/graphs/arc-tz-weather" target="_top">weather station installed</a></span></div></div>
+      <div class="stat"><img src="images/numbers/weather-station.jpg" alt="" loading="lazy" decoding="async"><div><b>1</b><span data-i18n="impact.num.station" data-i18n-html>weather station installed</span></div></div>
       <div class="stat"><img src="images/numbers/retrofit-buildings.jpg" alt="" loading="lazy" decoding="async"><div><b>5</b><span data-i18n="impact.num.retrofit">buildings being retrofitted</span></div></div>
       <div class="stat"><img src="images/numbers/expert-network.jpg" alt="" loading="lazy" decoding="async"><div><b>8</b><span data-i18n="impact.num.countries" data-i18n-html><a href="/map" target="_top">countries in our expert network</a></span></div></div>
       <div class="stat"><img src="images/numbers/houses-monitored.jpg" alt="" loading="lazy" decoding="async"><div><b>3</b><span data-i18n="impact.num.houses">houses monitored (and 1 planned)</span></div></div>
@@ -449,7 +449,7 @@ h3{font-size:var(--t2);font-weight:700;margin:0 0 6px}
       <div class="special"><img src="images/special/demonstration-retrofit.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.retrofit.title">A demonstration retrofit</h3><p data-i18n="impact.special.retrofit.body" data-i18n-html>Upgrading an existing Tanzanian house to the <a href="/cool-buildings-guide" target="_top">ARC Cool Buildings Standard</a> - to be used as a training hub, community rooms &amp; accommodation.</p></div></div>
       <div class="special"><img src="images/special/contractors-club.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.club.title">ARC Contractors Club</h3><p data-i18n="impact.special.club.body">Working with local builders and their clients to co-create and evidence cool-building techniques and patterns via workshops, sharing performance data: creating mutually supportive local construction ecosystems.</p></div></div>
       <div class="special"><img src="images/special/sensor-array.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.sensor.title" data-i18n-html>Low-cost DIY infrared sensor array &amp; network</h3><p data-i18n="impact.special.sensor.body">Developing a DIY kit based on affordable components, locally assembled, to measure humidity and air, surface and mean radiant temperatures.</p></div></div>
-      <div class="special"><img src="images/special/weather-stations.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.stations.title">Installing weather stations and data loggers</h3><p data-i18n="impact.special.stations.body" data-i18n-html>Expanding the <a href="/graphs/arc-tz-weather" target="_top">evidence base</a> for better building performance in hot climates and for educational use.</p></div></div>
+      <div class="special"><img src="images/special/weather-stations.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.stations.title">Installing weather stations and data loggers</h3><p data-i18n="impact.special.stations.body" data-i18n-html>Expanding the evidence base for better building performance in hot climates and for educational use.</p></div></div>
       <div class="special"><img src="images/special/cool-building-patterns.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.patterns.title">ARC Cool Building Patterns</h3><p data-i18n="impact.special.patterns.body">Producing proof of concept designs, components, construction assemblies and ‘ready to use patterns’ for building in hot climates.</p></div></div>
       <div class="special"><img src="images/special/knowledge-sharing.jpg" alt="" loading="lazy" decoding="async"><div><h3 data-i18n="impact.special.knowledge.title">Knowledge sharing</h3><p data-i18n="impact.special.knowledge.body" data-i18n-html>Making <a href="/cool-buildings-guide" target="_top">Cool Buildings knowledge</a> and ARC's pattern library accessible to students, contractors and their customers - and learning easier for all.</p></div></div>
     </div>
@@ -460,7 +460,7 @@ h3{font-size:var(--t2);font-weight:700;margin:0 0 6px}
 <section id="thanks" class="sec">
   <div class="wrap thanks">
     <h2 data-i18n="impact.thanks.heading">Thank you</h2>
-    <p data-i18n="impact.thanks.p1" data-i18n-html>Our sincere thanks go to the early supporters of this initiative, including the <a href="https://islamichelp.org.uk/" target="_blank" rel="noopener">Islamic Help</a> team and trustees, their regional office teams across Pakistan and Tanzania, and <a href="https://simmondsmills.com/" target="_blank" rel="noopener">Simmonds.Mills Architects</a>, the staff, residents, and neighbours of the Al-Mizan Children's Ecovillage in Tanzania, the <a href="https://aecb.net/" target="_blank" rel="noopener">AECB</a>, and, of course, our volunteer expert advisors.</p>
+    <p data-i18n="impact.thanks.p1" data-i18n-html>Our sincere thanks go to the early supporters of this initiative, including the <a href="https://islamichelp.org.uk/" target="_blank" rel="noopener">Islamic Help</a> team and trustees, their regional office teams across Pakistan and Tanzania, and <a href="https://simmondsmills.com/" target="_blank" rel="noopener">Simmonds.Mills Architects</a>, the staff, residents, and neighbours of the <a href="https://islamichelp.org.uk/projects/environment/childrens-eco-village/" target="_blank" rel="noopener">Al-Mizan Children's Ecovillage</a> in Tanzania, the <a href="https://aecb.net/" target="_blank" rel="noopener">AECB</a>, and, of course, our volunteer expert advisors.</p>
     <p data-i18n="impact.thanks.p2">We are grateful to many people who have shared their home, their observations and their honest opinions with us, sharing their personal experiences, local knowledge and technical expertise.</p>
     <p data-i18n="impact.thanks.p3" data-i18n-html>Please consider supporting ARC, donations large and small are meaningful. If you'd like to donate, please visit <a href="/support" target="_top">actionresearchprojects.net/support</a></p>
     <a class="cta" href="/support" target="_top" data-i18n="impact.thanks.cta">Support ARC →</a>
