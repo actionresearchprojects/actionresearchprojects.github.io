@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC Daylight Factor Calculator</title>
+<script>
+(function(){
+  if(sessionStorage.getItem('arc_auth')==='1')return;
+  var s=document.createElement('style');
+  s.textContent='body{visibility:hidden}';
+  document.head.appendChild(s);
+  document.addEventListener('DOMContentLoaded',function(){
+    s.remove();
+    var o=document.createElement('div');
+    o.id='pw-overlay';
+    o.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:#111;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#fff;';
+    o.innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:20px;font-weight:500">Enter password</div><input id="pw-in" type="password" placeholder="Password" style="padding:10px 14px;font-size:16px;background:#222;color:#fff;border:1px solid #555;border-radius:4px;width:220px;outline:none;display:block;margin:0 auto 8px"><div id="pw-err" style="color:#f66;font-size:13px;height:20px"></div><button id="pw-btn" style="padding:10px 28px;background:#fff;color:#111;border:none;border-radius:4px;font-size:15px;cursor:pointer;margin-top:4px">Enter</button></div>';
+    document.body.appendChild(o);
+    document.getElementById('pw-in').focus();
+    async function check(){
+      var val=document.getElementById('pw-in').value;
+      var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
+      var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+      if(hash==='52e32618b274e60e320245f222a7a50dd485ea0e3edcf48cb2873977502b5f19'){
+        sessionStorage.setItem('arc_auth','1');
+        o.remove();
+      }else{
+        document.getElementById('pw-err').textContent='Incorrect password';
+      }
+    }
+    document.getElementById('pw-btn').addEventListener('click',check);
+    document.getElementById('pw-in').addEventListener('keydown',function(e){if(e.key==='Enter')check();});
+  });
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='2' fill='%231a6b4a'/><rect x='4' y='3' width='8' height='10' fill='%23fff'/><line x1='8' y1='3' x2='8' y2='13' stroke='%231a6b4a'/></svg>">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Ubuntu',sans-serif;font-size:13px;background:#f8f9fa;color:#333}
+#header{background:#fff;border-bottom:1px solid #ddd;padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:20}
+#header h1{font-size:17px;font-weight:500;color:#222;white-space:nowrap}
+#header .spacer{flex:1}
+#tabs{background:#fff;border-bottom:1px solid #ddd;display:flex;gap:0;padding:0 8px;overflow-x:auto;position:sticky;top:49px;z-index:19}
+#tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:9px 14px;font-family:inherit;font-size:12px;font-weight:500;color:#666;cursor:pointer;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+#tabs button:hover{color:#222;background:#f4f5f6}
+#tabs button.active{color:#1a6b4a;border-bottom-color:#1a6b4a}
+main{padding:14px;max-width:1500px;margin:0 auto}
+.card{background:#fff;border:1px solid #ddd;border-radius:4px;padding:12px;margin-bottom:12px}
+.card>h2{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card>h2 .sub{font-weight:400;text-transform:none;letter-spacing:0;color:#999;font-size:11px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+label.f{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#666}
+label.f>span{font-weight:500}
+input,select,button,textarea{font-family:inherit;font-size:12px}
+input[type=text],input[type=number],select,textarea{padding:4px 6px;border:1px solid #ccc;border-radius:3px;background:#fff;width:100%}
+input[type=number]{text-align:right}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#1a6b4a;box-shadow:0 0 0 2px rgba(26,107,74,.12)}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border:1px solid #e3e5e7;padding:3px 5px;text-align:left;vertical-align:middle}
+thead th{background:#f4f5f6;font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.03em;line-height:1.25;padding:5px}
+thead th .u{display:block;font-weight:400;text-transform:none;letter-spacing:0;color:#999}
+td.out{background:#fbfbfc;color:#555;text-align:right;font-variant-numeric:tabular-nums}
+td.num input{text-align:right}
+.tablewrap{overflow-x:auto}
+.btn{background:#fff;border:1px solid #bbb;border-radius:3px;padding:4px 10px;cursor:pointer;color:#333;font-size:12px}
+.btn:hover{background:#f0f1f2;border-color:#999}
+.btn.primary{background:#1a6b4a;border-color:#1a6b4a;color:#fff}
+.btn.primary:hover{background:#155a3e}
+.btn.sm{padding:2px 7px;font-size:11px;line-height:1.4}
+.btn.danger{color:#a32b2b;border-color:#ddc0c0}
+.btn.danger:hover{background:#fdf2f2;border-color:#a32b2b}
+.pass{color:#1a6b4a;font-weight:600}
+.fail{color:#a32b2b;font-weight:600}
+.borderline{color:#9a6b00;font-weight:600}
+.na{color:#999}
+.hint{font-size:11px;color:#888;line-height:1.5;margin-top:8px}
+.hint code{background:#f0f1f2;padding:1px 4px;border-radius:2px}
+.roomhead{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px}
+.roomstat{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#666;margin:8px 0;padding:7px 9px;background:#f6f7f8;border-radius:3px}
+.roomstat b{color:#222;font-weight:600;font-variant-numeric:tabular-nums}
+.empty{color:#999;padding:18px;text-align:center;border:1px dashed #ddd;border-radius:4px}
+.resultgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.stat{background:#f6f7f8;border-radius:3px;padding:9px 11px}
+.stat .k{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#777;margin-bottom:3px}
+.stat .v{font-size:19px;font-weight:500;color:#222;font-variant-numeric:tabular-nums}
+.stat .v small{font-size:12px;color:#888}
+.warn{background:#fff8e6;border:1px solid #e8d59a;border-radius:3px;padding:9px 11px;font-size:11.5px;color:#5c4a12;line-height:1.55}
+.warn b{color:#3d3108}
+@media print{
+  #header,#tabs,.noprint{display:none!important}
+  body{background:#fff;font-size:11px}
+  main{padding:0;max-width:none}
+  .card{border:none;padding:0;margin-bottom:14px;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>Daylight Factor Calculator</h1>
+  <label class="f" style="max-width:260px"><span>Project</span><input type="text" id="projName" placeholder="Project name"></label>
+  <label class="f" style="max-width:170px"><span>Assessment standard</span><select id="standard"></select></label>
+  <div class="spacer"></div>
+  <button class="btn" id="btnSave">Save file</button>
+  <button class="btn" id="btnLoad">Open file</button>
+  <button class="btn" id="btnCsv">Export CSV</button>
+  <button class="btn" id="btnReset">Reset</button>
+  <input type="file" id="fileInput" accept=".json" hidden>
+</div>
+
+<nav id="tabs"></nav>
+<main id="panel"></main>
+
+<script src="calc.js"></script>
+<script>
+(function () {
+'use strict';
+const { ORIENTATIONS, LOCATIONS, STANDARDS, ROOM_TYPES, targetDF, maintenanceFactor,
+        num, roomGeometry, windowTypeDerived, obstruction, roomResult } = window.DL;
+
+const STORE_KEY = 'arc-daylight-v1';
+let uid = 1;
+const nid = p => p + '-' + (uid++) + '-' + Math.random().toString(36).slice(2, 6);
+
+/* ---------- default project ---------- */
+function defaultState() {
+  const g = { id: nid('gl'), desc: 'Standard glass (triple, vertical)',   tvis: 0.66, orientFactor: 1,   buildingType: 4, exposure: 1, special: 1 };
+  const g2 = { id: nid('gl'), desc: 'Standard rooflight (triple, inclined)', tvis: 0.66, orientFactor: 0.8, buildingType: 4, exposure: 3, special: 1 };
+  const g3 = { id: nid('gl'), desc: 'HQI (double, vertical, easily cleaned)', tvis: 0.68, orientFactor: 1, buildingType: 4, exposure: 1, special: 1 };
+  const g4 = { id: nid('gl'), desc: 'HQI (double, vertical, balcony/overhang)', tvis: 0.68, orientFactor: 1, buildingType: 4, exposure: 3, special: 1 };
+  const f = { id: nid('fr'), desc: 'Standard window', left: 0.13, right: 0.13, bottom: 0.145, top: 0.13 };
+  const f2 = { id: nid('fr'), desc: 'Standard rooflight', left: 0.13, right: 0.13, bottom: 0.145, top: 0.13 };
+  return {
+    project: { name: '', consultant: '', client: '', address: '', standard: 'LEAP', notes: '' },
+    storeys: [ newStorey('Ground') ],
+    glazings: [g, g2, g3, g4],
+    frames: [f, f2],
+    windowTypes: [
+      { id: nid('wt'), desc: 'Typical window', width: 1.2, height: 1.35, wallThickness: 0.3,
+        inclination: 0, overhangDepth: 0, overhangDist: 0, glazingId: g.id, frameId: f.id },
+    ],
+    rooms: [],
+  };
+}
+function newStorey(name) {
+  const obstructions = {};
+  ORIENTATIONS.forEach(o => obstructions[o] = { distance: 12, extraDistance: 0, height: 6 });
+  return { id: nid('st'), name, storeyHeight: 2.5, floorThickness: 0.3, windowHead: 2.1, rooflightHead: 2.4, obstructions };
+}
+function newRoom(state) {
+  return {
+    id: nid('rm'), name: 'Room ' + (state.rooms.length + 1), type: 'Living Room',
+    storeyId: state.storeys[0].id, depth: 4.5, width: 3.6, height: 2.4,
+    rFloor: 0.2, rWall: 0.85, rCeil: 0.85, windows: [newWindowRow(state)],
+  };
+}
+function newWindowRow(state) {
+  return {
+    id: nid('wr'), orientation: 'South', windowTypeId: state.windowTypes[0]?.id || '',
+    count: 1, location: 'Length', workingPlane: 0.85, shadeWinter: 1, shadeSummer: 1,
+  };
+}
+
+let state = load() || defaultState();
+let tab = 'site';
+
+/* ---------- persistence ---------- */
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+function load() {
+  try { const s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+}
+
+/* ---------- helpers ---------- */
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fx = (v, d = 2) => (Number.isFinite(v) ? v.toFixed(d) : '—');
+function byPath(path) {
+  return path.split('.').reduce((o, k) => (o == null ? o : o[k]), state);
+}
+function setPath(path, value) {
+  const parts = path.split('.');
+  const last = parts.pop();
+  const obj = parts.reduce((o, k) => o[k], state);
+  obj[last] = value;
+}
+function findById(list, id) { return list.find(x => x.id === id); }
+
+function inp(path, value, opts = {}) {
+  const t = opts.type || 'number';
+  const attrs = [`data-bind="${path}"`, `type="${t}"`];
+  if (t === 'number') attrs.push(`step="${opts.step || 0.01}"`, 'min="0"');
+  if (opts.placeholder) attrs.push(`placeholder="${esc(opts.placeholder)}"`);
+  return `<input ${attrs.join(' ')} value="${esc(value)}">`;
+}
+function sel(path, value, options) {
+  const body = options.map(o => {
+    if (typeof o === 'object' && o.group) return `<optgroup label="${esc(o.group)}">`;
+    if (typeof o === 'object' && o.endGroup) return `</optgroup>`;
+    const v = typeof o === 'object' ? o.value : o;
+    const l = typeof o === 'object' ? o.label : o;
+    return `<option value="${esc(v)}"${v === value ? ' selected' : ''}>${esc(l)}</option>`;
+  }).join('');
+  return `<select data-bind="${path}">${body}</select>`;
+}
+function roomTypeOptions() {
+  const out = [];
+  let open = false;
+  ROOM_TYPES.forEach(r => {
+    if (r.group) { if (open) out.push({ endGroup: true }); out.push({ group: r.group }); open = true; }
+    else out.push({ value: r.name, label: r.name });
+  });
+  if (open) out.push({ endGroup: true });
+  return out;
+}
+
+/* ---------- tabs ---------- */
+const TABS = [
+  { id: 'site', label: 'Project & site' },
+  { id: 'components', label: 'Glazing & frames' },
+  { id: 'windows', label: 'Window types' },
+  { id: 'rooms', label: 'Rooms' },
+  { id: 'results', label: 'Results' },
+];
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = TABS
+    .map(t => `<button data-tab="${t.id}" class="${t.id === tab ? 'active' : ''}">${t.label}</button>`).join('');
+}
+
+/* ---------- panels ---------- */
+function renderSite() {
+  const p = state.project;
+  let h = `<div class="card">
+    <h2>Project</h2>
+    <div class="fields">
+      <label class="f"><span>Project name</span>${inp('project.name', p.name, { type: 'text' })}</label>
+      <label class="f"><span>Consultant</span>${inp('project.consultant', p.consultant, { type: 'text' })}</label>
+      <label class="f"><span>Client</span>${inp('project.client', p.client, { type: 'text' })}</label>
+      <label class="f"><span>Address</span>${inp('project.address', p.address, { type: 'text' })}</label>
+    </div>
+  </div>`;
+
+  h += `<div class="card">
+    <h2>Storeys <span class="sub">— heights set the window head level used for obstruction angles</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr>
+        <th>Storey</th>
+        <th>Storey height<span class="u">m</span></th>
+        <th>Floor thickness<span class="u">m</span></th>
+        <th>Window head above floor<span class="u">m</span></th>
+        <th>Rooflight head above floor<span class="u">m</span></th>
+        <th>Floor level<span class="u">m above ground</span></th>
+        <th class="noprint"></th>
+      </tr></thead><tbody>`;
+  state.storeys.forEach((s, i) => {
+    h += `<tr>
+      <td>${inp(`storeys.${i}.name`, s.name, { type: 'text' })}</td>
+      <td class="num">${inp(`storeys.${i}.storeyHeight`, s.storeyHeight)}</td>
+      <td class="num">${inp(`storeys.${i}.floorThickness`, s.floorThickness)}</td>
+      <td class="num">${inp(`storeys.${i}.windowHead`, s.windowHead)}</td>
+      <td class="num">${inp(`storeys.${i}.rooflightHead`, s.rooflightHead)}</td>
+      <td class="out" data-out="floorlevel.${i}"></td>
+      <td class="noprint">${state.storeys.length > 1 ? `<button class="btn sm danger" data-act="delStorey" data-i="${i}">Remove</button>` : ''}</td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>
+    <div class="noprint" style="margin-top:8px"><button class="btn sm" data-act="addStorey">Add storey</button></div>
+  </div>`;
+
+  state.storeys.forEach((s, i) => {
+    h += `<div class="card">
+      <h2>Obstructions — ${esc(s.name)} <span class="sub">— heights are measured from ground level</span></h2>
+      <div class="tablewrap"><table>
+        <thead><tr>
+          <th>Orientation</th>
+          <th>Horizontal distance to obstruction<span class="u">m</span></th>
+          <th>Extra distance for rooflights<span class="u">m</span></th>
+          <th>Height of obstruction<span class="u">m above ground</span></th>
+          <th>Above window head (y)<span class="u">m</span></th>
+          <th>Above rooflight head (y)<span class="u">m</span></th>
+        </tr></thead><tbody>`;
+    ORIENTATIONS.forEach(o => {
+      const ob = s.obstructions[o];
+      h += `<tr>
+        <td>${esc(o)}</td>
+        <td class="num">${inp(`storeys.${i}.obstructions.${o}.distance`, ob.distance)}</td>
+        <td class="num">${inp(`storeys.${i}.obstructions.${o}.extraDistance`, ob.extraDistance)}</td>
+        <td class="num">${inp(`storeys.${i}.obstructions.${o}.height`, ob.height)}</td>
+        <td class="out" data-out="obsY.${i}.${o}"></td>
+        <td class="out" data-out="obsYr.${i}.${o}"></td>
+      </tr>`;
+    });
+    h += `</tbody></table></div></div>`;
+  });
+  return h;
+}
+
+function renderComponents() {
+  let h = `<div class="card">
+    <h2>Glazing types <span class="sub">— maintenance factor = (100 − orientation × building type × exposure × special) / 100</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr>
+        <th style="min-width:190px">Description</th>
+        <th>T<sub>vis</sub></th>
+        <th>Orientation factor</th>
+        <th>Building type</th>
+        <th>Exposure</th>
+        <th>Special</th>
+        <th>Maintenance factor</th>
+        <th class="noprint"></th>
+      </tr></thead><tbody>`;
+  state.glazings.forEach((g, i) => {
+    h += `<tr>
+      <td>${inp(`glazings.${i}.desc`, g.desc, { type: 'text' })}</td>
+      <td class="num">${inp(`glazings.${i}.tvis`, g.tvis)}</td>
+      <td class="num">${inp(`glazings.${i}.orientFactor`, g.orientFactor, { step: 0.1 })}</td>
+      <td class="num">${inp(`glazings.${i}.buildingType`, g.buildingType, { step: 1 })}</td>
+      <td class="num">${inp(`glazings.${i}.exposure`, g.exposure, { step: 1 })}</td>
+      <td class="num">${inp(`glazings.${i}.special`, g.special, { step: 0.1 })}</td>
+      <td class="out" data-out="maint.${i}"></td>
+      <td class="noprint"><button class="btn sm danger" data-act="delGlazing" data-i="${i}">Remove</button></td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>
+    <div class="noprint" style="margin-top:8px"><button class="btn sm" data-act="addGlazing">Add glazing type</button></div>
+    <div class="hint">Loss factors follow BS 8206-2 / BRE Digest 309: orientation (vertical 1.0, inclined 0.8, horizontal 0.6),
+      building type (e.g. 4 for housing/offices), exposure (1 clean, 2 industrial, 3 very dirty), and a special multiplier for anything else.</div>
+  </div>`;
+
+  h += `<div class="card">
+    <h2>Frame types <span class="sub">— frame widths reduce the net glazed area</span></h2>
+    <div class="tablewrap"><table>
+      <thead><tr>
+        <th style="min-width:190px">Description</th>
+        <th>Left<span class="u">m</span></th><th>Right<span class="u">m</span></th>
+        <th>Below<span class="u">m</span></th><th>Above<span class="u">m</span></th>
+        <th class="noprint"></th>
+      </tr></thead><tbody>`;
+  state.frames.forEach((f, i) => {
+    h += `<tr>
+      <td>${inp(`frames.${i}.desc`, f.desc, { type: 'text' })}</td>
+      <td class="num">${inp(`frames.${i}.left`, f.left, { step: 0.005 })}</td>
+      <td class="num">${inp(`frames.${i}.right`, f.right, { step: 0.005 })}</td>
+      <td class="num">${inp(`frames.${i}.bottom`, f.bottom, { step: 0.005 })}</td>
+      <td class="num">${inp(`frames.${i}.top`, f.top, { step: 0.005 })}</td>
+      <td class="noprint"><button class="btn sm danger" data-act="delFrame" data-i="${i}">Remove</button></td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>
+    <div class="noprint" style="margin-top:8px"><button class="btn sm" data-act="addFrame">Add frame type</button></div>
+  </div>`;
+  return h;
+}
+
+function renderWindowTypes() {
+  const gOpts = state.glazings.map(g => ({ value: g.id, label: g.desc }));
+  const fOpts = state.frames.map(f => ({ value: f.id, label: f.desc }));
+  let h = `<div class="card">
+    <h2>Window types</h2>
+    <div class="tablewrap"><table>
+      <thead><tr>
+        <th style="min-width:150px">Description</th>
+        <th>Width<span class="u">m</span></th>
+        <th>Height<span class="u">m</span></th>
+        <th>Reveal / wall thickness<span class="u">m</span></th>
+        <th>Inclination from horizontal<span class="u">degrees</span></th>
+        <th>Overhang depth<span class="u">m</span></th>
+        <th>Glazing edge to overhang<span class="u">m</span></th>
+        <th style="min-width:130px">Glazing</th>
+        <th style="min-width:120px">Frame</th>
+        <th>Window area<span class="u">m²</span></th>
+        <th>Glazing area<span class="u">m²</span></th>
+        <th>Obstruction angle b<span class="u">degrees</span></th>
+        <th class="noprint"></th>
+      </tr></thead><tbody>`;
+  state.windowTypes.forEach((w, i) => {
+    h += `<tr>
+      <td>${inp(`windowTypes.${i}.desc`, w.desc, { type: 'text' })}</td>
+      <td class="num">${inp(`windowTypes.${i}.width`, w.width)}</td>
+      <td class="num">${inp(`windowTypes.${i}.height`, w.height)}</td>
+      <td class="num">${inp(`windowTypes.${i}.wallThickness`, w.wallThickness)}</td>
+      <td class="num">${inp(`windowTypes.${i}.inclination`, w.inclination, { step: 1 })}</td>
+      <td class="num">${inp(`windowTypes.${i}.overhangDepth`, w.overhangDepth)}</td>
+      <td class="num">${inp(`windowTypes.${i}.overhangDist`, w.overhangDist)}</td>
+      <td>${sel(`windowTypes.${i}.glazingId`, w.glazingId, gOpts)}</td>
+      <td>${sel(`windowTypes.${i}.frameId`, w.frameId, fOpts)}</td>
+      <td class="out" data-out="wtArea.${i}"></td>
+      <td class="out" data-out="wtGlaz.${i}"></td>
+      <td class="out" data-out="wtTanB.${i}"></td>
+      <td class="noprint"><button class="btn sm danger" data-act="delWinType" data-i="${i}">Remove</button></td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>
+    <div class="noprint" style="margin-top:8px"><button class="btn sm" data-act="addWinType">Add window type</button></div>
+    <div class="hint">Inclination is measured from the horizontal: 90° for a vertical window, 0° for a horizontal rooflight.
+      Leave the overhang fields at 0 where there is none — the reveal alone then sets the obstruction angle.</div>
+  </div>`;
+  return h;
+}
+
+function renderRooms() {
+  if (!state.rooms.length) {
+    return `<div class="card"><h2>Rooms</h2>
+      <div class="empty">No rooms yet.</div>
+      <div class="noprint" style="margin-top:10px"><button class="btn primary" data-act="addRoom">Add room</button></div></div>`;
+  }
+  const wtOpts = state.windowTypes.map(w => ({ value: w.id, label: w.desc }));
+  const stOpts = state.storeys.map(s => ({ value: s.id, label: s.name }));
+  let h = '';
+  state.rooms.forEach((r, i) => {
+    h += `<div class="card">
+      <h2>${esc(r.name || 'Room')} <span class="sub">— ${esc(r.type)}</span></h2>
+      <div class="fields">
+        <label class="f"><span>Room name / no.</span>${inp(`rooms.${i}.name`, r.name, { type: 'text' })}</label>
+        <label class="f"><span>Room type</span>${sel(`rooms.${i}.type`, r.type, roomTypeOptions())}</label>
+        <label class="f"><span>Storey</span>${sel(`rooms.${i}.storeyId`, r.storeyId, stOpts)}</label>
+        <label class="f"><span>Room depth L (m)</span>${inp(`rooms.${i}.depth`, r.depth)}</label>
+        <label class="f"><span>Room width W (m)</span>${inp(`rooms.${i}.width`, r.width)}</label>
+        <label class="f"><span>Room height (m)</span>${inp(`rooms.${i}.height`, r.height)}</label>
+        <label class="f"><span>Reflectance — floor</span>${inp(`rooms.${i}.rFloor`, r.rFloor)}</label>
+        <label class="f"><span>Reflectance — walls</span>${inp(`rooms.${i}.rWall`, r.rWall)}</label>
+        <label class="f"><span>Reflectance — ceiling</span>${inp(`rooms.${i}.rCeil`, r.rCeil)}</label>
+      </div>
+      <div class="roomstat" data-out="roomstat.${i}"></div>
+      <div class="tablewrap"><table>
+        <thead><tr>
+          <th>Orientation</th>
+          <th style="min-width:130px">Window type</th>
+          <th>No. of windows</th>
+          <th>Location<span class="u">room dimension</span></th>
+          <th>Working plane<span class="u">m</span></th>
+          <th>Shading factor winter</th>
+          <th>Shading factor summer</th>
+          <th>Distance x<span class="u">m</span></th>
+          <th>Obstruction y<span class="u">m</span></th>
+          <th>Visible sky θ<span class="u">degrees</span></th>
+          <th>Net glazed area<span class="u">m²</span></th>
+          <th>No-sky line<span class="u">m</span></th>
+          <th>Daylit fraction</th>
+          <th class="noprint"></th>
+        </tr></thead><tbody>`;
+    (r.windows || []).forEach((w, j) => {
+      h += `<tr>
+        <td>${sel(`rooms.${i}.windows.${j}.orientation`, w.orientation, ORIENTATIONS)}</td>
+        <td>${sel(`rooms.${i}.windows.${j}.windowTypeId`, w.windowTypeId, wtOpts)}</td>
+        <td class="num">${inp(`rooms.${i}.windows.${j}.count`, w.count, { step: 1 })}</td>
+        <td>${sel(`rooms.${i}.windows.${j}.location`, w.location, LOCATIONS)}</td>
+        <td class="num">${inp(`rooms.${i}.windows.${j}.workingPlane`, w.workingPlane, { step: 0.05 })}</td>
+        <td class="num">${inp(`rooms.${i}.windows.${j}.shadeWinter`, w.shadeWinter, { step: 0.05 })}</td>
+        <td class="num">${inp(`rooms.${i}.windows.${j}.shadeSummer`, w.shadeSummer, { step: 0.05 })}</td>
+        <td class="out" data-out="wr.${i}.${j}.x"></td>
+        <td class="out" data-out="wr.${i}.${j}.y"></td>
+        <td class="out" data-out="wr.${i}.${j}.theta"></td>
+        <td class="out" data-out="wr.${i}.${j}.glaz"></td>
+        <td class="out" data-out="wr.${i}.${j}.nsl"></td>
+        <td class="out" data-out="wr.${i}.${j}.unif"></td>
+        <td class="noprint"><button class="btn sm danger" data-act="delWinRow" data-i="${i}" data-j="${j}">×</button></td>
+      </tr>`;
+    });
+    h += `</tbody></table></div>
+      <div class="noprint" style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn sm" data-act="addWinRow" data-i="${i}">Add window</button>
+        <button class="btn sm danger" data-act="delRoom" data-i="${i}">Delete room</button>
+      </div>
+      <div class="hint">Location is the room dimension the daylight penetrates, which the no-sky line is measured against:
+        <b>Length</b> for a window in the wall across the end of the room (depth L — the usual case),
+        <b>Width</b> for one in a side wall (W), or <b>Roof</b> for a rooflight — which uses the rooflight head height
+        and offset distance, and takes visible sky as 180° − a − b − inclination.</div>
+    </div>`;
+  });
+  h += `<div class="noprint"><button class="btn primary" data-act="addRoom">Add room</button></div>`;
+  return h;
+}
+
+function renderResults() {
+  const ctx = { storeys: state.storeys, windowTypes: state.windowTypes, glazings: state.glazings,
+                frames: state.frames, standard: state.project.standard };
+  if (!state.rooms.length) return `<div class="card"><h2>Results</h2><div class="empty">Add a room to see results.</div></div>`;
+
+  const results = state.rooms.map(r => ({ room: r, res: roomResult(r, ctx) }));
+  const assessed = results.filter(x => x.res.target != null);
+  const passing = assessed.filter(x => x.res.verdictWinter === 'Pass').length;
+  const uniformOk = results.filter(x => x.res.avgUniformity >= 0.8).length;
+  const depthOk = results.filter(x => x.res.depthCheck && x.res.depthCheck.pass).length;
+
+  let h = `<div class="card">
+    <h2>Summary <span class="sub">— ${esc(state.project.standard)}</span></h2>
+    <div class="resultgrid">
+      <div class="stat"><div class="k">Rooms assessed</div><div class="v">${results.length}</div></div>
+      <div class="stat"><div class="k">Meeting target DF</div><div class="v">${passing}<small> / ${assessed.length}</small></div></div>
+      <div class="stat"><div class="k">Daylight uniformity ≥ 80%</div><div class="v">${uniformOk}<small> / ${results.length}</small></div></div>
+      <div class="stat"><div class="k">Room depth check passed</div><div class="v">${depthOk}<small> / ${results.length}</small></div></div>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr>
+        <th>Room</th><th>Type</th><th>Storey</th>
+        <th>Target DF<span class="u">%</span></th>
+        <th>Average DF<span class="u">%</span></th>
+        <th>Verdict</th>
+        <th>Daylit fraction<span class="u">% of working plane</span></th>
+        <th>Uniformity</th>
+        <th>Room depth check</th>
+        <th>Net glazed area<span class="u">m²</span></th>
+        <th>Required for target<span class="u">m²</span></th>
+      </tr></thead><tbody>`;
+  results.forEach(({ room, res }) => {
+    const storey = findById(state.storeys, room.storeyId);
+    const unifPass = res.avgUniformity >= 0.8;
+    h += `<tr>
+      <td>${esc(room.name)}</td>
+      <td>${esc(room.type)}</td>
+      <td>${esc(storey ? storey.name : '—')}</td>
+      <td class="out">${res.target == null ? '<span class="na">n/a</span>' : fx(res.target, 1)}</td>
+      <td class="out"><b>${fx(res.dfWinter, 1)}</b></td>
+      <td class="${verdictClass(res.verdictWinter)}">${res.verdictWinter}</td>
+      <td class="out">${fx(res.avgUniformity * 100, 0)}</td>
+      <td class="${unifPass ? 'pass' : 'fail'}">${unifPass ? 'Pass' : 'Fail'}</td>
+      <td class="${res.depthCheck ? (res.depthCheck.pass ? 'pass' : 'fail') : 'na'}">${res.depthCheck ? (res.depthCheck.pass ? 'Pass' : 'Fail') : '—'}</td>
+      <td class="out">${fx(res.totalGlazing, 2)}</td>
+      <td class="out">${res.requiredAw == null ? '—' : fx(res.requiredAw, 2)}</td>
+    </tr>`;
+  });
+  h += `</tbody></table></div>
+    <div class="hint">Average daylight factor per BS 8206-2:
+      <code>DF = Σ(M · T<sub>vis</sub> · θ · A<sub>w</sub>) / (A · (1 − R²))</code>,
+      where θ is the angle of visible sky in degrees, A<sub>w</sub> the net glazed area, A the total internal surface area
+      and R the area-weighted reflectance. Daylight uniformity is the fraction of the working plane in front of the no-sky line;
+      the AECB guidance asks for more than 80%.</div>
+  </div>`;
+
+  results.forEach(({ room, res }) => {
+    h += `<div class="card">
+      <h2>${esc(room.name)} <span class="sub">— ${esc(room.type)}</span></h2>
+      <div class="resultgrid">
+        <div class="stat"><div class="k">Average daylight factor</div><div class="v">${fx(res.dfWinter, 1)}<small> %</small></div></div>
+        <div class="stat"><div class="k">Target</div><div class="v">${res.target == null ? '—' : fx(res.target, 1)}<small> %</small></div></div>
+        <div class="stat"><div class="k">Daylit fraction</div><div class="v">${fx(res.avgUniformity * 100, 0)}<small> %</small></div></div>
+        <div class="stat"><div class="k">Internal surface area A</div><div class="v">${fx(res.geo.A, 1)}<small> m²</small></div></div>
+        <div class="stat"><div class="k">Weighted reflectance R</div><div class="v">${fx(res.geo.R, 2)}</div></div>
+      </div>
+      <div class="tablewrap"><table>
+        <thead><tr>
+          <th>Orientation</th><th>Window type</th><th>No.</th>
+          <th>Distance x<span class="u">m</span></th><th>Obstruction y<span class="u">m</span></th>
+          <th>Angle a<span class="u">deg</span></th><th>Angle b<span class="u">deg</span></th>
+          <th>Visible sky θ<span class="u">deg</span></th>
+          <th>T<sub>vis</sub></th><th>Maintenance</th>
+          <th>Net glazed<span class="u">m²</span></th>
+          <th>No-sky line<span class="u">m</span></th>
+        </tr></thead><tbody>`;
+    res.rows.forEach(({ row, res: w }) => {
+      h += `<tr>
+        <td>${esc(row.orientation)}</td>
+        <td>${esc(w.windowType.desc)}</td>
+        <td class="out">${w.count}</td>
+        <td class="out">${fx(w.x, 2)}</td>
+        <td class="out">${fx(w.y, 2)}</td>
+        <td class="out">${fx(w.tanA, 1)}</td>
+        <td class="out">${fx(w.tanB, 1)}</td>
+        <td class="out">${fx(w.theta, 1)}</td>
+        <td class="out">${fx(w.tvis, 2)}</td>
+        <td class="out">${fx(w.maint, 3)}</td>
+        <td class="out">${fx(w.totalGlazing, 2)}</td>
+        <td class="out">${fx(w.noSkyLine, 2)}</td>
+      </tr>`;
+    });
+    h += `</tbody></table></div>`;
+    if (res.depthCheck) {
+      h += `<div class="hint">Room depth check: L/W + L/H<sub>w</sub> = <b>${fx(res.depthCheck.lhs, 2)}</b>
+        against a limit of 2/(1−R) = <b>${fx(res.depthCheck.rhs, 2)}</b> —
+        <span class="${res.depthCheck.pass ? 'pass' : 'fail'}">${res.depthCheck.pass ? 'Pass' : 'Fail'}</span>.
+        A room that fails is too deep for its window head height and will look gloomy at the back.</div>`;
+    }
+    h += `</div>`;
+  });
+
+  h += `<div class="card noprint"><h2>Report</h2>
+    <button class="btn primary" onclick="window.print()">Print / save as PDF</button>
+    <div class="hint">Prints the results only — input tabs are hidden.</div></div>`;
+  return h;
+}
+
+function verdictClass(v) {
+  return v === 'Pass' ? 'pass' : v === 'Fail' ? 'fail' : v === 'Borderline' ? 'borderline' : 'na';
+}
+
+/* ---------- derived output cells ---------- */
+function updateOutputs() {
+  const ctx = { storeys: state.storeys, windowTypes: state.windowTypes, glazings: state.glazings,
+                frames: state.frames, standard: state.project.standard };
+  const set = (key, text) => {
+    const el = document.querySelector(`[data-out="${key}"]`);
+    if (el) el.textContent = text;
+  };
+
+  state.storeys.forEach((s, i) => {
+    set(`floorlevel.${i}`, fx(window.DL.storeyFloorLevel(state.storeys, i), 2));
+    ORIENTATIONS.forEach(o => {
+      set(`obsY.${i}.${o}`, fx(obstruction(state.storeys, i, o, false).y, 2));
+      set(`obsYr.${i}.${o}`, fx(obstruction(state.storeys, i, o, true).y, 2));
+    });
+  });
+
+  state.glazings.forEach((g, i) => set(`maint.${i}`, fx(maintenanceFactor(g), 3)));
+
+  state.windowTypes.forEach((w, i) => {
+    const d = windowTypeDerived(w, findById(state.glazings, w.glazingId), findById(state.frames, w.frameId));
+    set(`wtArea.${i}`, fx(d.windowArea, 2));
+    set(`wtGlaz.${i}`, fx(d.glazingArea, 2));
+    set(`wtTanB.${i}`, fx(d.tanB, 1));
+  });
+
+  state.rooms.forEach((r, i) => {
+    const res = roomResult(r, ctx);
+    const statEl = document.querySelector(`[data-out="roomstat.${i}"]`);
+    if (statEl) {
+      const dc = res.depthCheck;
+      statEl.innerHTML = `
+        <span>Floor area <b>${fx(res.geo.floorArea, 2)} m²</b></span>
+        <span>Internal surfaces A <b>${fx(res.geo.A, 1)} m²</b></span>
+        <span>Weighted reflectance R <b>${fx(res.geo.R, 2)}</b></span>
+        <span>Average DF <b>${fx(res.dfWinter, 1)} %</b></span>
+        <span>Target <b>${res.target == null ? 'n/a' : fx(res.target, 1) + ' %'}</b></span>
+        <span class="${verdictClass(res.verdictWinter)}">${res.verdictWinter}</span>
+        <span>Room depth ${dc ? `<b class="${dc.pass ? 'pass' : 'fail'}">${dc.pass ? 'Pass' : 'Fail'}</b>` : '<b>—</b>'}</span>`;
+    }
+    res.rows.forEach(({ res: w }, j) => {
+      set(`wr.${i}.${j}.x`, fx(w.x, 2));
+      set(`wr.${i}.${j}.y`, fx(w.y, 2));
+      set(`wr.${i}.${j}.theta`, fx(w.theta, 1));
+      set(`wr.${i}.${j}.glaz`, fx(w.totalGlazing, 2));
+      set(`wr.${i}.${j}.nsl`, fx(w.noSkyLine, 2));
+      set(`wr.${i}.${j}.unif`, fx(w.uniformity * 100, 0) + '%');
+    });
+  });
+}
+
+/* ---------- render ---------- */
+function render() {
+  renderTabs();
+  const panel = document.getElementById('panel');
+  panel.innerHTML =
+    tab === 'site' ? renderSite() :
+    tab === 'components' ? renderComponents() :
+    tab === 'windows' ? renderWindowTypes() :
+    tab === 'rooms' ? renderRooms() :
+    renderResults();
+  document.getElementById('projName').value = state.project.name || '';
+  updateOutputs();
+  save();
+}
+
+/* ---------- events ---------- */
+document.getElementById('tabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  tab = b.dataset.tab;
+  render();
+});
+
+document.getElementById('panel').addEventListener('input', e => {
+  const t = e.target;
+  if (!t.dataset.bind) return;
+  const v = t.type === 'number' ? (t.value === '' ? '' : parseFloat(t.value)) : t.value;
+  setPath(t.dataset.bind, v);
+  if (t.dataset.bind === 'project.name') document.getElementById('projName').value = t.value;
+  updateOutputs();
+  save();
+});
+
+document.getElementById('panel').addEventListener('change', e => {
+  const t = e.target;
+  if (!t.dataset.bind || t.tagName !== 'SELECT') return;
+  setPath(t.dataset.bind, t.value);
+  // Room name/type appear in headings, so a select change needs a full redraw.
+  render();
+});
+
+document.getElementById('panel').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const i = b.dataset.i !== undefined ? +b.dataset.i : null;
+  const j = b.dataset.j !== undefined ? +b.dataset.j : null;
+  const act = b.dataset.act;
+  if (act === 'addStorey') state.storeys.push(newStorey('Storey ' + (state.storeys.length + 1)));
+  if (act === 'delStorey') {
+    const removed = state.storeys[i];
+    state.storeys.splice(i, 1);
+    state.rooms.forEach(r => { if (r.storeyId === removed.id) r.storeyId = state.storeys[0].id; });
+  }
+  if (act === 'addGlazing') state.glazings.push({ id: nid('gl'), desc: 'New glazing', tvis: 0.66, orientFactor: 1, buildingType: 4, exposure: 1, special: 1 });
+  if (act === 'delGlazing') state.glazings.splice(i, 1);
+  if (act === 'addFrame') state.frames.push({ id: nid('fr'), desc: 'New frame', left: 0.1, right: 0.1, bottom: 0.1, top: 0.1 });
+  if (act === 'delFrame') state.frames.splice(i, 1);
+  if (act === 'addWinType') state.windowTypes.push({ id: nid('wt'), desc: 'New window type', width: 1.2, height: 1.35, wallThickness: 0.3, inclination: 0, overhangDepth: 0, overhangDist: 0, glazingId: state.glazings[0]?.id, frameId: state.frames[0]?.id });
+  if (act === 'delWinType') state.windowTypes.splice(i, 1);
+  if (act === 'addRoom') state.rooms.push(newRoom(state));
+  if (act === 'delRoom') state.rooms.splice(i, 1);
+  if (act === 'addWinRow') state.rooms[i].windows.push(newWindowRow(state));
+  if (act === 'delWinRow') state.rooms[i].windows.splice(j, 1);
+  render();
+});
+
+document.getElementById('projName').addEventListener('input', e => {
+  state.project.name = e.target.value;
+  save();
+});
+
+const stdSel = document.getElementById('standard');
+stdSel.innerHTML = STANDARDS.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+stdSel.value = state.project.standard;
+stdSel.addEventListener('change', e => { state.project.standard = e.target.value; render(); });
+
+document.getElementById('btnSave').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (state.project.name || 'daylight-assessment').replace(/[^\w\- ]/g, '') + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('btnLoad').addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      state = JSON.parse(reader.result);
+      stdSel.value = state.project.standard;
+      render();
+    } catch (err) { alert('Could not read that file: ' + err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('btnCsv').addEventListener('click', () => {
+  const ctx = { storeys: state.storeys, windowTypes: state.windowTypes, glazings: state.glazings,
+                frames: state.frames, standard: state.project.standard };
+  const head = ['Room', 'Type', 'Storey', 'Target DF %', 'Average DF %', 'Verdict',
+                'Daylit fraction %', 'Uniformity', 'Room depth check', 'Net glazed area m2', 'Required area m2'];
+  const rows = state.rooms.map(r => {
+    const res = roomResult(r, ctx);
+    const storey = findById(state.storeys, r.storeyId);
+    return [r.name, r.type, storey ? storey.name : '', res.target == null ? '' : res.target,
+            res.dfWinter.toFixed(2), res.verdictWinter, (res.avgUniformity * 100).toFixed(0),
+            res.avgUniformity >= 0.8 ? 'Pass' : 'Fail',
+            res.depthCheck ? (res.depthCheck.pass ? 'Pass' : 'Fail') : '',
+            res.totalGlazing.toFixed(2), res.requiredAw == null ? '' : res.requiredAw.toFixed(2)];
+  });
+  const csv = [head, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (state.project.name || 'daylight-assessment').replace(/[^\w\- ]/g, '') + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (!confirm('Clear this assessment and start again? Save the file first if you want to keep it.')) return;
+  state = defaultState();
+  stdSel.value = state.project.standard;
+  render();
+});
+
+render();
+})();
+</script>
+</body>
+</html>
