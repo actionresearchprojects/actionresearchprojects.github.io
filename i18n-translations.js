@@ -675,7 +675,7 @@ window.ARC_TRANSLATIONS = {
     // Front-page impact page (assets/impact/). 114 strings; person names are
     // proper nouns and carry no sw entry, so they fall back to English.
     'impact.tab.top': 'Top',
-    'impact.tab.message': 'From CEO',
+    'impact.tab.message': 'From Team Lead',
     'impact.tab.people': 'People',
     'impact.tab.about': 'Who we are',
     'impact.tab.work': 'Our work',
