@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARC Dashboard Guide</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+  height: 100%;
+  background: #fff;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Ubuntu", -apple-system, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2328;
+  padding: 48px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Headings */
+h1 { font-size: 2em; font-weight: 600; margin: 0 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h2 { font-size: 1.5em; font-weight: 600; margin: 24px 0 16px; padding-bottom: 0.3em; border-bottom: 1px solid #d1d9e0; }
+h3 { font-size: 1.25em; font-weight: 600; margin: 24px 0 16px; }
+h4 { font-size: 1em; font-weight: 600; margin: 24px 0 16px; }
+
+/* Paragraphs */
+p { margin: 0 0 16px; }
+
+/* Links */
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Lists */
+ul, ol { margin: 0 0 16px; padding-left: 2em; }
+li { margin: 4px 0; }
+li > ul, li > ol { margin: 4px 0 4px; }
+
+/* Code */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 85%;
+  background: rgba(175,184,193,0.2);
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+}
+pre {
+  margin: 0 0 16px;
+  padding: 16px;
+  overflow-x: auto;
+  background: #f6f8fa;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: 85%;
+  border-radius: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 16px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: 1px solid #d1d9e0;
+  padding: 6px 13px;
+  text-align: left;
+}
+th {
+  font-weight: 600;
+  background: #f6f8fa;
+}
+tr:nth-child(even) td {
+  background: #f6f8fa;
+}
+
+/* Horizontal rules */
+hr {
+  border: 0;
+  border-top: 1px solid #d1d9e0;
+  margin: 24px 0;
+}
+
+/* Bold */
+strong { font-weight: 600; }
+
+/* Blockquotes */
+blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: #656d76;
+  border-left: 0.25em solid #d1d9e0;
+}
+
+</style>
+<style>
+img { max-width: 100%; height: auto; display: block; margin: 16px 0;
+      border: 1px solid #d1d9e0; border-radius: 6px; }
+img[src*="03-sensor-list"], img[src*="07-kiswahili-list"] { max-width: 420px; }
+img[src*="01-language-menu"], img[src*="08-graph-menu"],
+img[src*="06-advanced-settings"], img[src*="14-warning-triangle"] { max-width: 380px; }
+</style>
+</head>
+<body>
+<h1>House 5 sensor dashboard: how to use it</h1>
+<h2>Dashibodi ya vihisi vya Nyumba 5: jinsi ya kuitumia</h2>
+<p>The Swahili translation on this page is being checked by a Swahili speaker. The button names are taken directly from the dashboard, so those match what is on screen.</p>
+<blockquote>
+<p>Tafsiri ya Kiswahili katika ukurasa huu inakaguliwa na mzungumzaji wa Kiswahili. Majina ya vitufe yamechukuliwa moja kwa moja kutoka kwenye dashibodi.</p>
+</blockquote>
+<hr />
+<h2>What this is</h2>
+<p>House 5 has small sensors in most rooms. They measure temperature and humidity every few minutes. The readings go to a website. You can open that website and see what every room has been doing, day by day, going back to 2023.</p>
+<p>The website can draw the same readings as five different graphs. Part 1 of this guide covers the first graph, the line graph. Part 2 covers the other four and how to switch between them.</p>
+<blockquote>
+<h2>Hii ni nini</h2>
+<p>Nyumba 5 ina vihisi vidogo katika vyumba vingi. Vinapima joto na unyevunyevu kila baada ya dakika chache. Takwimu zinakwenda kwenye tovuti. Unaweza kufungua tovuti hiyo na kuona hali ya kila chumba, siku kwa siku, tangu mwaka 2023.</p>
+<p>Tovuti inaweza kuchora takwimu hizo hizo kwa namna tano tofauti za grafu. Sehemu ya 1 ya mwongozo huu inahusu grafu ya kwanza, grafu ya mstari. Sehemu ya 2 inahusu nyingine nne na jinsi ya kubadilisha kati yake.</p>
+</blockquote>
+<hr />
+<h1>Part 1: the line graph</h1>
+<h2>Sehemu ya 1: grafu ya mstari</h2>
+<h2>Step 1. Open the page</h2>
+<p>Address: <strong>actionresearchprojects.net/graphs/arc-temp-humid</strong></p>
+<p>The page asks for a password. Ask Andy for it.</p>
+<p>It works on a phone or a computer. Once it has loaded, it keeps working even if the internet stops.</p>
+<blockquote>
+<h2>Hatua ya 1. Fungua ukurasa</h2>
+<p>Anwani: <strong>actionresearchprojects.net/graphs/arc-temp-humid</strong></p>
+<p>Ukurasa utaomba nenosiri. Muulize Andy akupe.</p>
+<p>Unafanya kazi kwenye simu au kwenye kompyuta. Ukishafunguka mara moja, unaendelea kufanya kazi hata kama mtandao umekatika.</p>
+</blockquote>
+<hr />
+<h2>Step 2. Choose your language</h2>
+<p>Click the globe at the top right. Choose English or Kiswahili.</p>
+<p><img alt="Language menu" src="figures/01-language-menu.png" /></p>
+<p>The whole page changes, including the room names. This is the sensor list in Kiswahili:</p>
+<p><img alt="The sensor list in Kiswahili" src="figures/07-kiswahili-list.png" /></p>
+<blockquote>
+<h2>Hatua ya 2. Chagua lugha yako</h2>
+<p>Bofya alama ya dunia iliyo juu kulia. Chagua "English" au "Kiswahili". Ukurasa wote utabadilika, pamoja na majina ya vyumba. Picha iliyo hapo juu inaonyesha orodha ya vihisi kwa Kiswahili.</p>
+</blockquote>
+<hr />
+<h2>Step 3. Choose the house and the type of graph</h2>
+<p>Top left there are two boxes. In the first box choose <strong>House 5</strong>. In the second box choose <strong>Line Graph</strong>.</p>
+<p>When the page opens it shows every sensor at once, over three years. That is too much to read.</p>
+<p><img alt="The page as it first opens" src="figures/02-first-view.png" /></p>
+<p>Steps 4 and 5 cut it down to something you can read.</p>
+<blockquote>
+<h2>Hatua ya 3. Chagua nyumba na aina ya grafu</h2>
+<p>Juu kushoto kuna visanduku viwili. Kwenye sanduku la kwanza chagua <strong>Nyumba 5</strong>. Kwenye sanduku la pili chagua <strong>Grafu ya Mstari</strong>.</p>
+<p>Ukurasa ukifunguka unaonyesha vihisi vyote kwa pamoja, kwa miaka mitatu. Ni vingi mno kusoma. Hatua ya 4 na ya 5 zinapunguza.</p>
+</blockquote>
+<hr />
+<h2>Step 4. Choose which sensors to show</h2>
+<p>In the list on the left, press <strong>None</strong> under each heading. That clears everything.</p>
+<p>Then tick only the ones you want. For this example, tick three:</p>
+<ul>
+<li><strong>Kitchen (OmniSense)</strong> - under ROOM</li>
+<li><strong>Bedroom 4 (OmniSense)</strong> - under ROOM</li>
+<li><strong>Bedroom 4 (above ceiling) (OmniSense)</strong> - under STRUCTURAL</li>
+</ul>
+<p>Under METRICS, untick <strong>Humidity</strong>. Leave <strong>Temperature</strong> ticked.</p>
+<p><img alt="The sensor list" src="figures/03-sensor-list.png" /></p>
+<p>The three headings mean:</p>
+<table>
+<thead>
+<tr>
+<th>Heading</th>
+<th>Where the sensor is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EXTERNAL (NJE)</td>
+<td>Outside the house</td>
+</tr>
+<tr>
+<td>ROOM (CHUMBA)</td>
+<td>Inside a room, where people are</td>
+</tr>
+<tr>
+<td>STRUCTURAL (MUUNDO)</td>
+<td>Inside the roof and ceiling, not where people are</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<h2>Hatua ya 4. Chagua vihisi vya kuonyesha</h2>
+<p>Kwenye orodha ya kushoto, bofya <strong>Hakuna</strong> chini ya kila kichwa. Hii inaondoa vyote.</p>
+<p>Kisha weka alama kwenye vile unavyotaka tu. Kwa mfano huu, weka alama kwenye vitatu:</p>
+<ul>
+<li><strong>Jikoni (OmniSense)</strong> - chini ya CHUMBA</li>
+<li><strong>Chumba cha kulala 4 (OmniSense)</strong> - chini ya CHUMBA</li>
+<li><strong>Chumba cha kulala 4 (juu ya dari) (OmniSense)</strong> - chini ya MUUNDO</li>
+</ul>
+<p>Chini ya VIPIMO, ondoa alama kwenye <strong>Unyevunyevu</strong>. Acha <strong>Joto</strong> kikiwa na alama.</p>
+<p>Vichwa vitatu vina maana hii: NJE ni nje ya nyumba. CHUMBA ni ndani ya chumba ambako watu wanakaa. MUUNDO ni ndani ya paa na dari, siyo mahali watu wanakaa.</p>
+</blockquote>
+<hr />
+<h2>Step 5. Choose the dates</h2>
+<p>Top right, next to <strong>Range</strong>, choose <strong>Month</strong>. Then choose <strong>February 2026</strong>.</p>
+<blockquote>
+<h2>Hatua ya 5. Chagua tarehe</h2>
+<p>Juu kulia, kando ya <strong>Muda</strong>, chagua <strong>Mwezi</strong>. Kisha chagua <strong>February 2026</strong>.</p>
+</blockquote>
+<hr />
+<h2>Step 6. Read the line graph</h2>
+<p><img alt="February 2026, three sensors" src="figures/04-graph-february.png" /></p>
+<ul>
+<li>Each line is one sensor. The colours match the list on the right of the graph.</li>
+<li>The pink band is 32 to 35 degrees. When a line goes into that band, the room is hot enough to matter.</li>
+<li>Every line goes up and down each day. Hot in the afternoon, cooler at night. That is normal.</li>
+</ul>
+<p>Now look at <strong>Bedroom 4</strong>, the brown-red line. From 1 to 12 February it climbs into the pink band on most days, and at night it stays higher than the other two lines. After 12 February it comes down and follows the other lines closely. Step 7 explains what happened on that date.</p>
+<p>The sensor above the ceiling is the blue line. At night it drops faster than Bedroom 4 does. So the heat was not coming down from the roof. It was staying inside the room.</p>
+<blockquote>
+<h2>Hatua ya 6. Soma grafu ya mstari</h2>
+<p>Kila mstari ni kihisi kimoja. Rangi zinalingana na orodha iliyo upande wa kulia wa grafu.</p>
+<p>Eneo la rangi ya pinki ni nyuzi 32 hadi 35. Mstari ukiingia kwenye eneo hilo, chumba kina joto la kuzingatia.</p>
+<p>Kila mstari unapanda na kushuka kila siku. Joto mchana, baridi usiku. Hii ni kawaida.</p>
+<p>Sasa angalia <strong>Chumba cha kulala 4</strong>, mstari wa rangi ya kahawia-nyekundu. Kuanzia tarehe 1 hadi 12 Februari unapanda hadi kwenye eneo la pinki siku nyingi, na usiku unakaa juu kuliko mistari mingine miwili. Baada ya tarehe 12 Februari unashuka na kufuata mistari mingine kwa karibu. Hatua ya 7 inaeleza kilichotokea siku hiyo.</p>
+<p>Kihisi cha juu ya dari ni mstari wa buluu. Usiku unashuka haraka kuliko Chumba cha kulala 4. Kwa hiyo joto halikuwa linashuka kutoka kwenye paa. Lilikuwa linabaki ndani ya chumba.</p>
+</blockquote>
+<hr />
+<h2>Step 7. The warning triangle</h2>
+<p>Next to <strong>Bedroom 4 (OmniSense)</strong> there is a small orange triangle. It means someone has already looked at this data and marked it. Hold the mouse over the triangle to read why.</p>
+<p><img alt="The warning triangle" src="figures/14-warning-triangle-only.png" /></p>
+<p>The explanation says the data before 12 February 2026 is not reliable. Furniture placed across the window, together with curtains kept closed, is thought to have blocked the airflow through the room, so the heat stayed inside. It says this is suspected, not proved.</p>
+<p>That is the same date where the brown-red line drops in Step 6.</p>
+<p><strong>Note:</strong> this explanation stays in English even when the page is set to Kiswahili.</p>
+<blockquote>
+<h2>Hatua ya 7. Alama ya tahadhari</h2>
+<p>Kando ya <strong>Chumba cha kulala 4 (OmniSense)</strong> kuna pembetatu ndogo ya rangi ya machungwa. Inamaanisha mtu ameshaangalia data hii na kuiwekea alama. Weka kishale juu ya pembetatu ili kusoma sababu.</p>
+<p>Maelezo yanasema data ya kabla ya tarehe 12 Februari 2026 siyo ya kuaminika. Samani iliyowekwa mbele ya dirisha, pamoja na mapazia yaliyokuwa yamefungwa, inadhaniwa ilizuia hewa kupita ndani ya chumba, kwa hiyo joto lilibaki ndani. Yanasema hili linadhaniwa, halijathibitishwa.</p>
+<p>Hii ni tarehe ile ile ambapo mstari wa kahawia-nyekundu unashuka katika Hatua ya 6.</p>
+<p><strong>Kumbuka:</strong> maelezo haya yanabaki kwa Kiingereza hata ukurasa ukiwekwa kwa Kiswahili.</p>
+</blockquote>
+<hr />
+<h2>Step 8. Hide the marked data</h2>
+<p>Click <strong>ADVANCED SETTINGS</strong> at the top of the left-hand list. Tick <strong>Exclude anomalous data</strong>. The marked readings disappear from the graph. Untick it to bring them back.</p>
+<p><img alt="Advanced settings" src="figures/06-advanced-settings.png" /></p>
+<blockquote>
+<h2>Hatua ya 8. Ficha data iliyowekewa alama</h2>
+<p>Bofya <strong>MIPANGILIO YA JUU</strong> juu ya orodha ya kushoto. Weka alama kwenye <strong>Ondoa data isiyo ya kawaida</strong>. Data iliyowekewa alama itaondoka kwenye grafu. Ondoa alama ili kuirudisha.</p>
+</blockquote>
+<hr />
+<h1>Part 2: the other graphs</h1>
+<h2>Sehemu ya 2: grafu nyingine</h2>
+<h2>Step 9. Change the type of graph</h2>
+<p>The second box along the top is the graph type. Click it and choose from the list. The sensors you ticked and the dates you chose stay the same, so you can look at the same readings five different ways.</p>
+<p><img alt="The graph type box" src="figures/08-graph-menu.png" /></p>
+<table>
+<thead>
+<tr>
+<th>Graph</th>
+<th>What it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Line Graph</strong><br><em>Grafu ya Mstari</em></td>
+<td>What happened, hour by hour? (Part 1)</td>
+</tr>
+<tr>
+<td><strong>Adaptive Comfort</strong><br><em>Faraja ya Kubadilika</em></td>
+<td>Were the rooms comfortable for the people in them?</td>
+</tr>
+<tr>
+<td><strong>Histogram</strong><br><em>Histogramu</em></td>
+<td>How often did each temperature happen?</td>
+</tr>
+<tr>
+<td><strong>Average Profiles</strong><br><em>Wastani wa Profaili</em></td>
+<td>What does an average day look like?</td>
+</tr>
+<tr>
+<td><strong>Beta Features</strong><br><em>Vipengele vya Beta</em></td>
+<td>Are the sensors working, and what are the numbers?</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<h2>Hatua ya 9. Badilisha aina ya grafu</h2>
+<p>Sanduku la pili juu ni aina ya grafu. Bofya na uchague kutoka kwenye orodha. Vihisi ulivyoweka alama na tarehe ulizochagua vitabaki vilevile, kwa hiyo unaweza kuangalia takwimu zilezile kwa namna tano tofauti.</p>
+<p><strong>Grafu ya Mstari</strong> - kilichotokea saa kwa saa (Sehemu ya 1). <strong>Faraja ya Kubadilika</strong> - kama vyumba vilikuwa na hali nzuri kwa watu. <strong>Histogramu</strong> - ni mara ngapi kila kiwango cha joto kilitokea. <strong>Wastani wa Profaili</strong> - siku ya kawaida inaonekanaje. <strong>Vipengele vya Beta</strong> - kama vihisi vinafanya kazi, na tarakimu zenyewe.</p>
+</blockquote>
+<hr />
+<h2>Average Profiles</h2>
+<p>This one takes every day in the period and works out the average day. The bottom axis is the hour of the day, not the date. It is the clearest way to see when a room is hottest.</p>
+<p><img alt="Average Profiles" src="figures/09-average-profiles.png" /></p>
+<p>In this picture, over the whole of 2026:</p>
+<ul>
+<li>The space above the ceiling (blue) is the hottest in the afternoon, around 1pm, but the coolest at night.</li>
+<li><strong>Bedroom 4</strong> (brown-red) is the warmest of the three from about 6 in the evening until 7 in the morning. That is the time the room is in use.</li>
+</ul>
+<p>You can also change <strong>Cycle</strong> from Day to Year to see the seasons instead of the hours.</p>
+<blockquote>
+<h2>Wastani wa Profaili</h2>
+<p>Hii inachukua kila siku katika kipindi ulichochagua na kutafuta wastani wa siku. Mhimili wa chini ni saa ya siku, siyo tarehe. Hii ndiyo njia rahisi zaidi ya kuona chumba kina joto zaidi wakati gani.</p>
+<p>Katika picha hii, kwa mwaka wote wa 2026: sehemu ya juu ya dari (buluu) ina joto zaidi mchana, karibu saa saba, lakini ina baridi zaidi usiku. <strong>Chumba cha kulala 4</strong> (kahawia-nyekundu) kina joto zaidi kuliko vingine viwili kuanzia saa kumi na mbili jioni hadi saa moja asubuhi. Huo ndio muda ambao chumba kinatumika.</p>
+<p>Unaweza pia kubadilisha <strong>Mzunguko</strong> kutoka Siku kwenda Mwaka ili kuona misimu badala ya saa.</p>
+</blockquote>
+<hr />
+<h2>Histogram</h2>
+<p>This shows how often each temperature happened. The taller the bar, the more readings at that temperature. The bars are stacked, one colour for each sensor.</p>
+<p><img alt="Histogram" src="figures/10-histogram.png" /></p>
+<p>Most readings in 2026 sit between 26 and 28 degrees. The pink band on the right is 32 to 35 degrees. Only a small part of the bars reaches it, and most of that part is Bedroom 4.</p>
+<blockquote>
+<h2>Histogramu</h2>
+<p>Hii inaonyesha ni mara ngapi kila kiwango cha joto kilitokea. Baa ndefu zaidi inamaanisha masomo mengi zaidi kwenye kiwango hicho. Baa zimepangwa juu ya nyingine, rangi moja kwa kila kihisi.</p>
+<p>Masomo mengi ya mwaka 2026 yako kati ya nyuzi 26 na 28. Eneo la pinki upande wa kulia ni nyuzi 32 hadi 35. Sehemu ndogo tu ya baa inafika hapo, na sehemu kubwa yake ni Chumba cha kulala 4.</p>
+</blockquote>
+<hr />
+<h2>Adaptive Comfort</h2>
+<p>This asks one question: were the rooms comfortable for the people in them? People accept a warmer room when the weather outside has been warm for a while, so the comfortable range moves with the weather. That is what the sloping green band is.</p>
+<p><img alt="Adaptive Comfort" src="figures/11-adaptive-comfort.png" /></p>
+<p>Each dot is one reading. Dots inside the green band were comfortable. Dots above it were too hot.</p>
+<p>Only room sensors appear on this graph. Roof and ceiling sensors are left out, because nobody sits in the roof.</p>
+<blockquote>
+<h2>Faraja ya Kubadilika</h2>
+<p>Hii inauliza swali moja: je, vyumba vilikuwa na hali nzuri kwa watu waliomo? Watu wanakubali chumba chenye joto zaidi kama hali ya hewa ya nje imekuwa ya joto kwa siku kadhaa. Kwa hiyo eneo la starehe linabadilika pamoja na hali ya hewa. Hiyo ndiyo bendi ya kijani inayoinama.</p>
+<p>Kila alama ni usomaji mmoja. Alama zilizo ndani ya bendi ya kijani zilikuwa katika hali nzuri. Alama zilizo juu ya bendi zilikuwa na joto kupita kiasi.</p>
+<p>Vihisi vya chumba pekee ndivyo vinavyoonekana kwenye grafu hii. Vihisi vya paa na dari vimeachwa, kwa sababu hakuna mtu anayekaa kwenye paa.</p>
+</blockquote>
+<hr />
+<h2>Beta Features</h2>
+<p>Beta means these are new and still being tested. Choose <strong>Beta Features</strong> in the graph box, then a second box appears with five choices. Two of them are useful day to day.</p>
+<blockquote>
+<h2>Vipengele vya Beta</h2>
+<p>Beta inamaanisha hivi ni vipya na bado vinajaribiwa. Chagua <strong>Vipengele vya Beta</strong> kwenye sanduku la grafu, kisha sanduku la pili litatokea likiwa na chaguo tano. Viwili kati yake vinasaidia kila siku.</p>
+</blockquote>
+<h3>Data Quality (Ubora wa Data)</h3>
+<p>Use this first whenever you think a sensor has stopped. One row per sensor. Green means readings arrived. Orange means a gap of more than six hours. Purple means admin has marked that stretch, as in Step 7.</p>
+<p><img alt="Data Quality" src="figures/12-data-quality.png" /></p>
+<p>In this picture the orange gaps get worse from April onwards. That is the gateway box losing power, not the sensors failing. You can also see that Bedroom 4 has a purple mark at the start of the year, and that the outdoor weather station only starts in February.</p>
+<blockquote>
+<p>Tumia hii kwanza unapodhani kihisi kimeacha kufanya kazi. Safu moja kwa kila kihisi. Kijani inamaanisha masomo yalifika. Machungwa inamaanisha pengo la zaidi ya saa sita. Zambarau inamaanisha msimamizi ameweka alama, kama katika Hatua ya 7.</p>
+<p>Katika picha hii mapengo ya machungwa yanaongezeka kuanzia Aprili. Hilo ni kisanduku cha lango kukosa umeme, siyo vihisi kuharibika.</p>
+</blockquote>
+<h3>Summary Statistics (Takwimu za Muhtasari)</h3>
+<p>A table of numbers for the sensors and dates you chose.</p>
+<p><img alt="Summary Statistics" src="figures/13-summary-statistics.png" /></p>
+<p>The columns worth knowing:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coverage</td>
+<td>How much of the period the sensor actually recorded. Low numbers mean gaps, so treat the rest of the row carefully.</td>
+</tr>
+<tr>
+<td>Mean</td>
+<td>The average.</td>
+</tr>
+<tr>
+<td>Max</td>
+<td>The highest single reading.</td>
+</tr>
+<tr>
+<td>Swing</td>
+<td>The difference between the coolest and the hottest.</td>
+</tr>
+<tr>
+<td>≥32°C</td>
+<td>How much of the time the room was at or above 32 degrees.</td>
+</tr>
+</tbody>
+</table>
+<p>In February 2026, Bedroom 4 was at or above 32 degrees for 18.6% of the time. The Kitchen was 1.2%.</p>
+<blockquote>
+<p>Jedwali la tarakimu kwa vihisi na tarehe ulizochagua. Safu muhimu: <strong>Ufikiaji</strong> ni kiasi cha kipindi ambacho kihisi kilirekodi kweli. <strong>Wastani</strong> ni wastani. <strong>Juu</strong> ni usomaji mkubwa zaidi. <strong>Mabadiliko</strong> ni tofauti kati ya baridi zaidi na joto zaidi. <strong>≥32°C</strong> ni muda ambao chumba kilikuwa na nyuzi 32 au zaidi.</p>
+<p>Mwezi Februari 2026, Chumba cha kulala 4 kilikuwa na nyuzi 32 au zaidi kwa asilimia 18.6 ya muda. Jikoni ilikuwa asilimia 1.2.</p>
+</blockquote>
+<h3>The other three</h3>
+<p><strong>Temperature Differential</strong>, <strong>Decrement Factor</strong> and <strong>Thermal Lag</strong> are for Andy and Archie rather than for day-to-day use. In short: the first shows how much hotter it is inside than outside, the second shows how well the building flattens out the outdoor swing, and the third shows how many hours the indoor peak trails the outdoor peak.</p>
+<blockquote>
+<p><strong>Tofauti ya Joto</strong>, <strong>Kipengele cha Kupunguza</strong> na <strong>Ucheleweshaji wa Joto</strong> ni kwa ajili ya Andy na Archie, siyo matumizi ya kila siku.</p>
+</blockquote>
+<hr />
+<h2>If something looks wrong</h2>
+<table>
+<thead>
+<tr>
+<th>What you see / Unachoona</th>
+<th>What to do / Unachotakiwa kufanya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One line stops and there is a gap.<br><em>Mstari mmoja unakatika na kuna pengo.</em></td>
+<td>Open Beta Features, then Data Quality, to see how big the gap is. Usually the battery is finished. Write down the room and the dates.<br><em>Fungua Vipengele vya Beta, kisha Ubora wa Data, ili kuona pengo ni kubwa kiasi gani. Mara nyingi betri imeisha. Andika jina la chumba na tarehe.</em></td>
+</tr>
+<tr>
+<td>All the lines stop on the same day.<br><em>Mistari yote inakatika siku moja.</em></td>
+<td>The gateway box lost power. Andy and Archie get an email automatically when this happens, so they already know. Check that the gateway box and its battery are plugged in.<br><em>Kisanduku cha lango kimekosa umeme. Andy na Archie wanapata barua pepe moja kwa moja, kwa hiyo tayari wanajua. Hakikisha kisanduku cha lango na betri yake vimeunganishwa kwenye umeme.</em></td>
+</tr>
+<tr>
+<td>One room stays much hotter than the others for many days, and there is no warning triangle.<br><em>Chumba kimoja kinakaa na joto kubwa kuliko vingine kwa siku nyingi, na hakuna pembetatu ya tahadhari.</em></td>
+<td>Write down the room and the dates, and tell Andy or Archie. It is not an emergency.<br><em>Andika jina la chumba na tarehe, kisha mwambie Andy au Archie. Siyo dharura.</em></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Who to ask</h2>
+<p>Andy Simmonds (Simmonds.Mills) and Archie Worthington (ARC).</p>
+<blockquote>
+<h2>Nani wa kuuliza</h2>
+<p>Andy Simmonds (Simmonds.Mills) na Archie Worthington (ARC).</p>
+</blockquote>
+<hr />
+<p><em>Screenshots taken from the dashboard on 12/09/2026. Line graph and summary statistics show February 2026; the other graphs show the whole of 2026. Dashboard source: <code>ARC_graphs/arc_temp_humid</code>.</em></p>
+</body>
+</html>
