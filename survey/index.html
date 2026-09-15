@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a6b4a">
+<title>ARC House 5 Comfort Survey</title>
+<script>
+(function(){
+  if(sessionStorage.getItem('arc_auth')==='1')return;
+  var s=document.createElement('style');
+  s.textContent='body{visibility:hidden}';
+  document.head.appendChild(s);
+  document.addEventListener('DOMContentLoaded',function(){
+    s.remove();
+    var o=document.createElement('div');
+    o.id='pw-overlay';
+    o.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:#111;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#fff;';
+    o.innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:20px;font-weight:500">Enter password</div><input id="pw-in" type="password" placeholder="Password" style="padding:10px 14px;font-size:16px;background:#222;color:#fff;border:1px solid #555;border-radius:4px;width:220px;outline:none;display:block;margin:0 auto 8px"><div id="pw-err" style="color:#f66;font-size:13px;height:20px"></div><button id="pw-btn" style="padding:10px 28px;background:#fff;color:#111;border:none;border-radius:4px;font-size:15px;cursor:pointer;margin-top:4px">Enter</button></div>';
+    document.body.appendChild(o);
+    document.getElementById('pw-in').focus();
+    async function check(){
+      var val=document.getElementById('pw-in').value;
+      var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
+      var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+      if(hash==='52e32618b274e60e320245f222a7a50dd485ea0e3edcf48cb2873977502b5f19'){
+        sessionStorage.setItem('arc_auth','1');
+        o.remove();
+      }else{
+        document.getElementById('pw-err').textContent='Incorrect password';
+      }
+    }
+    document.getElementById('pw-btn').addEventListener('click',check);
+    document.getElementById('pw-in').addEventListener('keydown',function(e){if(e.key==='Enter')check();});
+  });
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="any" href="../assets/images/favicon.png">
+<link rel="apple-touch-icon" href="../assets/images/favicon.png">
+<style>
+:root{
+  --green:#1a6b4a; --green-d:#125239; --green-l:#e7f2ec;
+  --ink:#1c2321; --muted:#5d6b66; --line:#d6ded9; --bg:#f4f7f5; --card:#fff;
+  --s3:#2b6cb0; --s2:#3182ce; --s1:#5b9bd5; --s0:#38a169;
+  --p1:#d99a3c; --p2:#ed8936; --p3:#e53e3e;
+  --yes:#2f855a; --no:#b03a3a;
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Ubuntu',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  font-size:17px;line-height:1.35;overscroll-behavior:none;
+}
+button,input,textarea,select{font-family:inherit}
+.hide{display:none !important}
+
+/* ---------- shell ---------- */
+#app{min-height:100%;min-height:100dvh;display:flex;flex-direction:column}
+#bar{
+  background:var(--green);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+#bar .who{font-size:15px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bar .step{font-size:14px;opacity:.85;font-variant-numeric:tabular-nums}
+#bar button{
+  background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:10px;
+  padding:8px 12px;font-size:14px;font-weight:500;cursor:pointer;
+}
+#bar button:active{background:rgba(255,255,255,.3)}
+#prog{height:6px;background:rgba(0,0,0,.12);flex-shrink:0}
+#prog>i{display:block;height:100%;background:#8fd6b4;width:0;transition:width .25s ease}
+
+#stage{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 14px 8px;display:flex;justify-content:center}
+#stage>.wrap{width:100%;max-width:960px;display:flex;flex-direction:column}
+
+#foot{
+  flex-shrink:0;padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  display:flex;gap:10px;background:var(--bg);border-top:1px solid var(--line);
+}
+#foot button{
+  flex:1;border:none;border-radius:14px;padding:18px 14px;font-size:19px;font-weight:500;cursor:pointer;
+}
+#btn-back{flex:0 0 33%;background:#e3e9e6;color:var(--muted)}
+#btn-next{background:var(--green);color:#fff;box-shadow:0 2px 0 var(--green-d)}
+#btn-next:disabled{background:#c3cdc8;box-shadow:none;color:#fff}
+#btn-next:active:not(:disabled){transform:translateY(1px);box-shadow:none}
+
+/* ---------- question ---------- */
+.sec{
+  display:inline-block;align-self:flex-start;background:var(--green-l);color:var(--green-d);
+  font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 11px;border-radius:999px;margin-bottom:12px;
+}
+.q-sw{font-size:29px;font-weight:500;line-height:1.2;margin-bottom:4px}
+.q-en{font-size:20px;font-weight:300;color:var(--muted);line-height:1.25;margin-bottom:4px}
+.q-hint{font-size:15px;color:var(--muted);margin-top:8px;font-style:italic}
+.q-head{margin-bottom:20px}
+
+/* option grids */
+.opts{display:grid;gap:11px;margin-bottom:6px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.gauto{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+
+.opt{
+  background:var(--card);border:3px solid var(--line);border-radius:var(--r);
+  padding:14px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;
+  gap:8px;text-align:center;transition:border-color .12s,background .12s,transform .08s;
+  color:var(--muted);min-height:118px;justify-content:center;
+}
+.opt:active{transform:scale(.97)}
+.opt svg{width:56px;height:56px;flex-shrink:0;display:block}
+.opt .lab-sw{font-size:18px;font-weight:500;color:var(--ink);line-height:1.15}
+.opt .lab-en{font-size:14px;font-weight:300;color:var(--muted);line-height:1.15}
+.opt.on{border-color:currentColor;background:#fff;box-shadow:0 0 0 4px rgba(0,0,0,.06)}
+.opt.on{box-shadow:0 0 0 4px color-mix(in srgb,currentColor 16%,transparent)}
+.opt.on .lab-sw{color:currentColor}
+
+/* 7-point scale */
+.scale{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.scale .opt{padding:12px 4px;min-height:132px;gap:6px}
+.scale .opt svg{width:48px;height:48px}
+.scale .opt .lab-sw{font-size:14px}
+.scale .opt .lab-en{font-size:12px}
+.scale .num{
+  font-size:13px;font-weight:700;color:currentColor;border-radius:999px;
+  background:#eef1f0;
+  background:color-mix(in srgb,currentColor 18%,#fff);
+  padding:2px 9px;font-variant-numeric:tabular-nums;line-height:1.3;
+}
+
+/* yes / no */
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.yn .opt{min-height:140px}
+.yn .opt svg{width:64px;height:64px}
+.yn .opt .lab-sw{font-size:24px}
+
+/* counter */
+.counter{display:flex;align-items:center;justify-content:center;gap:18px;margin:10px 0 18px}
+.counter button{
+  width:82px;height:82px;border-radius:50%;border:3px solid var(--green);background:#fff;
+  color:var(--green);font-size:40px;font-weight:300;cursor:pointer;line-height:1;
+}
+.counter button:active{background:var(--green-l)}
+.counter .val{
+  font-size:64px;font-weight:500;min-width:110px;text-align:center;font-variant-numeric:tabular-nums;
+}
+/* text */
+textarea,input[type=text]{
+  width:100%;border:3px solid var(--line);border-radius:var(--r);padding:14px;
+  font-size:21px;background:#fff;color:var(--ink);outline:none;resize:vertical;
+}
+textarea:focus,input[type=text]:focus{border-color:var(--green)}
+textarea{min-height:150px;line-height:1.4}
+.locked{background:#eef2f0;color:var(--muted);pointer-events:none}
+.lock-note{font-size:14px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:flex-start}
+
+/* chips (roster / rooms) */
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}
+.chip{
+  background:#fff;border:3px solid var(--line);border-radius:999px;padding:12px 20px;
+  font-size:19px;cursor:pointer;color:var(--ink);
+}
+.chip.on{border-color:var(--green);background:var(--green-l);color:var(--green-d);font-weight:500}
+
+/* ---------- start / review / done ---------- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.panel h2{font-size:22px;font-weight:500;margin-bottom:4px}
+.panel p.sub{font-size:15px;color:var(--muted);margin-bottom:14px}
+.field{margin-bottom:16px}
+.field>label{display:block;font-size:15px;font-weight:500;margin-bottom:8px;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo .mark{width:46px;height:46px;border-radius:12px;background:var(--green);display:grid;place-items:center;flex-shrink:0}
+.logo .mark svg{width:28px;height:28px;color:#fff}
+.logo h1{font-size:25px;font-weight:500;line-height:1.15}
+.logo .sub{font-size:14px;color:var(--muted)}
+
+.review{list-style:none}
+.review li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px;align-items:flex-start}
+.review li:last-child{border-bottom:none}
+.review .rq{flex:1;color:var(--muted)}
+.review .ra{font-weight:500;text-align:right;max-width:52%;word-break:break-word}
+.review .ra.empty{color:#b4bfba;font-weight:300}
+.review li button{background:none;border:none;color:var(--green);font-size:14px;cursor:pointer;padding:2px 4px;text-decoration:underline}
+
+.done-mark{width:110px;height:110px;margin:26px auto 18px;display:block;color:var(--green)}
+.done h2{text-align:center;font-size:30px;font-weight:500;margin-bottom:8px}
+.done p{text-align:center;color:var(--muted);font-size:17px;margin-bottom:22px}
+
+.note{background:#fff8e6;border:1px solid #e8d49a;border-radius:12px;padding:12px 14px;font-size:14.5px;color:#6b5626;margin-bottom:14px}
+.note.bad{background:#fdeceb;border-color:#e8b0ab;color:#83302a}
+.note.ok{background:var(--green-l);border-color:#a9cfbc;color:var(--green-d)}
+.queue-badge{background:#fff;color:var(--green-d);border-radius:999px;padding:3px 9px;font-size:13px;font-weight:500}
+
+.mini{display:flex;gap:8px;flex-wrap:wrap}
+.mini button{
+  background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 14px;
+  font-size:14px;cursor:pointer;color:var(--muted);
+}
+.mini button:active{background:var(--green-l)}
+
+/* ---------- responsive ---------- */
+@media (max-width:820px){
+  .scale{grid-template-columns:repeat(4,1fr)}
+  .scale .opt{min-height:118px}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .q-sw{font-size:25px}
+  .q-en{font-size:17px}
+  .scale{grid-template-columns:repeat(2,1fr)}
+  .scale .opt{min-height:112px;flex-direction:row;justify-content:flex-start;padding:10px 12px;gap:10px;text-align:left}
+  .scale .opt svg{width:44px;height:44px}
+  .scale .opt .lab-sw{font-size:16px}
+  .scale .opt .txt{display:flex;flex-direction:column;gap:2px}
+  .g3{grid-template-columns:repeat(2,1fr)}
+  .counter button{width:72px;height:72px;font-size:34px}
+  .counter .val{font-size:54px}
+}
+@media (min-width:821px){
+  .scale .opt .txt{display:contents}
+}
+@media (max-width:560px){
+  .scale .num{align-self:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== ICON SPRITE ===================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+
+<!-- shared bits -->
+<g id="b-body" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="32" cy="20" r="10.5"/>
+  <path d="M12 58Q12 35 32 35T52 58"/>
+</g>
+<g id="b-eyes" fill="currentColor"><circle cx="28.2" cy="18" r="1.9"/><circle cx="35.8" cy="18" r="1.9"/></g>
+<g id="b-sun" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+  <circle cx="0" cy="0" r="4.6"/>
+  <path d="M0-8.6V-11M0 8.6V11M-8.6 0H-11M8.6 0H11M-6.1-6.1l-1.7-1.7M6.1 6.1l1.7 1.7M6.1-6.1l1.7-1.7M-6.1 6.1l-1.7 1.7"/>
+</g>
+<path id="b-drop" d="M0-6c2.6 3.7 4 6 4 7.9A4 4 0 0 1-4 1.9C-4 0-2.6-2.3 0-6z" fill="currentColor"/>
+<g id="b-flake" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+  <path d="M0-6.5V6.5M-5.6-3.2L5.6 3.2M-5.6 3.2L5.6-3.2"/>
+</g>
+
+<!-- ---- thermal sensation scale ---- -->
+<symbol id="i-sc-3" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <path d="M27 25.5q1.7-2 3.4 0t3.4 0 3.2 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  <use href="#b-flake" transform="translate(52 13) scale(1.15)"/>
+  <use href="#b-flake" transform="translate(11 16) scale(.85)"/>
+</symbol>
+
+<symbol id="i-sc-2" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <path d="M28 26q4-3 8 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  <use href="#b-flake" transform="translate(52 14)"/>
+</symbol>
+
+<symbol id="i-sc-1" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <path d="M28 25.5h8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  <use href="#b-flake" transform="translate(53 15) scale(.8)"/>
+</symbol>
+
+<symbol id="i-sc0" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <path d="M27.2 24q4.8 5.2 9.6 0" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+</symbol>
+
+<symbol id="i-sc1" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <path d="M28 25.5h8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+  <use href="#b-drop" transform="translate(52 15)"/>
+</symbol>
+
+<symbol id="i-sc2" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <ellipse cx="32" cy="25.5" rx="3.4" ry="2.6" fill="currentColor"/>
+  <use href="#b-sun" transform="translate(53 13) scale(.8)"/>
+  <use href="#b-drop" transform="translate(11 17) scale(.9)"/>
+</symbol>
+
+<symbol id="i-sc3" viewBox="0 0 64 64">
+  <use href="#b-body"/><use href="#b-eyes"/>
+  <ellipse cx="32" cy="26" rx="4.6" ry="3.4" fill="currentColor"/>
+  <use href="#b-sun" transform="translate(53 12) scale(.85)"/>
+  <use href="#b-drop" transform="translate(11 16)"/>
+  <use href="#b-drop" transform="translate(56 30) scale(.75)"/>
+</symbol>
+
+<!-- ---- preference scale: thermometer + arrows ---- -->
+<g id="b-therm" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M18 10a4.5 4.5 0 0 1 9 0v26a8 8 0 1 1-9 0z"/>
+  <path d="M22.5 20v18"/>
+</g>
+<symbol id="i-pr-3" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 10v16M38 20l6 6 6-6"/><path d="M44 34v14M38 42l6 6 6-6"/></g></symbol>
+<symbol id="i-pr-2" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 14v26M37 33l7 7 7-7"/></g></symbol>
+<symbol id="i-pr-1" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 24v14M39 34l5 5 5-5"/></g></symbol>
+<symbol id="i-pr0" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"><path d="M36 27h16M36 37h16"/></g></symbol>
+<symbol id="i-pr1" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 39V25M39 30l5-5 5 5"/></g></symbol>
+<symbol id="i-pr2" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 40V14M37 21l7-7 7 7"/></g></symbol>
+<symbol id="i-pr3" viewBox="0 0 64 64"><use href="#b-therm"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M44 26V10M38 16l6-6 6 6"/><path d="M44 50V36M38 42l6-6 6 6"/></g></symbol>
+
+<!-- ---- yes / no ---- -->
+<symbol id="i-yes" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="3.4"/>
+  <path d="M21 33l8 8 15-17" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-no" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="3.4"/>
+  <path d="M23 23l18 18M41 23L23 41" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- ---- room conditions ---- -->
+<symbol id="i-fan-on" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 30c0-9-5-13-11-11s-4 11 5 13M32 30c8-4 13-1 13 5s-8 8-11 0M32 30c-3 9-9 11-14 7s0-12 9-11"/>
+    <circle cx="32" cy="31" r="3.6"/><path d="M32 44v9M24 55h16"/>
+  </g>
+  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".55">
+    <path d="M52 16c3 2 3 6 0 8M57 11c5 4 5 14 0 18"/></g>
+</symbol>
+<symbol id="i-fan-off" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
+    <path d="M32 30c0-9-5-13-11-11s-4 11 5 13M32 30c8-4 13-1 13 5s-8 8-11 0M32 30c-3 9-9 11-14 7s0-12 9-11"/>
+    <circle cx="32" cy="31" r="3.6"/><path d="M32 44v9M24 55h16"/>
+  </g>
+  <path d="M12 12l40 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-curtain-open" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 10h48"/>
+    <path d="M14 10v42c5-2 7-10 7-21S19 12 14 10zM50 10v42c-5-2-7-10-7-21s2-19 7-21z"/>
+    <path d="M26 16h12v32H26z" opacity=".45"/>
+  </g>
+</symbol>
+<symbol id="i-curtain-closed" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 10h48"/>
+    <path d="M14 10v44h18V10M50 10v44H32V10"/>
+    <path d="M20 12v40M26 12v40M38 12v40M44 12v40" opacity=".45"/>
+  </g>
+</symbol>
+<symbol id="i-sun-window" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="10" y="20" width="34" height="34" rx="2"/><path d="M27 20v34M10 37h34"/>
+  </g>
+  <use href="#b-sun" transform="translate(48 15) scale(1.15)"/>
+  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".6">
+    <path d="M44 24L30 38M50 30L36 44"/></g>
+</symbol>
+<symbol id="i-no-sun-window" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="10" y="20" width="34" height="34" rx="2"/><path d="M27 20v34M10 37h34"/>
+    <path d="M46 22c4 0 7 3 7 6.5 0 1-.2 1.8-.6 2.6 2.7.5 4.6 2.7 4.6 5.4 0 3-2.6 5.5-5.8 5.5H45" opacity=".8"/>
+  </g>
+</symbol>
+<symbol id="i-door" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 56V12l24-6v52z"/><path d="M38 14h12v42H12"/><circle cx="32" cy="33" r="2.2" fill="currentColor"/>
+  </g>
+</symbol>
+<symbol id="i-people" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="23" cy="21" r="8"/><path d="M8 52c0-9 6.7-14 15-14s15 5 15 14"/>
+    <circle cx="44" cy="24" r="6.5"/><path d="M42 39c8-1 14 4 14 13"/>
+  </g>
+</symbol>
+
+<!-- ---- night ---- -->
+<symbol id="i-bednet" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="32" cy="8" r="3"/>
+    <path d="M32 11L13 44M32 11l19 33"/>
+    <path d="M22 28h20M17 36h30" opacity=".5"/>
+    <path d="M8 46h48M12 46v10M52 46v10"/>
+    <path d="M14 50h14v-4h16v4h10" opacity=".85"/>
+  </g>
+</symbol>
+<symbol id="i-sleep-good" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="26" cy="34" r="10"/><path d="M22 33q2 2 4 0M28 33q2 2 4 0" stroke-width="2.4"/>
+    <path d="M21 39q5 4 10 0" stroke-width="2.4"/>
+    <path d="M42 26h9l-9 11h9M52 12h7l-7 9h7" stroke-width="2.8"/>
+  </g>
+</symbol>
+<symbol id="i-sleep-bad" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="26" cy="34" r="10"/>
+    <path d="M21 30l5 3M31 30l-5 3" stroke-width="2.4"/>
+    <path d="M21 41q5-4 10 0" stroke-width="2.4"/>
+    <path d="M42 26h9l-9 11h9" stroke-width="2.8"/>
+    <path d="M50 14l8 8M58 14l-8 8" stroke-width="2.8"/>
+  </g>
+</symbol>
+<symbol id="i-woke-hot" viewBox="0 0 64 64">
+  <use href="#b-therm" transform="translate(-6 0)"/>
+  <use href="#b-sun" transform="translate(44 20) scale(1.2)"/>
+  <use href="#b-drop" transform="translate(44 45)"/>
+</symbol>
+<symbol id="i-woke-cold" viewBox="0 0 64 64">
+  <use href="#b-therm" transform="translate(-6 0)"/>
+  <use href="#b-flake" transform="translate(44 22) scale(1.5)"/>
+  <use href="#b-flake" transform="translate(48 44)"/>
+</symbol>
+
+<!-- ---- clothing ---- -->
+<symbol id="i-headscarf" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 8c-11 0-19 9-19 20 0 8 3 12 4 18l-5 10h40l-5-10c1-6 4-10 4-18 0-11-8-20-19-20z"/>
+    <path d="M24 23a8 8 0 0 1 16 0v6c0 6-3.5 10-8 10s-8-4-8-10z"/>
+  </g>
+</symbol>
+<symbol id="i-kanga" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M25 10l7 4 7-4 9 6-4 9-4-2 4 31H24l4-31-4 2-4-9z"/>
+    <path d="M26 33h12M24.6 43h14.8" opacity=".5"/>
+  </g>
+</symbol>
+<symbol id="i-tshirt" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 10l8 5 8-5 12 7-5 11-5-2.5V52H22V25.5L17 28l-5-11z"/>
+  </g>
+</symbol>
+<symbol id="i-longsleeve" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 10l8 5 8-5 10 6 4 26-9 2-1-14v22H20V30L19 44l-9-2 4-26z"/>
+  </g>
+</symbol>
+<symbol id="i-sweater" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 12h16l10 5 4 24-9 2-1-13v22H20V30l-1 13-9-2 4-24z"/>
+    <path d="M26 12q6 6 12 0"/><path d="M22 46h20" opacity=".5"/>
+  </g>
+</symbol>
+<symbol id="i-longskirt" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 10h24l8 44H12z"/><path d="M20 20h24" opacity=".6"/><path d="M32 22v30" opacity=".4"/>
+  </g>
+</symbol>
+<symbol id="i-shorts" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M18 14h28l3 26H35l-3-14-3 14H15z"/><path d="M18 22h28" opacity=".6"/>
+  </g>
+</symbol>
+<symbol id="i-shoes" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 20h10c0 8 3 12 10 15l12 5c4 1.6 6 4 6 8H10z"/>
+    <path d="M10 36h14M20 20v6" opacity=".55"/>
+  </g>
+</symbol>
+<symbol id="i-barefoot" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 54c-6 0-9-4-9-10 0-7 4-9 4-17 0-7 4-11 9-11s9 4 9 10c0 9-4 12-4 18 0 6-3 10-9 10z"/>
+    <circle cx="42" cy="20" r="3.2"/><circle cx="48" cy="26" r="2.8"/><circle cx="50" cy="34" r="2.4"/>
+  </g>
+</symbol>
+
+<!-- ---- activity ---- -->
+<symbol id="i-sitting" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="20" cy="13" r="7"/>
+    <path d="M20 21c-6 0-9 4-9 9v10h18V30c0-5-3-9-9-9z"/>
+    <path d="M11 40v9h13"/>
+    <path d="M32 29h22v21H32z"/><path d="M43 29v21" opacity=".5"/>
+  </g>
+</symbol>
+<symbol id="i-walking" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 30L26 14l18 16"/><path d="M13 28v26h26V28"/>
+    <circle cx="26" cy="32" r="4.6"/><path d="M26 37v9M22 54l4-8 5 8M20 41l6 2 6-3"/>
+  </g>
+</symbol>
+<symbol id="i-playing" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="26" cy="15" r="6.6"/>
+    <path d="M26 22l-4 14 8 8-3 12M22 36l-9 6M30 26l10 3"/>
+  </g>
+  <use href="#b-sun" transform="translate(50 14)"/>
+</symbol>
+<symbol id="i-chores" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 8L20 36"/><path d="M14 32h14l6 12c0 4-4 8-11 8s-12-4-12-8z"/>
+    <path d="M12 44h26" opacity=".5"/>
+    <path d="M46 20l6 6M50 14l6 6" opacity=".7"/>
+  </g>
+</symbol>
+<symbol id="i-eating" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="28" cy="34" r="17"/><circle cx="28" cy="34" r="9" opacity=".5"/>
+    <path d="M52 12v26M52 12c-3 0-4 3-4 7s1 6 4 6M56 12c3 0 4 3 4 7s-1 6-4 6" opacity=".9"/>
+  </g>
+</symbol>
+<symbol id="i-resting" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 26v24M8 36h48v14M8 50h48"/>
+    <path d="M14 30h12v6H14z"/>
+    <path d="M44 16h10l-10 12h10" stroke-width="2.8"/>
+  </g>
+</symbol>
+
+<!-- ---- misc ---- -->
+<symbol id="i-room-living" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 34v14h44V34"/><path d="M14 34V24a4 4 0 0 1 4-4h28a4 4 0 0 1 4 4v10"/>
+    <path d="M22 34V22M42 34V22" opacity=".5"/><path d="M14 48v6M50 48v6"/>
+  </g>
+</symbol>
+<symbol id="i-room-bed" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 24v26M8 36h48v14M8 50h48M56 50v-8"/>
+    <path d="M14 28h14v8H14z"/>
+  </g>
+</symbol>
+<symbol id="i-done" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="4"/>
+  <path d="M19 33l9 9 17-19" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-mark" viewBox="0 0 64 64">
+  <circle cx="32" cy="20" r="10" fill="currentColor"/>
+  <path d="M12 56c0-12 9-20 20-20s20 8 20 20z" fill="currentColor"/>
+</symbol>
+</defs></svg>
+
+<div id="app">
+  <div id="bar">
+    <button id="btn-home" title="Anza upya / Start again">&#8962;</button>
+    <div class="who" id="who"></div>
+    <span class="queue-badge hide" id="qbadge"></span>
+    <div class="step" id="stepno"></div>
+  </div>
+  <div id="prog"><i id="progbar"></i></div>
+  <div id="stage"><div class="wrap" id="wrap"></div></div>
+  <div id="foot" class="hide">
+    <button id="btn-back">&#8592;</button>
+    <button id="btn-next">Endelea</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ARC House 5 Comfort Survey  ·  v1.0
+   Digital version of "House 5 Comfort Survey / Utafiti wa Hali
+   ya Hewa Ndani ya Nyumba" (paper form v2).
+   ============================================================ */
+
+/* ---------- CONFIG — edit these three things ---------- */
+var CFG = {
+  /* Google Apps Script web-app URL, ending /exec. Until this is set,
+     answers are stored on the device only and can be exported by hand. */
+  endpoint: '',
+
+  /* Must match SUBMIT_TOKEN in apps-script.gs */
+  token: 'arc-house5-2026',
+
+  /* The girls, in the order you want them listed. Leave the array empty
+     to get a free-text name box instead. Initials or IDs are fine. */
+  roster: [],
+
+  house: 'House 5',
+  version: '1.0'
+};
+/* ------------------------------------------------------ */
+
+var LS_DRAFT = 'arc_survey_draft', LS_QUEUE = 'arc_survey_queue', LS_PREFS = 'arc_survey_prefs';
+
+/* ---------- shared option sets ---------- */
+var SENSATION = [
+  {v:-3, sw:'Baridi sana',   en:'Cold',       icon:'i-sc-3', c:'var(--s3)'},
+  {v:-2, sw:'Baridi',        en:'Cool',       icon:'i-sc-2', c:'var(--s2)'},
+  {v:-1, sw:'Baridi kidogo', en:'A bit cool', icon:'i-sc-1', c:'var(--s1)'},
+  {v: 0, sw:'Sawa',          en:'OK',         icon:'i-sc0',  c:'var(--s0)'},
+  {v: 1, sw:'Joto kidogo',   en:'A bit warm', icon:'i-sc1',  c:'var(--p1)'},
+  {v: 2, sw:'Joto',          en:'Warm',       icon:'i-sc2',  c:'var(--p2)'},
+  {v: 3, sw:'Joto sana',     en:'Hot',        icon:'i-sc3',  c:'var(--p3)'}
+];
+var PREFERENCE = [
+  {v:-3, sw:'Baridi zaidi sana',   en:'A lot colder',  icon:'i-pr-3', c:'var(--s3)'},
+  {v:-2, sw:'Baridi zaidi',        en:'Colder',        icon:'i-pr-2', c:'var(--s2)'},
+  {v:-1, sw:'Baridi kidogo zaidi', en:'A bit colder',  icon:'i-pr-1', c:'var(--s1)'},
+  {v: 0, sw:'Ibaki hivi hivi',     en:'No change',     icon:'i-pr0',  c:'var(--s0)'},
+  {v: 1, sw:'Joto kidogo zaidi',   en:'A bit warmer',  icon:'i-pr1',  c:'var(--p1)'},
+  {v: 2, sw:'Joto zaidi',          en:'Warmer',        icon:'i-pr2',  c:'var(--p2)'},
+  {v: 3, sw:'Joto zaidi sana',     en:'A lot warmer',  icon:'i-pr3',  c:'var(--p3)'}
+];
+function YN(iconYes, iconNo){
+  return [{v:1, sw:'Ndiyo', en:'Yes', icon:iconYes||'i-yes', c:'var(--yes)'},
+          {v:0, sw:'Hapana',en:'No',  icon:iconNo ||'i-no',  c:'var(--no)'}];
+}
+
+/* ---------- the questions ---------- */
+var QS = [
+  /* ===== SECTION A — observed by the surveyor, never asked ===== */
+  {id:'a1_doors_open', sec:'A', surveyorOnly:true, type:'count', max:12, icon:'i-door',
+   sw:'Milango mingapi iko wazi?', en:'How many doors are open?',
+   hintSw:'Hesabu wewe mwenyewe. Usimuulize.', hintEn:'Count these yourself. Do not ask her.'},
+
+  {id:'a2_people', sec:'A', surveyorOnly:true, type:'count', max:25, icon:'i-people',
+   sw:'Watu wangapi wamo chumbani?', en:'How many people are in the room?'},
+
+  {id:'a3_fan_running', sec:'A', surveyorOnly:true, type:'choice', layout:'yn',
+   sw:'Je, feni inafanya kazi?', en:'Is the fan running?',
+   opts:YN('i-fan-on','i-fan-off')},
+
+  {id:'a4_curtains', sec:'A', surveyorOnly:true, type:'choice', layout:'yn',
+   sw:'Pazia', en:'Curtains',
+   opts:[{v:'open',  sw:'Wazi',       en:'Open',   icon:'i-curtain-open',   c:'var(--p1)'},
+         {v:'closed',sw:'Zimefungwa', en:'Closed', icon:'i-curtain-closed', c:'var(--s2)'}]},
+
+  {id:'a5_sun_on_windows', sec:'A', surveyorOnly:true, type:'choice', layout:'yn',
+   sw:'Je, jua linaangaza kwenye madirisha?', en:'Is the sun shining on the windows?',
+   opts:[{v:1, sw:'Ndiyo', en:'Yes', icon:'i-sun-window',    c:'var(--p2)'},
+         {v:0, sw:'Hapana',en:'No',  icon:'i-no-sun-window', c:'var(--s2)'}]},
+
+  {id:'a6_other_heat', sec:'A', surveyorOnly:true, type:'text', optional:true,
+   sw:'Je, kuna kitu kingine kinachofanya chumba kiwe na joto, au kuna jambo lolote la tofauti leo?',
+   en:'Is anything else making the room hot, or is anything unusual today?'},
+
+  /* ===== SECTION B — about last night, her own bedroom ===== */
+  {id:'b7_bedroom_last_night', sec:'B', type:'scale', opts:SENSATION,
+   sw:'Usiku uliopita, chumba chako cha kulala kilikuwaje?',
+   en:'Last night, how did your bedroom feel?',
+   hintSw:'Kuhusu chumba chake cha kulala, si chumba mlichokaa sasa.',
+   hintEn:'About her own bedroom, not the room you are sitting in.'},
+
+  {id:'b8_used_fan', sec:'B', type:'choice', layout:'yn',
+   sw:'Ulitumia feni usiku uliopita?', en:'Did you use the fan last night?',
+   opts:YN('i-fan-on','i-fan-off')},
+
+  {id:'b9_why_no_fan', sec:'B', type:'text', optional:true,
+   showIf:function(a){ return a.b8_used_fan === 0; },
+   sw:'Kwa nini hukutumia feni?', en:'Why did you not use the fan?',
+   hintSw:'Andika maneno yake hasa.', hintEn:'Write her exact words.',
+   swSelf:'Kwa nini hukutumia feni?', enSelf:'Why did you not use the fan?'},
+
+  {id:'b10_bed_net', sec:'B', type:'choice', layout:'yn',
+   sw:'Ulitumia chandarua?', en:'Did you use the bed net?',
+   opts:[{v:1, sw:'Ndiyo', en:'Yes', icon:'i-bednet', c:'var(--yes)'},
+         {v:0, sw:'Hapana',en:'No',  icon:'i-no',     c:'var(--no)'}]},
+
+  {id:'b11_slept_well', sec:'B', type:'choice', layout:'yn',
+   sw:'Ulilala vizuri?', en:'Did you sleep well?',
+   opts:[{v:1, sw:'Ndiyo', en:'Yes', icon:'i-sleep-good', c:'var(--yes)'},
+         {v:0, sw:'Hapana',en:'No',  icon:'i-sleep-bad',  c:'var(--no)'}]},
+
+  {id:'b12_woke_hot_cold', sec:'B', type:'choice', layout:'g3',
+   sw:'Uliamka usiku kwa sababu ulikuwa na joto sana au baridi sana?',
+   en:'Did you wake up in the night because you were too hot or too cold?',
+   opts:[{v:1, sw:'Joto sana',   en:'Too hot',  icon:'i-woke-hot',  c:'var(--p3)'},
+         {v:2, sw:'Baridi sana', en:'Too cold', icon:'i-woke-cold', c:'var(--s3)'},
+         {v:0, sw:'Hapana',      en:'No',       icon:'i-no',        c:'var(--muted)'}]},
+
+  /* ===== SECTION C — this room, right now ===== */
+  {id:'c_room', sec:'C', type:'choice', layout:'g3',
+   sw:'Tuko katika chumba gani sasa?', en:'Which room are we in now?',
+   hintSw:'Lazima awe amekaa katika chumba hiki kwa angalau dakika 30.',
+   hintEn:'She must have been in this room for at least 30 minutes.',
+   opts:[{v:'living',  sw:'Sebule',            en:'Living room', icon:'i-room-living', c:'var(--green)'},
+         {v:'bedroom', sw:'Chumba cha kulala', en:'Bedroom',     icon:'i-room-bed',    c:'var(--green)'},
+         {v:'other',   sw:'Nyingine',          en:'Other',       icon:'i-door',        c:'var(--muted)'}]},
+
+  {id:'c13_feel_words', sec:'C', type:'text', noPrime:true,
+   sw:'Unajisikiaje katika chumba hiki sasa hivi?',
+   en:'How do you feel in this room right now?',
+   hintSw:'Andika maneno yake hasa. Usisome chaguo lolote. mf. "baridi"',
+   hintEn:'Write her exact words. Do not read out any options. e.g. "baridi"',
+   hintSwSelf:'Andika kwa maneno yako mwenyewe. mf. "baridi"',
+   hintEnSelf:'Write it in your own words. e.g. "baridi"'},
+
+  {id:'c14_word_meaning', sec:'C', type:'text', noPrime:true,
+   sw:'Neno hilo lina maana gani kwako?',
+   en:'What does that word mean to you?',
+   hintSw:'Andika jibu lake. mf. "si joto sana, ni vizuri"',
+   hintEn:'Write her answer. e.g. "si joto sana, ni vizuri"',
+   hintSwSelf:'mf. "si joto sana, ni vizuri"',
+   hintEnSelf:'e.g. "si joto sana, ni vizuri"'},
+
+  {id:'c15_sensation_now', sec:'C', type:'scale', opts:SENSATION, primes:true,
+   sw:'Sasa chagua kimoja kinachofaa zaidi',
+   en:'Now pick the one that fits best',
+   hintSw:'Soma chaguo zote saba.', hintEn:'Read out all seven choices.'},
+
+  {id:'c16_preference', sec:'C', type:'scale', opts:PREFERENCE,
+   sw:'Ungependa iweje sasa hivi?', en:'How would you like it to be right now?',
+   hintSw:'Soma chaguo zote saba.', hintEn:'Read out all seven choices.'},
+
+  {id:'c17_comfortable', sec:'C', type:'choice', layout:'yn',
+   sw:'Sasa hivi, unajisikia vizuri?', en:'Right now, do you feel comfortable?',
+   opts:YN()},
+
+  {id:'c18_clothing', sec:'C', type:'multi', layout:'g3',
+   sw:'Amevaa nini sasa?', en:'What is she wearing now?',
+   hintSw:'Weka alama kwenye kila kitu unachokiona. Usimuulize.',
+   hintEn:'Tick everything you can see. Do not ask her.',
+   swSelf:'Umevaa nini sasa?', enSelf:'What are you wearing now?',
+   hintSwSelf:'Gusa kila kitu ulichovaa.', hintEnSelf:'Tap everything you are wearing.',
+   opts:[{v:1, sw:'Hijabu',                    en:'Headscarf',              icon:'i-headscarf'},
+         {v:2, sw:'Gauni jepesi au kanga',     en:'Light dress or kanga',   icon:'i-kanga'},
+         {v:3, sw:'Fulana au mikono mifupi',   en:'T-shirt or short sleeves',icon:'i-tshirt'},
+         {v:4, sw:'Shati la mikono mirefu',    en:'Long-sleeved top',       icon:'i-longsleeve'},
+         {v:5, sw:'Sweta',                     en:'Sweater or jumper',      icon:'i-sweater'},
+         {v:6, sw:'Sketi ndefu au suruali ndefu', en:'Long skirt or trousers', icon:'i-longskirt'},
+         {v:7, sw:'Sketi fupi au kaptula',     en:'Short skirt or shorts',  icon:'i-shorts'},
+         {v:8, sw:'Soksi au viatu',            en:'Socks or shoes',         icon:'i-shoes'},
+         {v:9, sw:'Bila viatu',                en:'Bare feet',              icon:'i-barefoot'}]},
+
+  {id:'c18_layers', sec:'C', type:'count', max:6, start:1, icon:'i-sweater',
+   sw:'Tabaka za juu, bila kuhesabu chupi',
+   en:'Layers on top, not counting underwear'},
+
+  {id:'c19_activity', sec:'C', type:'choice', layout:'g3',
+   sw:'Ulikuwa unafanya nini katika dakika 30 zilizopita?',
+   en:'What were you doing in the last 30 minutes?',
+   opts:[{v:1, sw:'Kukaa, kusoma, kazi za shule', en:'Sitting, reading, schoolwork', icon:'i-sitting',  c:'var(--green)'},
+         {v:2, sw:'Kutembea ndani',               en:'Walking about indoors',        icon:'i-walking',  c:'var(--green)'},
+         {v:3, sw:'Kucheza au kukimbia nje',      en:'Playing or running outside',   icon:'i-playing',  c:'var(--p2)'},
+         {v:4, sw:'Kazi za nyumbani',             en:'Housework or chores',          icon:'i-chores',   c:'var(--green)'},
+         {v:5, sw:'Kula',                         en:'Eating',                       icon:'i-eating',   c:'var(--green)'},
+         {v:6, sw:'Kupumzika, kulala, au ameamka tu', en:'Resting, lying down, or just woken up', icon:'i-resting', c:'var(--s2)'}]},
+
+  /* ===== SECTION D ===== */
+  {id:'d_notes', sec:'D', type:'text', optional:true,
+   sw:'Kuna kitu kingine chochote?', en:'Anything else?',
+   hintSw:'Andika chochote kingine alichosema ambacho maswali hapo juu hayakukigusa.',
+   hintEn:'Write anything else she said that the questions above did not cover.',
+   hintSwSelf:'Andika chochote kingine unachotaka kutuambia.',
+   hintEnSelf:'Write anything else you would like to tell us.'}
+];
+
+var SEC_NAME = {
+  A:{sw:'Sehemu A · Hali ya chumba', en:'Section A · Room conditions'},
+  B:{sw:'Sehemu B · Usiku uliopita', en:'Section B · About last night'},
+  C:{sw:'Sehemu C · Sasa hivi',      en:'Section C · Right now'},
+  D:{sw:'Sehemu D · Maelezo',        en:'Section D · Notes'}
+};
+
+/* the column order written to the sheet — must match apps-script.gs */
+var FIELDS = ['submitted_at','local_time','mode','lang','house','name','asked_by','date','time',
+  'a1_doors_open','a2_people','a3_fan_running','a4_curtains','a5_sun_on_windows','a6_other_heat',
+  'b7_bedroom_last_night','b8_used_fan','b9_why_no_fan','b10_bed_net','b11_slept_well','b12_woke_hot_cold',
+  'c_room','c13_feel_words','c14_word_meaning','c15_sensation_now','c16_preference','c17_comfortable',
+  'c18_clothing','c18_layers','c19_activity','d_notes',
+  'duration_seconds','app_version','device'];
+
+/* ============================================================
+   state
+   ============================================================ */
+var S = {
+  screen : 'start',
+  lang   : 'both',       // both | sw | en
+  mode   : 'surveyor',   // surveyor | self
+  meta   : {name:'', asked_by:'', date:'', time:''},
+  ans    : {},
+  i      : 0,
+  started: 0,
+  primed : false,        // true once the 7-point scale has been shown
+  sent   : false
+};
+
+var $wrap=document.getElementById('wrap'), $foot=document.getElementById('foot'),
+    $back=document.getElementById('btn-back'), $next=document.getElementById('btn-next'),
+    $bar=document.getElementById('bar'), $who=document.getElementById('who'),
+    $stepno=document.getElementById('stepno'), $prog=document.getElementById('progbar'),
+    $badge=document.getElementById('qbadge'), $stage=document.getElementById('stage');
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function pad(n){ return (n<10?'0':'')+n; }
+function today(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function now(){ var d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function icon(id,cls){ return '<svg class="'+(cls||'')+'"><use href="#'+id+'"/></svg>'; }
+
+/* bilingual label: returns the two lines the current language setting wants */
+function lines(q, key){
+  var self = S.mode==='self';
+  var sw = (self && q[key+'Self'] ? q[key+'Self'] : q[key]) || '';
+  var enKey = key==='sw' ? 'en' : (key==='hintSw' ? 'hintEn' : null);
+  var en = '';
+  if (enKey) en = (self && q[enKey+'Self'] ? q[enKey+'Self'] : q[enKey]) || '';
+  return {sw:sw, en:en};
+}
+function qTitleHTML(q){
+  var L = lines(q,'sw');
+  if (S.lang==='sw') return '<div class="q-sw">'+esc(L.sw)+'</div>';
+  if (S.lang==='en') return '<div class="q-sw">'+esc(L.en)+'</div>';
+  return '<div class="q-sw">'+esc(L.sw)+'</div><div class="q-en">'+esc(L.en)+'</div>';
+}
+function qHintHTML(q){
+  var L = lines(q,'hintSw');
+  if (!L.sw && !L.en) return '';
+  var txt = S.lang==='en' ? L.en : (S.lang==='sw' ? L.sw : L.sw+' &nbsp;·&nbsp; '+L.en);
+  return '<div class="q-hint">'+txt+'</div>';
+}
+function optLabelHTML(o){
+  if (S.lang==='sw') return '<span class="lab-sw">'+esc(o.sw)+'</span>';
+  if (S.lang==='en') return '<span class="lab-sw">'+esc(o.en)+'</span>';
+  return '<span class="lab-sw">'+esc(o.sw)+'</span><span class="lab-en">'+esc(o.en)+'</span>';
+}
+
+/* ============================================================
+   which questions apply
+   ============================================================ */
+function steps(){
+  return QS.filter(function(q){
+    if (q.surveyorOnly && S.mode!=='surveyor') return false;
+    if (q.showIf && !q.showIf(S.ans)) return false;
+    return true;
+  });
+}
+function answered(q){
+  var v = S.ans[q.id];
+  if (q.type==='multi') return Array.isArray(v) && v.length>0;
+  if (q.type==='text')  return typeof v==='string' && v.trim()!=='';
+  return v !== undefined && v !== null && v !== '';
+}
+
+/* ============================================================
+   persistence
+   ============================================================ */
+function saveDraft(){
+  try{ localStorage.setItem(LS_DRAFT, JSON.stringify({
+    lang:S.lang, mode:S.mode, meta:S.meta, ans:S.ans, i:S.i,
+    started:S.started, primed:S.primed, at:Date.now()
+  })); }catch(e){}
+}
+function clearDraft(){ try{ localStorage.removeItem(LS_DRAFT); }catch(e){} }
+function loadDraft(){ try{ var s=localStorage.getItem(LS_DRAFT); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function prefs(){ try{ return JSON.parse(localStorage.getItem(LS_PREFS))||{}; }catch(e){ return {}; } }
+function savePrefs(p){ try{ localStorage.setItem(LS_PREFS, JSON.stringify(p)); }catch(e){} }
+function queue(){ try{ return JSON.parse(localStorage.getItem(LS_QUEUE))||[]; }catch(e){ return []; } }
+function setQueue(q){ try{ localStorage.setItem(LS_QUEUE, JSON.stringify(q)); }catch(e){} paintBadge(); }
+function paintBadge(){
+  var n = queue().length;
+  $badge.classList.toggle('hide', n===0);
+  $badge.textContent = n + ' ⏳';
+  $badge.title = n+' not yet sent';
+}
+
+/* ============================================================
+   chrome
+   ============================================================ */
+function paintChrome(){
+  var st = steps(), on = S.screen==='q';
+  $stepno.textContent = on ? (S.i+1)+' / '+st.length : '';
+  $prog.style.width = on ? ((S.i)/st.length*100)+'%' : (S.screen==='done'?'100%':'0%');
+  var bits=[];
+  if (S.meta.name) bits.push(S.meta.name);
+  if (S.screen!=='start') bits.push(S.mode==='self' ? 'mwenyewe' : 'msaidizi');
+  $who.textContent = bits.join(' · ');
+  $foot.classList.toggle('hide', S.screen==='start' || S.screen==='done');
+  paintBadge();
+}
+
+/* ============================================================
+   screens
+   ============================================================ */
+function render(){
+  if (S.screen==='start')  renderStart();
+  else if (S.screen==='q') renderQ();
+  else if (S.screen==='review') renderReview();
+  else if (S.screen==='done')   renderDone(S.sent);
+  paintChrome();
+  $stage.scrollTop = 0;
+}
+
+/* ---------- start ---------- */
+function renderStart(){
+  var p = prefs();
+  if (p.lang) S.lang = p.lang;
+  if (p.asked_by && !S.meta.asked_by) S.meta.asked_by = p.asked_by;
+  if (!S.meta.date) S.meta.date = today();
+  if (!S.meta.time) S.meta.time = now();
+
+  var draft = loadDraft();
+  var hasDraft = draft && draft.ans && Object.keys(draft.ans).length>0;
+
+  var rosterHTML = CFG.roster.length
+    ? '<div class="chips" id="roster">' + CFG.roster.map(function(n){
+        return '<button class="chip'+(S.meta.name===n?' on':'')+'" data-name="'+esc(n)+'">'+esc(n)+'</button>';
+      }).join('') + '</div>'
+    : '<input type="text" id="f-name" placeholder="Jina / Name" value="'+esc(S.meta.name)+'">';
+
+  $wrap.innerHTML =
+  '<div class="logo"><div class="mark">'+icon('i-mark')+'</div>'+
+    '<div><h1>Utafiti wa Hali ya Hewa</h1><div class="sub">ARC &middot; '+esc(CFG.house)+' &middot; Comfort Survey</div></div></div>'+
+
+  (hasDraft ? '<div class="note" id="resume-note"><b>Kuna utafiti ambao haujakamilika.</b> There is an unfinished survey'+
+     (draft.meta&&draft.meta.name?' for '+esc(draft.meta.name):'')+'.<div class="mini" style="margin-top:10px">'+
+     '<button id="btn-resume">Endelea nao / Resume</button><button id="btn-discard">Anza upya / Start fresh</button></div></div>' : '')+
+
+  '<div class="panel">'+
+    '<div class="field"><label>Lugha / Language</label>'+
+      '<div class="chips" id="lang">'+
+        ['sw|Kiswahili','both|Zote mbili / Both','en|English'].map(function(s){
+          var b=s.split('|'); return '<button class="chip'+(S.lang===b[0]?' on':'')+'" data-lang="'+b[0]+'">'+b[1]+'</button>';
+        }).join('')+
+      '</div></div>'+
+
+    '<div class="field"><label>Nani anajaza? / Who is filling this in?</label>'+
+      '<div class="chips" id="mode">'+
+        '<button class="chip'+(S.mode==='surveyor'?' on':'')+'" data-mode="surveyor">Mtu mzima / A grown-up</button>'+
+        '<button class="chip'+(S.mode==='self'?' on':'')+'" data-mode="self">Msichana mwenyewe / The girl herself</button>'+
+      '</div>'+
+      '<div class="q-hint" id="mode-hint"></div></div>'+
+
+    '<div class="field"><label>Jina / Name</label>'+rosterHTML+'</div>'+
+
+    (S.mode==='surveyor'
+      ? '<div class="field"><label>Aliyeuliza / Asked by</label>'+
+        '<input type="text" id="f-asked" placeholder="Jina lako / Your name" value="'+esc(S.meta.asked_by)+'"></div>'
+      : '')+
+
+    '<div class="field"><label>Tarehe na saa / Date and time</label>'+
+      '<div style="display:flex;gap:10px">'+
+        '<input type="date" id="f-date" value="'+esc(S.meta.date)+'" style="flex:1;border:3px solid var(--line);border-radius:16px;padding:14px;font-size:18px;background:#fff;color:var(--ink);outline:none">'+
+        '<input type="time" id="f-time" value="'+esc(S.meta.time)+'" style="flex:1;border:3px solid var(--line);border-radius:16px;padding:14px;font-size:18px;background:#fff;color:var(--ink);outline:none">'+
+      '</div></div>'+
+  '</div>'+
+
+  '<button id="btn-start" style="border:none;border-radius:16px;padding:22px;font-size:23px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">Anza / Start</button>'+
+
+  '<div class="mini" style="margin-top:20px;justify-content:center">'+
+    '<button id="btn-export">Hifadhi nakala / Export data ('+queue().length+')</button>'+
+  '</div>'+
+  (CFG.endpoint ? '' :
+    '<div class="note" style="margin-top:14px">No Google Sheet is connected yet. Answers are saved on this device and can be exported with the button above. See <b>survey/README.md</b>.</div>');
+
+  var hint = S.mode==='surveyor'
+    ? 'Sehemu A na swali la mavazi hujazwa kwa kuangalia, bila kumuuliza. / Section A and the clothing question are filled in by looking, not by asking.'
+    : 'Sehemu A inarukwa kwa sababu inahitaji mtu mzima aangalie chumba. / Section A is skipped because it needs an adult to look at the room.';
+  document.getElementById('mode-hint').innerHTML = hint;
+
+  // language
+  document.getElementById('lang').addEventListener('click', function(e){
+    var b=e.target.closest('[data-lang]'); if(!b) return;
+    S.lang=b.dataset.lang; var p=prefs(); p.lang=S.lang; savePrefs(p); render();
+  });
+  // mode
+  document.getElementById('mode').addEventListener('click', function(e){
+    var b=e.target.closest('[data-mode]'); if(!b) return;
+    S.mode=b.dataset.mode; render();
+  });
+  // roster
+  var r=document.getElementById('roster');
+  if (r) r.addEventListener('click', function(e){
+    var b=e.target.closest('[data-name]'); if(!b) return;
+    S.meta.name = (S.meta.name===b.dataset.name) ? '' : b.dataset.name; render();
+  });
+  var fn=document.getElementById('f-name');
+  if (fn) fn.addEventListener('input', function(){ S.meta.name=this.value; });
+  var fa=document.getElementById('f-asked');
+  if (fa) fa.addEventListener('input', function(){ S.meta.asked_by=this.value; });
+  document.getElementById('f-date').addEventListener('input', function(){ S.meta.date=this.value; });
+  document.getElementById('f-time').addEventListener('input', function(){ S.meta.time=this.value; });
+
+  document.getElementById('btn-start').addEventListener('click', function(){
+    if (!S.meta.name || !S.meta.name.trim()){
+      alertish('Tafadhali andika jina. / Please enter a name.'); return;
+    }
+    if (S.meta.asked_by){ var p=prefs(); p.asked_by=S.meta.asked_by; savePrefs(p); }
+    S.started = Date.now(); S.i=0; S.screen='q'; saveDraft(); render();
+  });
+  document.getElementById('btn-export').addEventListener('click', exportQueue);
+
+  if (hasDraft){
+    document.getElementById('btn-resume').addEventListener('click', function(){
+      S.lang=draft.lang; S.mode=draft.mode; S.meta=draft.meta; S.ans=draft.ans;
+      S.i=draft.i||0; S.started=draft.started||Date.now(); S.primed=!!draft.primed;
+      S.screen='q'; render();
+    });
+    document.getElementById('btn-discard').addEventListener('click', function(){
+      clearDraft(); S.ans={}; S.i=0; S.primed=false; render();
+    });
+  }
+}
+
+function alertish(msg){
+  var n=document.createElement('div');
+  n.textContent=msg;
+  n.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#2b2f2d;color:#fff;padding:14px 20px;border-radius:12px;font-size:16px;z-index:9999;max-width:88%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25)';
+  document.body.appendChild(n);
+  setTimeout(function(){ n.remove(); }, 2600);
+}
+
+/* ---------- a question ---------- */
+function renderQ(){
+  var st = steps();
+  if (S.i >= st.length){ S.screen='review'; render(); return; }
+  var q = st[S.i];
+
+  if (q.primes) S.primed = true;   // the 7-point scale has now been seen
+
+  var sec = SEC_NAME[q.sec];
+  var secTxt = S.lang==='en' ? sec.en : (S.lang==='sw' ? sec.sw : sec.sw);
+  var html = '<div class="sec">'+esc(secTxt)+'</div><div class="q-head">'+qTitleHTML(q)+qHintHTML(q)+'</div>';
+
+  if (q.type==='scale')       html += scaleHTML(q);
+  else if (q.type==='choice') html += choiceHTML(q);
+  else if (q.type==='multi')  html += multiHTML(q);
+  else if (q.type==='count')  html += countHTML(q);
+  else if (q.type==='text')   html += textHTML(q);
+
+  $wrap.innerHTML = html;
+  wire(q);
+
+  $back.disabled = false;
+  $next.textContent = (S.i===st.length-1)
+    ? (S.lang==='en' ? 'Check answers' : 'Angalia majibu')
+    : (S.lang==='en' ? 'Next' : 'Endelea');
+  $next.disabled = !(answered(q) || q.optional);
+}
+
+function optHTML(q,o,on,extra){
+  return '<button class="opt'+(on?' on':'')+'" data-v="'+esc(o.v)+'" style="color:'+(o.c||'var(--green)')+'">'+
+         icon(o.icon)+(extra||'')+optLabelHTML(o)+'</button>';
+}
+function scaleHTML(q){
+  var cur = S.ans[q.id];
+  return '<div class="opts scale">'+q.opts.map(function(o){
+    var num = '<span class="num">'+(o.v>0?'+':'')+o.v+'</span>';
+    var on = cur===o.v;
+    return '<button class="opt'+(on?' on':'')+'" data-v="'+o.v+'" style="color:'+o.c+'">'+
+           icon(o.icon)+'<span class="txt">'+num+optLabelHTML(o)+'</span></button>';
+  }).join('')+'</div>';
+}
+function choiceHTML(q){
+  var cur = S.ans[q.id];
+  var cls = q.layout==='yn' ? 'yn' : (q.layout==='g3' ? 'opts g3' : 'opts gauto');
+  return '<div class="'+cls+'">'+q.opts.map(function(o){
+    return optHTML(q,o,String(cur)===String(o.v));
+  }).join('')+'</div>';
+}
+function multiHTML(q){
+  var cur = S.ans[q.id]||[];
+  return '<div class="opts '+(q.layout||'gauto')+'">'+q.opts.map(function(o){
+    return optHTML(q,o,cur.indexOf(o.v)>-1);
+  }).join('')+'</div>';
+}
+function countHTML(q){
+  var v = S.ans[q.id];
+  if (v===undefined) v = (q.start!==undefined ? q.start : 0);
+  return '<div class="counter">'+
+    '<button data-d="-1" aria-label="minus">&minus;</button>'+
+    '<div class="val" id="cval" style="color:var(--green-d)">'+v+'</div>'+
+    '<button data-d="1" aria-label="plus">+</button></div>'+
+    '<div style="display:grid;place-items:center;color:var(--green);opacity:.5">'+icon(q.icon||'i-people')+'</div>';
+}
+function textHTML(q){
+  var v = S.ans[q.id]||'';
+  var locked = q.noPrime && S.primed && v.trim()!=='';
+  var note = '';
+  if (locked){
+    note = '<div class="lock-note">&#128274; '+
+      (S.lang==='en' ? 'Locked — her own words were recorded before the seven choices were shown.'
+                     : 'Imefungwa &middot; maneno yake yalihifadhiwa kabla ya kuonyesha chaguo saba.')+'</div>';
+  }
+  return '<textarea id="ta"'+(locked?' readonly class="locked"':'')+
+    ' placeholder="'+(S.lang==='en'?'Type here…':'Andika hapa…')+'">'+esc(v)+'</textarea>'+note;
+}
+
+function wire(q){
+  $wrap.onclick = null;
+  if (q.type==='scale' || q.type==='choice'){
+    $wrap.onclick = function(e){
+      var b=e.target.closest('.opt'); if(!b) return;
+      var raw=b.dataset.v;
+      var o = q.opts.filter(function(x){ return String(x.v)===raw; })[0];
+      S.ans[q.id] = o.v;
+      Array.prototype.forEach.call($wrap.querySelectorAll('.opt'), function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      $next.disabled = false;
+      saveDraft();
+      setTimeout(function(){ if (S.screen==='q' && steps()[S.i]===q) go(1); }, 280);
+    };
+  }
+  if (q.type==='multi'){
+    $wrap.onclick = function(e){
+      var b=e.target.closest('.opt'); if(!b) return;
+      var raw=b.dataset.v;
+      var o = q.opts.filter(function(x){ return String(x.v)===raw; })[0];
+      var cur = S.ans[q.id]||[];
+      var k = cur.indexOf(o.v);
+      if (k>-1) cur.splice(k,1); else cur.push(o.v);
+      S.ans[q.id]=cur;
+      b.classList.toggle('on', k===-1);
+      $next.disabled = !(cur.length>0 || q.optional);
+      saveDraft();
+    };
+  }
+  if (q.type==='count'){
+    var v = S.ans[q.id];
+    if (v===undefined) v = (q.start!==undefined ? q.start : 0);
+    S.ans[q.id]=v; $next.disabled=false;
+    $wrap.onclick = function(e){
+      var b=e.target.closest('[data-d]'); if(!b) return;
+      var d=parseInt(b.dataset.d,10);
+      var n=Math.max(0, Math.min(q.max||20, (S.ans[q.id]||0)+d));
+      S.ans[q.id]=n;
+      document.getElementById('cval').textContent=n;
+      saveDraft();
+    };
+  }
+  if (q.type==='text'){
+    var ta=document.getElementById('ta');
+    ta.addEventListener('input', function(){
+      S.ans[q.id]=this.value;
+      $next.disabled = !(this.value.trim()!=='' || q.optional);
+      saveDraft();
+    });
+    if (!ta.readOnly && !('ontouchstart' in window)) ta.focus();
+  }
+}
+
+function go(d){
+  var st = steps();
+  if (d>0){
+    var q = st[S.i];
+    if (q && !answered(q) && !q.optional){ return; }
+    if (S.i >= st.length-1){ S.screen='review'; saveDraft(); render(); return; }
+    S.i++;
+  } else {
+    if (S.i===0){ S.screen='start'; saveDraft(); render(); return; }
+    S.i--;
+  }
+  saveDraft(); render();
+}
+
+/* ---------- review ---------- */
+function shortAnswer(q){
+  var v = S.ans[q.id];
+  if (v===undefined || v===null || v==='' || (Array.isArray(v)&&!v.length)) return null;
+  if (q.type==='text')  return v;
+  if (q.type==='count') return String(v);
+  if (q.type==='multi'){
+    return v.map(function(x){
+      var o=q.opts.filter(function(y){return y.v===x;})[0];
+      return o ? (S.lang==='en'?o.en:o.sw) : x;
+    }).join(', ');
+  }
+  var o = q.opts.filter(function(y){ return String(y.v)===String(v); })[0];
+  if (!o) return String(v);
+  var lab = S.lang==='en' ? o.en : o.sw;
+  return (q.type==='scale' ? (o.v>0?'+':'')+o.v+'  ' : '') + lab;
+}
+
+function renderReview(){
+  var st = steps();
+  var rows = st.map(function(q,k){
+    var a = shortAnswer(q);
+    var L = lines(q,'sw');
+    var qt = S.lang==='en' ? L.en : L.sw;
+    return '<li><span class="rq">'+esc(qt)+'</span>'+
+      '<span class="ra'+(a?'':' empty')+'">'+esc(a || (S.lang==='en'?'—':'—'))+'</span>'+
+      '<button data-k="'+k+'">'+(S.lang==='en'?'edit':'badili')+'</button></li>';
+  }).join('');
+
+  var q = queue().length;
+  $wrap.innerHTML =
+    '<div class="sec">'+(S.lang==='en'?'Check before sending':'Angalia kabla ya kutuma')+'</div>'+
+    '<div class="q-head">'+
+      '<div class="q-sw">'+esc(S.meta.name)+'</div>'+
+      '<div class="q-en">'+esc(S.meta.date)+' &middot; '+esc(S.meta.time)+
+      (S.meta.asked_by ? ' &middot; '+esc(S.meta.asked_by) : '')+'</div></div>'+
+    (q ? '<div class="note">'+q+' '+(S.lang==='en'?'earlier survey(s) still waiting to be sent.':'utafiti uliopita bado haujatumwa.')+'</div>' : '')+
+    '<div class="panel"><ul class="review" id="rev">'+rows+'</ul></div>';
+
+  document.getElementById('rev').addEventListener('click', function(e){
+    var b=e.target.closest('[data-k]'); if(!b) return;
+    S.i = parseInt(b.dataset.k,10); S.screen='q'; render();
+  });
+
+  $back.disabled=false;
+  $next.disabled=false;
+  $next.textContent = S.lang==='en' ? 'Send' : 'Tuma';
+}
+
+/* ---------- done ---------- */
+function renderDone(sent){
+  $wrap.innerHTML =
+    '<div class="done">'+icon('i-done','done-mark')+
+    '<h2>'+(S.lang==='en'?'Thank you!':'Asante sana!')+'</h2>'+
+    '<p>'+(sent===true
+        ? (S.lang==='en'?'Your answers have been sent.':'Majibu yako yametumwa.')
+        : (S.lang==='en'?'Saved on this device. It will send itself when there is internet.'
+                        :'Imehifadhiwa kwenye kifaa hiki. Itatumwa yenyewe kukiwa na intaneti.'))+'</p>'+
+    '<button id="btn-again" style="border:none;border-radius:16px;padding:20px;font-size:21px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">'+
+      (S.lang==='en'?'Next girl':'Msichana mwingine')+'</button>'+
+    '<div class="mini" style="margin-top:18px;justify-content:center">'+
+      '<button id="btn-export2">'+(S.lang==='en'?'Export data':'Hifadhi nakala')+' ('+queue().length+')</button></div>'+
+    '</div>';
+  document.getElementById('btn-again').addEventListener('click', function(){
+    S.ans={}; S.i=0; S.primed=false; S.meta.name=''; S.meta.time=now(); S.meta.date=today();
+    S.screen='start'; clearDraft(); render();
+  });
+  document.getElementById('btn-export2').addEventListener('click', exportQueue);
+}
+
+/* ============================================================
+   submission
+   ============================================================ */
+function buildPayload(){
+  var p = {};
+  p.submitted_at   = new Date().toISOString();
+  p.local_time     = new Date().toString();
+  p.mode           = S.mode;
+  p.lang           = S.lang;
+  p.house          = CFG.house;
+  p.name           = S.meta.name;
+  p.asked_by       = S.meta.asked_by;
+  p.date           = S.meta.date;
+  p.time           = S.meta.time;
+  QS.forEach(function(q){
+    var v = S.ans[q.id];
+    if (Array.isArray(v)) v = v.slice().sort(function(a,b){return a-b;}).join(',');
+    p[q.id] = (v===undefined||v===null) ? '' : v;
+  });
+  p.duration_seconds = S.started ? Math.round((Date.now()-S.started)/1000) : '';
+  p.app_version      = CFG.version;
+  p.device           = navigator.userAgent;
+  return p;
+}
+
+function send(payload){
+  if (!CFG.endpoint) return Promise.reject(new Error('no endpoint'));
+  return fetch(CFG.endpoint, {
+    method : 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},  // avoids a CORS preflight
+    body   : JSON.stringify({token:CFG.token, fields:FIELDS, row:payload})
+  }).then(function(r){
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(t){
+    if (t.indexOf('OK')!==0) throw new Error(t.slice(0,120));
+    return true;
+  });
+}
+
+function submit(){
+  var payload = buildPayload();
+  $next.disabled = true;
+  $next.textContent = S.lang==='en' ? 'Sending…' : 'Inatuma…';
+  send(payload).then(function(){
+    clearDraft(); S.sent=true;  S.screen='done'; paintChrome(); renderDone(true); flushQueue();
+  }).catch(function(){
+    var q=queue(); q.push(payload); setQueue(q);
+    clearDraft(); S.sent=false; S.screen='done'; paintChrome(); renderDone(false);
+  });
+}
+
+function flushQueue(){
+  if (!CFG.endpoint) return;
+  var q = queue();
+  if (!q.length) return;
+  var item = q[0];
+  send(item).then(function(){
+    var cur = queue(); cur.shift(); setQueue(cur);
+    setTimeout(flushQueue, 400);
+  }).catch(function(){ /* still offline — try again later */ });
+}
+
+/* ---------- manual export, so nothing is ever stranded ---------- */
+function toCSV(rows){
+  var out = [FIELDS.join(',')];
+  rows.forEach(function(r){
+    out.push(FIELDS.map(function(f){
+      var v = r[f]==null ? '' : String(r[f]);
+      return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+    }).join(','));
+  });
+  return out.join('\n');
+}
+function exportQueue(){
+  var rows = queue();
+  if (!rows.length){ alertish(S.lang==='en'?'Nothing waiting to send.':'Hakuna kilichosalia.'); return; }
+  var blob = new Blob(['﻿'+toCSV(rows)], {type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'arc-house5-survey-'+today()+'.csv';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+/* ============================================================
+   wiring
+   ============================================================ */
+$next.addEventListener('click', function(){
+  if (S.screen==='review'){ submit(); return; }
+  go(1);
+});
+$back.addEventListener('click', function(){
+  if (S.screen==='review'){ S.screen='q'; S.i=steps().length-1; render(); return; }
+  go(-1);
+});
+document.getElementById('btn-home').addEventListener('click', function(){
+  if (S.screen==='start') return;
+  saveDraft();
+  S.screen='start'; render();
+});
+window.addEventListener('online', flushQueue);
+document.addEventListener('keydown', function(e){
+  if (S.screen!=='q') return;
+  if (e.key==='Enter' && e.target.tagName!=='TEXTAREA' && !$next.disabled){ go(1); }
+});
+
+paintBadge();
+flushQueue();
+render();
+</script>
+</body>
+</html>

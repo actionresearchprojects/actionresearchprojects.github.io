@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 
 Disallow: /admin/
+Disallow: /survey/
 Disallow: /embedded/
 
 Sitemap: https://actionresearchprojects.net/sitemap.xml
