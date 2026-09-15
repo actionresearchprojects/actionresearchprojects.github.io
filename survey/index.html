@@ -346,32 +346,11 @@ textarea{min-height:150px;line-height:1.4}
   </g>
   <path d="M12 12l40 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
 </symbol>
-<symbol id="i-curtain-open" viewBox="0 0 64 64">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 10h48"/>
-    <path d="M14 10v42c5-2 7-10 7-21S19 12 14 10zM50 10v42c-5-2-7-10-7-21s2-19 7-21z"/>
-    <path d="M26 16h12v32H26z" opacity=".45"/>
-  </g>
-</symbol>
 <symbol id="i-curtain-closed" viewBox="0 0 64 64">
   <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M8 10h48"/>
     <path d="M14 10v44h18V10M50 10v44H32V10"/>
     <path d="M20 12v40M26 12v40M38 12v40M44 12v40" opacity=".45"/>
-  </g>
-</symbol>
-<symbol id="i-sun-window" viewBox="0 0 64 64">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="10" y="20" width="34" height="34" rx="2"/><path d="M27 20v34M10 37h34"/>
-  </g>
-  <use href="#b-sun" transform="translate(48 15) scale(1.15)"/>
-  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".6">
-    <path d="M44 24L30 38M50 30L36 44"/></g>
-</symbol>
-<symbol id="i-no-sun-window" viewBox="0 0 64 64">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="10" y="20" width="34" height="34" rx="2"/><path d="M27 20v34M10 37h34"/>
-    <path d="M46 22c4 0 7 3 7 6.5 0 1-.2 1.8-.6 2.6 2.7.5 4.6 2.7 4.6 5.4 0 3-2.6 5.5-5.8 5.5H45" opacity=".8"/>
   </g>
 </symbol>
 <symbol id="i-door" viewBox="0 0 64 64">
@@ -457,11 +436,6 @@ textarea{min-height:150px;line-height:1.4}
     <path d="M20 10h24l8 44H12z"/><path d="M20 20h24" opacity=".6"/><path d="M32 22v30" opacity=".4"/>
   </g>
 </symbol>
-<symbol id="i-shorts" viewBox="0 0 64 64">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M18 14h28l3 26H35l-3-14-3 14H15z"/><path d="M18 22h28" opacity=".6"/>
-  </g>
-</symbol>
 <symbol id="i-shoes" viewBox="0 0 64 64">
   <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10 20h10c0 8 3 12 10 15l12 5c4 1.6 6 4 6 8H10z"/>
@@ -515,6 +489,73 @@ textarea{min-height:150px;line-height:1.4}
     <path d="M8 26v24M8 36h48v14M8 50h48"/>
     <path d="M14 30h12v6H14z"/>
     <path d="M44 16h10l-10 12h10" stroke-width="2.8"/>
+  </g>
+</symbol>
+
+<!-- ---- things used in the room (Q5) ---- -->
+<symbol id="i-stove" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 26h40v14a12 12 0 0 1-12 12H24a12 12 0 0 1-12-12z"/>
+    <path d="M7 26h50"/>
+    <path d="M20 20c0-4 4-5 4-9M32 20c0-4 4-5 4-9M44 20c0-4 4-5 4-9" opacity=".75"/>
+  </g>
+</symbol>
+<symbol id="i-iron" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 40c0-9 8-15 20-15h18v15z"/>
+    <path d="M9 40h46l-4 8H13z"/>
+    <path d="M28 25v-3a5 5 0 0 1 5-5h11a5 5 0 0 1 5 5v3"/>
+  </g>
+</symbol>
+<symbol id="i-tv" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="8" y="18" width="48" height="30" rx="3"/>
+    <path d="M32 48v7M23 55h18"/>
+    <path d="M23 8l9 10 9-10" opacity=".6"/>
+  </g>
+</symbol>
+<symbol id="i-other" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M41 9l14 14-30 30-17 3 3-17z"/>
+    <path d="M35 15l14 14M11 39l14 14" opacity=".55"/>
+  </g>
+</symbol>
+
+<!-- ---- sheet or blanket (Q10) ---- -->
+<g id="b-bed" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 20v36M5 50h54M59 32v24"/>
+  <circle cx="17" cy="35" r="8"/>
+</g>
+<symbol id="i-blanket-full" viewBox="0 0 64 64"><use href="#b-bed"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M27 27h32v23H27z"/><path d="M27 35h32" opacity=".5"/></g></symbol>
+<symbol id="i-blanket-part" viewBox="0 0 64 64"><use href="#b-bed"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M43 27h16v23H43z"/><path d="M43 35h16" opacity=".5"/>
+    <path d="M27 50V42h16"/></g></symbol>
+<symbol id="i-blanket-none" viewBox="0 0 64 64"><use href="#b-bed"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M27 50V42h32"/></g></symbol>
+
+<!-- ---- went outside (Q20) ---- -->
+<symbol id="i-outside" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 56V12l21-5v54z"/><circle cx="25" cy="33" r="2.2" fill="currentColor"/>
+    <path d="M31 14h9v42h-9"/>
+  </g>
+  <use href="#b-sun" transform="translate(52 24)"/>
+</symbol>
+<symbol id="i-standing" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="32" cy="14" r="7.5"/>
+    <path d="M32 22c-5.5 0-9 3.5-9 9v10h18V31c0-5.5-3.5-9-9-9z"/>
+    <path d="M27 41v13M37 41v13"/>
+  </g>
+</symbol>
+<symbol id="i-walk-slow" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="30" cy="12" r="6.8"/>
+    <path d="M30 19v18M30 37l-7 17M30 37l8 17M30 25l-9 5M30 25l10 4"/>
   </g>
 </symbol>
 
@@ -577,7 +618,7 @@ var CFG = {
   roster: [],
 
   house: 'House 5',
-  version: '1.0'
+  version: '2.0'
 };
 /* ------------------------------------------------------ */
 
@@ -608,54 +649,82 @@ function YN(iconYes, iconNo){
 }
 
 /* ---------- the questions ---------- */
+/* Numbering follows the paper form (v2, Sep 2026) so the two can be
+   cross-referenced. Section A is observed by an adult and skipped in self mode;
+   the room question is not, because Section C is about that same room. */
 var QS = [
-  /* ===== SECTION A — observed by the surveyor, never asked ===== */
+  /* ===== SECTION A — the room she is in now, observed, last 30 minutes ===== */
+  {id:'a_room', sec:'A', type:'choice', layout:'g3',
+   sw:'Tuko katika chumba gani sasa?', en:'Which room are we in now?',
+   hintSw:'Lazima awe amekuwa katika chumba hiki kwa angalau dakika 30.',
+   hintEn:'She must have been in this room for at least 30 minutes.',
+   swSelf:'Uko katika chumba gani sasa?', enSelf:'Which room are you in now?',
+   hintSwSelf:'Lazima uwe umekaa katika chumba hiki kwa angalau dakika 30.',
+   hintEnSelf:'You must have been in this room for at least 30 minutes.',
+   opts:[{v:'living',  sw:'Sebule',            en:'Living room', icon:'i-room-living', c:'var(--green)'},
+         {v:'bedroom', sw:'Chumba cha kulala', en:'Bedroom',     icon:'i-room-bed',    c:'var(--green)'},
+         {v:'other',   sw:'Nyingine',          en:'Other',       icon:'i-door',        c:'var(--muted)'}]},
+
   {id:'a1_doors_open', sec:'A', surveyorOnly:true, type:'count', max:12, icon:'i-door',
-   sw:'Milango mingapi iko wazi?', en:'How many doors are open?',
+   sw:'Ni milango mingapi iko wazi?', en:'How many doors are open?',
    hintSw:'Hesabu wewe mwenyewe. Usimuulize.', hintEn:'Count these yourself. Do not ask her.'},
 
   {id:'a2_people', sec:'A', surveyorOnly:true, type:'count', max:25, icon:'i-people',
-   sw:'Watu wangapi wamo chumbani?', en:'How many people are in the room?'},
+   sw:'Ni watu wangapi wamo chumbani?', en:'How many people are in the room?'},
 
-  {id:'a3_fan_running', sec:'A', surveyorOnly:true, type:'choice', layout:'yn',
-   sw:'Je, feni inafanya kazi?', en:'Is the fan running?',
-   opts:YN('i-fan-on','i-fan-off')},
+  {id:'a3_fans_on', sec:'A', surveyorOnly:true, type:'count', max:8, icon:'i-fan-on',
+   sw:'Ni feni ngapi zimewashwa katika chumba hiki?',
+   en:'How many fans are switched on in this room?'},
 
-  {id:'a4_curtains', sec:'A', surveyorOnly:true, type:'choice', layout:'yn',
-   sw:'Pazia', en:'Curtains',
-   opts:[{v:'open',  sw:'Wazi',       en:'Open',   icon:'i-curtain-open',   c:'var(--p1)'},
-         {v:'closed',sw:'Zimefungwa', en:'Closed', icon:'i-curtain-closed', c:'var(--s2)'}]},
+  {id:'a4_curtains_closed', sec:'A', surveyorOnly:true, type:'count', max:12, icon:'i-curtain-closed',
+   sw:'Ni madirisha mangapi yamefungwa pazia?',
+   en:'How many windows have their curtains closed?'},
 
-  {id:'a5_sun_on_windows', sec:'A', surveyorOnly:true, type:'choice', layout:'yn',
-   sw:'Je, jua linaangaza kwenye madirisha?', en:'Is the sun shining on the windows?',
-   opts:[{v:1, sw:'Ndiyo', en:'Yes', icon:'i-sun-window',    c:'var(--p2)'},
-         {v:0, sw:'Hapana',en:'No',  icon:'i-no-sun-window', c:'var(--s2)'}]},
+  {id:'a5_used_in_room', sec:'A', surveyorOnly:true, type:'multi', layout:'g3',
+   sw:'Katika dakika 30 zilizopita, je, kimojawapo kati ya hivi kimetumika katika chumba hiki?',
+   en:'In the last 30 minutes, has any of these been used in this room?',
+   hintSw:'Weka alama kwenye vyote vinavyohusika.', hintEn:'Tick all that apply.',
+   opts:[{v:1, sw:'Jiko',        en:'Stove or cooker', icon:'i-stove', c:'var(--p2)'},
+         {v:2, sw:'Pasi',        en:'Iron',            icon:'i-iron',  c:'var(--p2)'},
+         {v:3, sw:'Televisheni', en:'Television',      icon:'i-tv',    c:'var(--p1)'},
+         {v:4, sw:'Kitu kingine',en:'Something else',  icon:'i-other', c:'var(--green)'},
+         {v:0, sw:'Hakuna kati ya hivi', en:'None of these', icon:'i-no', c:'var(--muted)', exclusive:true}]},
 
-  {id:'a6_other_heat', sec:'A', surveyorOnly:true, type:'text', optional:true,
-   sw:'Je, kuna kitu kingine kinachofanya chumba kiwe na joto, au kuna jambo lolote la tofauti leo?',
-   en:'Is anything else making the room hot, or is anything unusual today?'},
+  {id:'a5_other_detail', sec:'A', surveyorOnly:true, type:'text',
+   showIf:function(a){ return (a.a5_used_in_room||[]).indexOf(4) > -1; },
+   sw:'Ni kitu gani kingine?', en:'What else was used?',
+   hintSw:'Andika hapa.', hintEn:'Write it here.'},
 
   /* ===== SECTION B — about last night, her own bedroom ===== */
-  {id:'b7_bedroom_last_night', sec:'B', type:'scale', opts:SENSATION,
+  {id:'b6_bedroom_last_night', sec:'B', type:'scale', opts:SENSATION,
    sw:'Usiku uliopita, chumba chako cha kulala kilikuwaje?',
    en:'Last night, how did your bedroom feel?',
    hintSw:'Kuhusu chumba chake cha kulala, si chumba mlichokaa sasa.',
-   hintEn:'About her own bedroom, not the room you are sitting in.'},
+   hintEn:'About her own bedroom, not the room you are sitting in.',
+   hintSwSelf:'Kuhusu chumba chako cha kulala, si chumba ulichomo sasa.',
+   hintEnSelf:'About your own bedroom, not the room you are in now.'},
 
-  {id:'b8_used_fan', sec:'B', type:'choice', layout:'yn',
+  {id:'b7_used_fan', sec:'B', type:'choice', layout:'yn',
    sw:'Ulitumia feni usiku uliopita?', en:'Did you use the fan last night?',
    opts:YN('i-fan-on','i-fan-off')},
 
-  {id:'b9_why_no_fan', sec:'B', type:'text', optional:true,
-   showIf:function(a){ return a.b8_used_fan === 0; },
+  {id:'b8_why_no_fan', sec:'B', type:'text', optional:true,
+   showIf:function(a){ return a.b7_used_fan === 0; },
    sw:'Kwa nini hukutumia feni?', en:'Why did you not use the fan?',
    hintSw:'Andika maneno yake hasa.', hintEn:'Write her exact words.',
-   swSelf:'Kwa nini hukutumia feni?', enSelf:'Why did you not use the fan?'},
+   hintSwSelf:'Andika kwa maneno yako mwenyewe.', hintEnSelf:'Write it in your own words.'},
 
-  {id:'b10_bed_net', sec:'B', type:'choice', layout:'yn',
+  {id:'b9_bed_net', sec:'B', type:'choice', layout:'yn',
    sw:'Ulitumia chandarua?', en:'Did you use the bed net?',
    opts:[{v:1, sw:'Ndiyo', en:'Yes', icon:'i-bednet', c:'var(--yes)'},
          {v:0, sw:'Hapana',en:'No',  icon:'i-no',     c:'var(--no)'}]},
+
+  {id:'b10_covering', sec:'B', type:'choice', layout:'g3',
+   sw:'Ulikuwa na shuka au blanketi likikufunika?',
+   en:'Did you have a sheet or blanket covering you?',
+   opts:[{v:1, sw:'Ndiyo, usiku wote',        en:'Yes, all night',           icon:'i-blanket-full',  c:'var(--s2)'},
+         {v:2, sw:'Kwa sehemu ya usiku tu',   en:'For part of the night only',icon:'i-blanket-part', c:'var(--s1)'},
+         {v:0, sw:'Hapana, sikuwa na kitu',   en:'No, nothing covering me',   icon:'i-blanket-none', c:'var(--muted)'}]},
 
   {id:'b11_slept_well', sec:'B', type:'choice', layout:'yn',
    sw:'Ulilala vizuri?', en:'Did you sleep well?',
@@ -669,15 +738,7 @@ var QS = [
          {v:2, sw:'Baridi sana', en:'Too cold', icon:'i-woke-cold', c:'var(--s3)'},
          {v:0, sw:'Hapana',      en:'No',       icon:'i-no',        c:'var(--muted)'}]},
 
-  /* ===== SECTION C — this room, right now ===== */
-  {id:'c_room', sec:'C', type:'choice', layout:'g3',
-   sw:'Tuko katika chumba gani sasa?', en:'Which room are we in now?',
-   hintSw:'Lazima awe amekaa katika chumba hiki kwa angalau dakika 30.',
-   hintEn:'She must have been in this room for at least 30 minutes.',
-   opts:[{v:'living',  sw:'Sebule',            en:'Living room', icon:'i-room-living', c:'var(--green)'},
-         {v:'bedroom', sw:'Chumba cha kulala', en:'Bedroom',     icon:'i-room-bed',    c:'var(--green)'},
-         {v:'other',   sw:'Nyingine',          en:'Other',       icon:'i-door',        c:'var(--muted)'}]},
-
+  /* ===== SECTION C — this room, right now. 13 and 14 before any options ===== */
   {id:'c13_feel_words', sec:'C', type:'text', noPrime:true,
    sw:'Unajisikiaje katika chumba hiki sasa hivi?',
    en:'How do you feel in this room right now?',
@@ -686,22 +747,24 @@ var QS = [
    hintSwSelf:'Andika kwa maneno yako mwenyewe. mf. "baridi"',
    hintEnSelf:'Write it in your own words. e.g. "baridi"'},
 
-  {id:'c14_word_meaning', sec:'C', type:'text', noPrime:true,
-   sw:'Neno hilo lina maana gani kwako?',
-   en:'What does that word mean to you?',
-   hintSw:'Andika jibu lake. mf. "si joto sana, ni vizuri"',
-   hintEn:'Write her answer. e.g. "si joto sana, ni vizuri"',
-   hintSwSelf:'mf. "si joto sana, ni vizuri"',
-   hintEnSelf:'e.g. "si joto sana, ni vizuri"'},
+  {id:'c14_more_detail', sec:'C', type:'text', noPrime:true,
+   sw:'Eleza zaidi kuhusu jinsi chumba kinavyokuwa na joto au baridi kwako, na kwa nini',
+   en:'Say more about how hot or cold the room feels to you, and why',
+   hintSw:'Mtie moyo aeleze zaidi. Andika anachosema.',
+   hintEn:'Encourage her to say more. Write down what she says.',
+   hintSwSelf:'Andika kadri unavyoweza.', hintEnSelf:'Write as much as you like.'},
 
   {id:'c15_sensation_now', sec:'C', type:'scale', opts:SENSATION, primes:true,
-   sw:'Sasa chagua kimoja kinachofaa zaidi',
-   en:'Now pick the one that fits best',
-   hintSw:'Soma chaguo zote saba.', hintEn:'Read out all seven choices.'},
+   sw:'Unajisikiaje katika chumba hiki sasa hivi?',
+   en:'How do you feel in this room right now?',
+   hintSw:'Sasa soma chaguo zote saba naye achague moja.',
+   hintEn:'Now read out all seven choices and she picks one.',
+   hintSwSelf:'Chagua kimoja kinachofaa zaidi.', hintEnSelf:'Pick the one that fits best.'},
 
   {id:'c16_preference', sec:'C', type:'scale', opts:PREFERENCE,
    sw:'Ungependa iweje sasa hivi?', en:'How would you like it to be right now?',
-   hintSw:'Soma chaguo zote saba.', hintEn:'Read out all seven choices.'},
+   hintSw:'Soma chaguo zote saba.', hintEn:'Read out all seven choices.',
+   hintSwSelf:'Chagua kimoja.', hintEnSelf:'Pick one.'},
 
   {id:'c17_comfortable', sec:'C', type:'choice', layout:'yn',
    sw:'Sasa hivi, unajisikia vizuri?', en:'Right now, do you feel comfortable?',
@@ -713,29 +776,42 @@ var QS = [
    hintEn:'Tick everything you can see. Do not ask her.',
    swSelf:'Umevaa nini sasa?', enSelf:'What are you wearing now?',
    hintSwSelf:'Gusa kila kitu ulichovaa.', hintEnSelf:'Tap everything you are wearing.',
-   opts:[{v:1, sw:'Hijabu',                    en:'Headscarf',              icon:'i-headscarf'},
-         {v:2, sw:'Gauni jepesi au kanga',     en:'Light dress or kanga',   icon:'i-kanga'},
-         {v:3, sw:'Fulana au mikono mifupi',   en:'T-shirt or short sleeves',icon:'i-tshirt'},
-         {v:4, sw:'Shati la mikono mirefu',    en:'Long-sleeved top',       icon:'i-longsleeve'},
-         {v:5, sw:'Sweta',                     en:'Sweater or jumper',      icon:'i-sweater'},
-         {v:6, sw:'Sketi ndefu au suruali ndefu', en:'Long skirt or trousers', icon:'i-longskirt'},
-         {v:7, sw:'Sketi fupi au kaptula',     en:'Short skirt or shorts',  icon:'i-shorts'},
-         {v:8, sw:'Soksi au viatu',            en:'Socks or shoes',         icon:'i-shoes'},
-         {v:9, sw:'Bila viatu',                en:'Bare feet',              icon:'i-barefoot'}]},
+   opts:[{v:1, sw:'Hijabu',                 en:'Headscarf',              icon:'i-headscarf'},
+         {v:2, sw:'Gauni jepesi au kanga',  en:'Light dress or kanga',   icon:'i-kanga'},
+         {v:3, sw:'Mikono mifupi',          en:'Short sleeves',          icon:'i-tshirt'},
+         {v:4, sw:'Mikono mirefu',          en:'Long sleeves',           icon:'i-longsleeve'},
+         {v:5, sw:'Sweta',                  en:'Sweater or jumper',      icon:'i-sweater'},
+         {v:6, sw:'Sketi ndefu au suruali ndefu', en:'Long skirt or long trousers', icon:'i-longskirt'},
+         {v:7, sw:'Soksi au viatu',         en:'Socks or shoes',         icon:'i-shoes'},
+         {v:8, sw:'Bila viatu',             en:'Bare feet',              icon:'i-barefoot'}]},
 
   {id:'c18_layers', sec:'C', type:'count', max:6, start:1, icon:'i-sweater',
    sw:'Tabaka za juu, bila kuhesabu chupi',
    en:'Layers on top, not counting underwear'},
 
   {id:'c19_activity', sec:'C', type:'choice', layout:'g3',
-   sw:'Ulikuwa unafanya nini katika dakika 30 zilizopita?',
-   en:'What were you doing in the last 30 minutes?',
+   sw:'Umekuwa ukifanya nini katika chumba hiki katika dakika 30 zilizopita?',
+   en:'What have you been doing in this room in the last 30 minutes?',
    opts:[{v:1, sw:'Kukaa, kusoma, kazi za shule', en:'Sitting, reading, schoolwork', icon:'i-sitting',  c:'var(--green)'},
          {v:2, sw:'Kutembea ndani',               en:'Walking about indoors',        icon:'i-walking',  c:'var(--green)'},
-         {v:3, sw:'Kucheza au kukimbia nje',      en:'Playing or running outside',   icon:'i-playing',  c:'var(--p2)'},
-         {v:4, sw:'Kazi za nyumbani',             en:'Housework or chores',          icon:'i-chores',   c:'var(--green)'},
-         {v:5, sw:'Kula',                         en:'Eating',                       icon:'i-eating',   c:'var(--green)'},
-         {v:6, sw:'Kupumzika, kulala, au ameamka tu', en:'Resting, lying down, or just woken up', icon:'i-resting', c:'var(--s2)'}]},
+         {v:3, sw:'Kazi za nyumbani',             en:'Housework or chores',          icon:'i-chores',   c:'var(--p1)'},
+         {v:4, sw:'Kula',                         en:'Eating',                       icon:'i-eating',   c:'var(--green)'},
+         {v:5, sw:'Kupumzika au kulala',          en:'Resting or lying down',        icon:'i-resting',  c:'var(--s2)'},
+         {v:6, sw:'Ameamka tu',                   en:'Just woken up',                icon:'i-sleep-good', c:'var(--s2)'}]},
+
+  {id:'c20_went_outside', sec:'C', type:'choice', layout:'yn',
+   sw:'Katika nusu saa kabla ya kuingia katika chumba hiki, ulikwenda nje?',
+   en:'In the half hour before you came into this room, did you go outside?',
+   opts:[{v:1, sw:'Ndiyo', en:'Yes', icon:'i-outside', c:'var(--p2)'},
+         {v:0, sw:'Hapana',en:'No',  icon:'i-no',      c:'var(--muted)'}]},
+
+  {id:'c20_outside_activity', sec:'C', type:'choice', layout:'g2',
+   showIf:function(a){ return a.c20_went_outside === 1; },
+   sw:'Ulikuwa unafanya nini nje?', en:'What were you doing outside?',
+   opts:[{v:1, sw:'Kukaa au kusimama kwa utulivu', en:'Sitting or standing quietly',        icon:'i-standing',  c:'var(--s2)'},
+         {v:2, sw:'Kutembea taratibu',             en:'Walking slowly',                     icon:'i-walk-slow', c:'var(--green)'},
+         {v:3, sw:'Kazi, kubeba au kuchukua vitu', en:'Chores, carrying or fetching things',icon:'i-chores',    c:'var(--p1)'},
+         {v:4, sw:'Kucheza au kukimbia',           en:'Playing or running',                 icon:'i-playing',   c:'var(--p3)'}]},
 
   /* ===== SECTION D ===== */
   {id:'d_notes', sec:'D', type:'text', optional:true,
@@ -747,18 +823,18 @@ var QS = [
 ];
 
 var SEC_NAME = {
-  A:{sw:'Sehemu A · Hali ya chumba', en:'Section A · Room conditions'},
-  B:{sw:'Sehemu B · Usiku uliopita', en:'Section B · About last night'},
-  C:{sw:'Sehemu C · Sasa hivi',      en:'Section C · Right now'},
-  D:{sw:'Sehemu D · Maelezo',        en:'Section D · Notes'}
+  A:{sw:'Sehemu A · Chumba alimo sasa',            en:'Section A · The room she is in now'},
+  B:{sw:'Sehemu B · Usiku uliopita',               en:'Section B · About last night'},
+  C:{sw:'Sehemu C · Anajisikiaje katika chumba hiki', en:'Section C · How she feels in this room now'},
+  D:{sw:'Sehemu D · Maelezo',                      en:'Section D · Notes'}
 };
 
 /* the column order written to the sheet — must match apps-script.gs */
 var FIELDS = ['submitted_at','local_time','mode','lang','house','name','asked_by','date','time',
-  'a1_doors_open','a2_people','a3_fan_running','a4_curtains','a5_sun_on_windows','a6_other_heat',
-  'b7_bedroom_last_night','b8_used_fan','b9_why_no_fan','b10_bed_net','b11_slept_well','b12_woke_hot_cold',
-  'c_room','c13_feel_words','c14_word_meaning','c15_sensation_now','c16_preference','c17_comfortable',
-  'c18_clothing','c18_layers','c19_activity','d_notes',
+  'a_room','a1_doors_open','a2_people','a3_fans_on','a4_curtains_closed','a5_used_in_room','a5_other_detail',
+  'b6_bedroom_last_night','b7_used_fan','b8_why_no_fan','b9_bed_net','b10_covering','b11_slept_well','b12_woke_hot_cold',
+  'c13_feel_words','c14_more_detail','c15_sensation_now','c16_preference','c17_comfortable',
+  'c18_clothing','c18_layers','c19_activity','c20_went_outside','c20_outside_activity','d_notes',
   'duration_seconds','app_version','device'];
 
 /* ============================================================
@@ -1044,7 +1120,7 @@ function scaleHTML(q){
 }
 function choiceHTML(q){
   var cur = S.ans[q.id];
-  var cls = q.layout==='yn' ? 'yn' : (q.layout==='g3' ? 'opts g3' : 'opts gauto');
+  var cls = q.layout==='yn' ? 'yn' : 'opts '+(q.layout||'gauto');
   return '<div class="'+cls+'">'+q.opts.map(function(o){
     return optHTML(q,o,String(cur)===String(o.v));
   }).join('')+'</div>';
@@ -1097,11 +1173,24 @@ function wire(q){
       var b=e.target.closest('.opt'); if(!b) return;
       var raw=b.dataset.v;
       var o = q.opts.filter(function(x){ return String(x.v)===raw; })[0];
-      var cur = S.ans[q.id]||[];
+      var cur = (S.ans[q.id]||[]).slice();
       var k = cur.indexOf(o.v);
-      if (k>-1) cur.splice(k,1); else cur.push(o.v);
+      if (k>-1){
+        cur.splice(k,1);
+      } else if (o.exclusive){
+        cur = [o.v];                       // "None of these" stands alone
+      } else {
+        cur = cur.filter(function(v){       // anything else clears it
+          var x = q.opts.filter(function(y){ return y.v===v; })[0];
+          return !(x && x.exclusive);
+        });
+        cur.push(o.v);
+      }
       S.ans[q.id]=cur;
-      b.classList.toggle('on', k===-1);
+      Array.prototype.forEach.call($wrap.querySelectorAll('.opt'), function(el){
+        el.classList.toggle('on', cur.indexOf(
+          q.opts.filter(function(y){ return String(y.v)===el.dataset.v; })[0].v) > -1);
+      });
       $next.disabled = !(cur.length>0 || q.optional);
       saveDraft();
     };

@@ -74,21 +74,44 @@ contaminated, so going back and "tidying it up" is blocked rather than trusted.
 
 ## What lands in the sheet
 
-One row per survey, columns in the order listed in `FIELDS`. Values are stored as
+One row per survey, columns in the order listed in `FIELDS`. Ids follow the paper
+form's question numbers so the two can be cross-referenced. Values are stored as
 numbers, not labels, so they sort and plot directly:
 
-- `b7_bedroom_last_night`, `c15_sensation_now` — **−3 … +3**:
+- `b6_bedroom_last_night`, `c15_sensation_now` — **−3 … +3**:
   −3 cold, −2 cool, −1 a bit cool, 0 OK, +1 a bit warm, +2 warm, +3 hot
 - `c16_preference` — **−3 … +3**: −3 a lot colder … 0 no change … +3 a lot warmer
 - yes/no fields — `1` / `0`
+- `a3_fans_on`, `a4_curtains_closed`, `a1_doors_open`, `a2_people`, `c18_layers` — counts
+- `a5_used_in_room` — comma-separated: `1` stove, `2` iron, `3` TV, `4` something
+  else (detail in `a5_other_detail`), `0` none of these. `0` is exclusive — picking
+  it clears the others and vice versa
+- `b10_covering` — `1` all night, `2` part of the night, `0` nothing
 - `b12_woke_hot_cold` — `1` too hot, `2` too cold, `0` no
-- `c18_clothing` — comma-separated codes 1–9 in the paper form's order
+- `c18_clothing` — comma-separated codes 1–8 in the paper form's order
 - `c19_activity` — 1–6 in the paper form's order
-- `c_room` — `living` / `bedroom` / `other`
-- `a4_curtains` — `open` / `closed`
+- `c20_went_outside` — `1`/`0`; `c20_outside_activity` — 1–4, blank if she did not
+- `a_room` — `living` / `bedroom` / `other`
 
-`c13_feel_words` and `c14_word_meaning` are free text, and are the two columns
-the study is actually about.
+`c13_feel_words` and `c14_more_detail` are free text, and are the two columns the
+study is actually about.
+
+## Kept in step with the paper form
+
+This is the digital version of **v2 (Sep 2026)**. If the PDF changes again, the
+things to check are the `QS` array, `FIELDS`, and `SEC_NAME`. Changes carried over
+from the first version of the form:
+
+- Section A is now "the room she is in now" — explicitly the same room as Section C,
+  everything scoped to the last 30 minutes, and the room field moved here from C
+- the fan and curtain questions became counts rather than yes/no and open/closed
+- the "sun shining on the windows" question was replaced by "has any of these been
+  used in the room" (stove / iron / TV / something else / none)
+- new: sheet or blanket covering you (Q10), and went outside beforehand (Q20)
+- Q14 now asks her to say more about how hot or cold it feels and why, rather than
+  what her one word means
+- clothing dropped "short skirt or shorts" and split sleeves from garment type;
+  the activity list dropped "playing outside", which Q20 now covers
 
 ## Adding or changing a question
 
