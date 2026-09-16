@@ -43,7 +43,9 @@ html = html.replace(
   /(<title>)(.*?)(<\/title>)/,
   `$1$2 (offline copy)$3\n<!-- Built by build-offline.js from index.html on ${new Date().toISOString().slice(0, 10)}.\n     Self-contained: no network required. Edit index.html, not this file. -->`
 );
-html = html.replace("version: '2.0'", "version: '2.0-offline'");
+const ver = html.match(/version: '([\d.]+)'/);
+if (!ver) throw new Error('CFG.version not found');
+html = html.replace(ver[0], `version: '${ver[1]}-offline'`);
 
 fs.writeFileSync(OUT, html);
 

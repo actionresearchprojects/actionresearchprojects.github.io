@@ -20,20 +20,53 @@ All at the top of `index.html`, in `var CFG`:
 
 ## Connecting the Google Sheet
 
-1. Create a Google Sheet. **Extensions → Apps Script.**
-2. Delete the placeholder and paste in `apps-script.gs` from this folder.
-3. **Deploy → New deployment → Web app.** Set *Execute as* **Me** and
-   *Who has access* **Anyone**. (It has to be "Anyone" — the survey posts without
-   a Google login. The `token` is what keeps casual junk out.)
-4. Authorise it, copy the `/exec` URL.
-5. Paste that URL into `CFG.endpoint` in `index.html`, commit, push.
+The spreadsheet already exists — **ARC House 5 Comfort Survey — Responses**:
+https://docs.google.com/spreadsheets/d/1SLIvoDLS1Mzw0S1IKZlXYy-W2cBEEe8MFuIBUcKIp0Q/edit
+
+`apps-script.gs` is already pointed at it. What is left is the one step that has to
+be done by a human, because Google will not let a script write to your Drive until
+*you* grant it consent in a browser:
+
+1. Open the sheet → **Extensions → Apps Script**
+2. Delete the placeholder, paste in all of `apps-script.gs`, save
+3. **Deploy → New deployment → Web app.** *Execute as* **Me**, *Who has access*
+   **Anyone**
+4. Authorise it (Google will warn that the app is unverified — it is your own
+   script; Advanced → Go to project)
+5. Copy the `/exec` URL and paste it into `CFG.endpoint` in `index.html`
+
+*Who has access* has to be **Anyone**: the survey posts with no Google login, from
+a phone that may belong to nobody in particular. `token` is what keeps junk out —
+it must match `SUBMIT_TOKEN` in the script.
+
+To check it is alive, open the `/exec` URL in a browser — it should say
+`OK ARC survey endpoint is live.`
 
 The script writes a header row on first submission and then appends one row per
 survey. If you later add a question to `QS`, it appends a **new column** rather
 than shifting existing data.
 
-To check it is alive, open the `/exec` URL in a browser — it should say
-`OK ARC survey endpoint is live.`
+### Why this step cannot be automated
+
+Everything else here was set up without you. This one cannot be, and it is worth
+knowing why so nobody goes looking for a shortcut:
+
+A page served from GitHub Pages is static — there is no server of ours to hold a
+credential. To write into a Google Sheet something has to authenticate, and the
+only three options are a deployed Apps Script (one human consent, then anonymous
+POSTs work forever), OAuth sign-in by every person filling in a survey, or a
+service-account key embedded in the page — which would be readable by anyone who
+views source, and which Google blocks for Sheets anyway.
+
+The Apps Script route is the cheap one, but its consent screen is deliberately
+interactive: Google requires a signed-in human to approve a script that writes to
+their own Drive. No API can grant that on your behalf.
+
+The obvious alternative — have the survey commit responses to this repo, the way
+`/admin/` commits blog posts — was rejected on safeguarding grounds, not technical
+ones. **This repository is public.** Survey answers about named children must not
+be published, so a private Google Sheet is the right destination and a repo file is
+not.
 
 ## Offline
 
@@ -148,15 +181,30 @@ numbers, not labels, so they sort and plot directly:
 - `c19_activity` — 1–6 in the paper form's order
 - `c20_went_outside` — `1`/`0`; `c20_outside_activity` — 1–4, blank if she did not
 - `a_room` — `living` / `bedroom` / `other`
+- `d21_mosquito_bother` — `0` not at all, `1` a little, `2` a lot
+- `d22_where_house` — comma-separated 1–6 (`6` only outside is exclusive)
+- `d23_where_room` — comma-separated 1–5, or `0` I do not know (exclusive)
+- `d24_time_of_day` — comma-separated 1–4
+- `d25_seasonal` — free text
 
 `c13_feel_words` and `c14_more_detail` are free text, and are the two columns the
-study is actually about.
+study is actually about. `d25_seasonal` and `e_notes` are free text too.
 
 ## Kept in step with the paper form
 
-This is the digital version of **v2 (Sep 2026)**. If the PDF changes again, the
-things to check are the `QS` array, `FIELDS`, and `SEC_NAME`. Changes carried over
-from the first version of the form:
+This is the digital version of the paper form as of **16 Sep 2026**. If the PDF
+changes again, the things to check are the `QS` array, `FIELDS`, and `SEC_NAME` —
+and bump `CACHE` in `sw.js` and re-run `build-offline.js`.
+
+Added in the latest revision:
+
+- **Section D, mosquitoes** (Q21–25) — how much they bothered her last night, where
+  in the house and where in a room she notices them, what time of day, and whether
+  some times of year are worse. These ask what she notices *generally*, not just
+  last night, because the point is working out where they get in despite the mesh
+- Notes moved from Section D to **Section E** (`d_notes` is now `e_notes`)
+
+Carried over from the first version of the form:
 
 - Section A is now "the room she is in now" — explicitly the same room as Section C,
   everything scoped to the last 30 minutes, and the room field moved here from C

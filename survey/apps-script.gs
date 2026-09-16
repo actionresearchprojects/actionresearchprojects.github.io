@@ -8,8 +8,9 @@
 // Must match CFG.token in survey/index.html.
 var SUBMIT_TOKEN = 'arc-house5-2026';
 
-// Leave blank to write into the sheet this script is bound to.
-var SPREADSHEET_ID = '';
+// The sheet created for this: "ARC House 5 Comfort Survey — Responses".
+// Blank it out to write into whatever sheet the script is bound to instead.
+var SPREADSHEET_ID = '1SLIvoDLS1Mzw0S1IKZlXYy-W2cBEEe8MFuIBUcKIp0Q';
 
 var SHEET_NAME = 'Responses';
 
