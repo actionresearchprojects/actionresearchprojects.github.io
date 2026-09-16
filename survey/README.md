@@ -35,17 +35,73 @@ than shifting existing data.
 To check it is alive, open the `/exec` URL in a browser — it should say
 `OK ARC survey endpoint is live.`
 
-## It works with no internet
+## Offline
 
-This matters on site. Every answer is written to `localStorage` as you go, so a
-closed tab or a flat battery does not lose a part-finished survey — reopening
-offers to resume it.
+There are two ways to run this without a connection, and they use the same source.
 
-On submit, if the POST fails (no signal, endpoint not set yet), the survey is
-queued on the device and sent automatically next time the tab is open with a
-connection. The hourglass badge in the top bar counts what is still waiting.
-**Export data** on the start and finish screens downloads the queue as a CSV, so
-nothing is ever stranded on one phone.
+### 1. Install it as an app (the hosted page)
+
+Open `/survey/` once somewhere with signal, then **Add to Home Screen** (Share →
+Add to Home Screen on iOS; ⋮ → Install app / Add to Home screen on Android). After
+that it opens full-screen from the home icon and works with no signal at all.
+
+`sw.js` precaches the page, the four fonts and the icons on first visit. Nothing is
+fetched from anyone else — the Ubuntu webfont is served from `fonts/` rather than
+from Google, so there is no third-party request to fail.
+
+**When you change `index.html`, bump `CACHE` in `sw.js`.** Installed devices key
+their cache on that string. Forgetting is not fatal — the worker is
+stale-while-revalidate, so an online device serves the old page once and picks the
+new one up in the background for next launch — but bumping makes it immediate and
+clears files you removed.
+
+### 2. The standalone file (no server, no install, no internet ever)
+
+`survey-offline.html` is one 172 KB file with the fonts and icon inlined. Put it on
+a laptop, a USB stick, or send it over WhatsApp, and open it — it runs from
+`file://` on a machine that has never been online. Verified in Chrome with
+networking disabled.
+
+Build it after **any** change to `index.html`:
+
+```bash
+node build-offline.js
+```
+
+It inlines the fonts and icon, strips the service worker and manifest (meaningless
+off a server), tags the version `2.0-offline`, and fails loudly if anything external
+is left behind. Do not edit `survey-offline.html` by hand — edit `index.html` and
+rebuild, or the two drift apart.
+
+The offline file still carries the full submission logic, so if that laptop is later
+online and `CFG.endpoint` is set, its queue flushes on its own. Otherwise the data
+comes off with **Export data**.
+
+### What was already offline-tolerant
+
+Every answer is written to `localStorage` as you go, so a closed tab or a flat
+battery does not lose a part-finished survey — reopening offers to resume it.
+
+On submit, if the POST fails, the survey is queued on the device and sent
+automatically next time the page is open with a connection. The hourglass badge in
+the top bar counts what is still waiting, and a **nje ya mtandao / offline** marker
+appears next to it when the browser reports no connection. **Export data** on the
+start and finish screens downloads the queue as a CSV, so nothing is ever stranded
+on one phone.
+
+### Two things to know
+
+- The password is asked again on each app launch — the gate uses `sessionStorage`,
+  which a fresh launch clears. That is deliberate on a shared device holding
+  answers from minors.
+- Installing the app does not install the Apps Script endpoint. If `CFG.endpoint`
+  was blank when a device cached the page, that device keeps the blank one until
+  the cache updates. Set the endpoint *before* handing devices out.
+
+### Fonts
+
+Ubuntu is redistributed here under the **Ubuntu Font Licence 1.0**, which permits
+it. Files are the latin subset only, four weights, 14 KB each, in `fonts/`.
 
 ## Two modes
 

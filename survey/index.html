@@ -36,10 +36,19 @@
   });
 })();
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" sizes="any" href="../assets/images/favicon.png">
-<link rel="apple-touch-icon" href="../assets/images/favicon.png">
+<link rel="icon" type="image/png" sizes="any" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARC Survey">
 <style>
+/* Ubuntu, self-hosted so the page works with no network at all.
+   Ubuntu Font Licence 1.0 — see README.md. BUILD_INLINE_FONTS */
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/ubuntu-300.woff2) format('woff2')}
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ubuntu-400.woff2) format('woff2')}
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ubuntu-500.woff2) format('woff2')}
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/ubuntu-700.woff2) format('woff2')}
 :root{
   --green:#1a6b4a; --green-d:#125239; --green-l:#e7f2ec;
   --ink:#1c2321; --muted:#5d6b66; --line:#d6ded9; --bg:#f4f7f5; --card:#fff;
@@ -194,6 +203,7 @@ textarea{min-height:150px;line-height:1.4}
 .note.bad{background:#fdeceb;border-color:#e8b0ab;color:#83302a}
 .note.ok{background:var(--green-l);border-color:#a9cfbc;color:var(--green-d)}
 .queue-badge{background:#fff;color:var(--green-d);border-radius:999px;padding:3px 9px;font-size:13px;font-weight:500}
+.offdot{background:rgba(0,0,0,.22);color:#ffd9a0;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;white-space:nowrap}
 
 .mini{display:flex;gap:8px;flex-wrap:wrap}
 .mini button{
@@ -586,6 +596,7 @@ textarea{min-height:150px;line-height:1.4}
   <div id="bar">
     <button id="btn-home" title="Anza upya / Start again">&#8962;</button>
     <div class="who" id="who"></div>
+    <span class="offdot hide" id="offdot" title="No connection — answers are saved on this device">&#9679;&nbsp;nje ya mtandao</span>
     <span class="queue-badge hide" id="qbadge"></span>
     <div class="step" id="stepno"></div>
   </div>
@@ -1028,7 +1039,7 @@ function renderStart(){
   // language
   document.getElementById('lang').addEventListener('click', function(e){
     var b=e.target.closest('[data-lang]'); if(!b) return;
-    S.lang=b.dataset.lang; var p=prefs(); p.lang=S.lang; savePrefs(p); render();
+    S.lang=b.dataset.lang; var p=prefs(); p.lang=S.lang; savePrefs(p); paintOnline(); render();
   });
   // mode
   document.getElementById('mode').addEventListener('click', function(e){
@@ -1410,6 +1421,24 @@ document.addEventListener('keydown', function(e){
   if (e.key==='Enter' && e.target.tagName!=='TEXTAREA' && !$next.disabled){ go(1); }
 });
 
+/* ---------- offline ---------- */
+/* BUILD_STRIP_SW_START */
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){ /* not fatal */ });
+  });
+}
+/* BUILD_STRIP_SW_END */
+
+function paintOnline(){
+  var off = !navigator.onLine, el = document.getElementById('offdot');
+  el.classList.toggle('hide', !off);
+  el.textContent = '\u25CF ' + (S.lang==='en' ? 'offline' : 'nje ya mtandao');
+}
+window.addEventListener('online',  function(){ paintOnline(); flushQueue(); });
+window.addEventListener('offline', paintOnline);
+
+paintOnline();
 paintBadge();
 flushQueue();
 render();
