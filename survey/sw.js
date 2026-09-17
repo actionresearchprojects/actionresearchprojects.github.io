@@ -1,6 +1,6 @@
 /* ARC House 5 Comfort Survey — offline service worker.
    Bump CACHE whenever index.html changes, or devices keep serving the old page. */
-var CACHE = 'arc-survey-v2.1.0';
+var CACHE = 'arc-survey-v2.2.0';
 
 var ASSETS = [
   './',

@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1a6b4a">
 <title>ARC House 5 Comfort Survey (offline copy)</title>
-<!-- Built by build-offline.js from index.html on 2026-09-16.
+<!-- Built by build-offline.js from index.html on 2026-09-17.
      Self-contained: no network required. Edit index.html, not this file. -->
 <script>
 (function(){
@@ -712,7 +712,7 @@ textarea{min-height:150px;line-height:1.4}
 var CFG = {
   /* Google Apps Script web-app URL, ending /exec. Until this is set,
      answers are stored on the device only and can be exported by hand. */
-  endpoint: '',
+  endpoint: 'https://script.google.com/macros/s/AKfycbwQJ7ufGwegmo8T1IAUyrFXsLKnvso6710K89jqZHL5BsQAIize1rGUuTpu2ZQ6DVlH/exec',
 
   /* Must match SUBMIT_TOKEN in apps-script.gs */
   token: 'arc-house5-2026',
@@ -722,7 +722,7 @@ var CFG = {
   roster: [],
 
   house: 'House 5',
-  version: '2.1-offline'
+  version: '2.2-offline'
 };
 /* ------------------------------------------------------ */
 
@@ -1074,7 +1074,7 @@ function loadDraft(){ try{ var s=localStorage.getItem(LS_DRAFT); return s?JSON.p
 function prefs(){ try{ return JSON.parse(localStorage.getItem(LS_PREFS))||{}; }catch(e){ return {}; } }
 function savePrefs(p){ try{ localStorage.setItem(LS_PREFS, JSON.stringify(p)); }catch(e){} }
 function queue(){ try{ return JSON.parse(localStorage.getItem(LS_QUEUE))||[]; }catch(e){ return []; } }
-function setQueue(q){ try{ localStorage.setItem(LS_QUEUE, JSON.stringify(q)); }catch(e){} paintBadge(); }
+function setQueue(q){ try{ localStorage.setItem(LS_QUEUE, JSON.stringify(q)); }catch(e){} paintBadge(); paintDoneStatus(); }
 function paintBadge(){
   var n = queue().length;
   $badge.classList.toggle('hide', n===0);
@@ -1104,7 +1104,7 @@ function render(){
   if (S.screen==='start')  renderStart();
   else if (S.screen==='q') renderQ();
   else if (S.screen==='review') renderReview();
-  else if (S.screen==='done')   renderDone(S.sent);
+  else if (S.screen==='done')   renderDone();
   paintChrome();
   $stage.scrollTop = 0;
 }
@@ -1434,14 +1434,22 @@ function renderReview(){
 }
 
 /* ---------- done ---------- */
-function renderDone(sent){
+function doneStatusText(){
+  var n = queue().length;
+  if (n === 0) return S.lang==='en' ? 'Sent.' : 'Imetumwa.';
+  if (navigator.onLine) return S.lang==='en' ? 'Saved. Sending…' : 'Imehifadhiwa. Inatumwa…';
+  return S.lang==='en' ? 'Saved on this device. It will send itself when there is internet.'
+                       : 'Imehifadhiwa kwenye kifaa hiki. Itatumwa yenyewe kukiwa na intaneti.';
+}
+function paintDoneStatus(){
+  var el = document.getElementById('done-status');
+  if (el) el.textContent = doneStatusText();
+}
+function renderDone(){
   $wrap.innerHTML =
     '<div class="done">'+icon('i-done','done-mark')+
     '<h2>'+(S.lang==='en'?'Thank you!':'Asante sana!')+'</h2>'+
-    '<p>'+(sent===true
-        ? (S.lang==='en'?'Your answers have been sent.':'Majibu yako yametumwa.')
-        : (S.lang==='en'?'Saved on this device. It will send itself when there is internet.'
-                        :'Imehifadhiwa kwenye kifaa hiki. Itatumwa yenyewe kukiwa na intaneti.'))+'</p>'+
+    '<p id="done-status">'+esc(doneStatusText())+'</p>'+
     '<button id="btn-again" style="border:none;border-radius:16px;padding:20px;font-size:21px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">'+
       (S.lang==='en'?'Next girl':'Msichana mwingine')+'</button>'+
     '<div class="mini" style="margin-top:18px;justify-content:center">'+
@@ -1495,26 +1503,44 @@ function send(payload){
 }
 
 function submit(){
-  var payload = buildPayload();
-  $next.disabled = true;
-  $next.textContent = S.lang==='en' ? 'Sending…' : 'Inatuma…';
-  send(payload).then(function(){
-    clearDraft(); S.sent=true;  S.screen='done'; paintChrome(); renderDone(true); flushQueue();
-  }).catch(function(){
-    var q=queue(); q.push(payload); setQueue(q);
-    clearDraft(); S.sent=false; S.screen='done'; paintChrome(); renderDone(false);
-  });
+  var q = queue();
+  q.push(buildPayload());
+  setQueue(q);
+  clearDraft();
+  S.screen='done'; paintChrome(); renderDone();
+  flushQueue();               // in the background; the surveyor never waits on it
+}
+
+/* The link at House 5 drops often and a submission can take 20s, so a failed
+   flush must retry itself. Without this a survey could sit in the queue until
+   someone happened to reload the page. */
+var flushTimer = null, flushWait = 15000, flushing = false;
+var FLUSH_MIN = 15000, FLUSH_MAX = 300000;
+
+function scheduleFlush(ms){
+  if (flushTimer) clearTimeout(flushTimer);
+  flushTimer = setTimeout(flushQueue, ms);
 }
 
 function flushQueue(){
-  if (!CFG.endpoint) return;
+  if (!CFG.endpoint || flushing) return;
+  if (flushTimer){ clearTimeout(flushTimer); flushTimer = null; }
+
   var q = queue();
-  if (!q.length) return;
-  var item = q[0];
-  send(item).then(function(){
+  if (!q.length){ flushWait = FLUSH_MIN; return; }
+  if (!navigator.onLine){ scheduleFlush(FLUSH_MIN); return; }
+
+  flushing = true;
+  send(q[0]).then(function(){
+    flushing = false;
     var cur = queue(); cur.shift(); setQueue(cur);
-    setTimeout(flushQueue, 400);
-  }).catch(function(){ /* still offline — try again later */ });
+    flushWait = FLUSH_MIN;
+    scheduleFlush(600);                       // straight on to the next one
+  }).catch(function(){
+    flushing = false;
+    flushWait = Math.min(flushWait * 2, FLUSH_MAX);
+    scheduleFlush(flushWait);                 // back off, but never give up
+  });
 }
 
 /* ---------- manual export, so nothing is ever stranded ---------- */

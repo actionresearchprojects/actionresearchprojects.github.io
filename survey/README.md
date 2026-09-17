@@ -20,12 +20,13 @@ All at the top of `index.html`, in `var CFG`:
 
 ## Connecting the Google Sheet
 
-The spreadsheet already exists — **ARC House 5 Comfort Survey — Responses**:
+**This is done and live.** Surveys land in **ARC House 5 Comfort Survey — Responses**:
 https://docs.google.com/spreadsheets/d/1SLIvoDLS1Mzw0S1IKZlXYy-W2cBEEe8MFuIBUcKIp0Q/edit
 
-`apps-script.gs` is already pointed at it. What is left is the one step that has to
-be done by a human, because Google will not let a script write to your Drive until
-*you* grant it consent in a browser:
+Verified end to end from a browser: a full 27-question run wrote one row with all
+43 columns mapped correctly.
+
+If the deployment ever has to be recreated (a new `/exec` URL), the steps are:
 
 1. Open the sheet → **Extensions → Apps Script**
 2. Delete the placeholder, paste in all of `apps-script.gs`, save
@@ -109,6 +110,19 @@ rebuild, or the two drift apart.
 The offline file still carries the full submission logic, so if that laptop is later
 online and `CFG.endpoint` is set, its queue flushes on its own. Otherwise the data
 comes off with **Export data**.
+
+### Sending never blocks the surveyor
+
+A submission over the link at House 5 takes **10–20 seconds** and fails outright
+perhaps one time in four. So tapping **Tuma** does not wait for the network: the
+survey is written to the queue, the thank-you screen appears in about 150 ms, and
+sending happens in the background. The line under "Asante sana!" reports what is
+actually happening — *Inatumwa… / Sending…*, then *Imetumwa / Sent*.
+
+A failed send retries on its own, backing off from 15 seconds to at most 5 minutes,
+and keeps retrying rather than waiting for a page reload. A `flushing` guard means
+overlapping attempts cannot send the same survey twice — verified by firing eight
+concurrent flushes at a two-item queue and counting exactly two POSTs.
 
 ### What was already offline-tolerant
 
