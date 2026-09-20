@@ -89,6 +89,28 @@ stale-while-revalidate, so an online device serves the old page once and picks t
 new one up in the background for next launch — but bumping makes it immediate and
 clears files you removed.
 
+### 1b. Caren's copy — saves to her computer, uploads nothing
+
+`survey-offline-local.html` is the same survey with `CFG.sink = 'file'`. After each
+survey it writes a CSV onto that computer and the finish screen names the file and
+says to look in Downloads. It never contacts the Apps Script — the build blanks
+`CFG.endpoint` as well as flipping the sink, so it cannot upload even by accident,
+and there is no queue badge to puzzle over.
+
+Files are named `ARC survey - <name> - <date> <time>.csv`, one per survey, so a
+month of them sorts by girl and by date and none can overwrite another. She sends
+the folder once a month.
+
+Build it with:
+
+```bash
+node build-offline.js --local
+```
+
+The trade-off is that nothing is backed up until she sends the files. If a laptop
+is lost, so is everything on it that has not been sent. The hosted app and the
+ordinary offline file both keep a copy in the sheet instead.
+
 ### 2. The standalone file (no server, no install, no internet ever)
 
 `survey-offline.html` is one 172 KB file with the fonts and icon inlined. Put it on
@@ -96,10 +118,11 @@ a laptop, a USB stick, or send it over WhatsApp, and open it — it runs from
 `file://` on a machine that has never been online. Verified in Chrome with
 networking disabled.
 
-Build it after **any** change to `index.html`:
+Build it after **any** change to `index.html` — both variants:
 
 ```bash
-node build-offline.js
+node build-offline.js           # survey-offline.html        -> Google Sheet
+node build-offline.js --local   # survey-offline-local.html  -> saves to the computer
 ```
 
 It inlines the fonts and icon, strips the service worker and manifest (meaningless
@@ -203,6 +226,20 @@ numbers, not labels, so they sort and plot directly:
 
 `c13_feel_words` and `c14_more_detail` are free text, and are the two columns the
 study is actually about. `d25_seasonal` and `e_notes` are free text too.
+
+## The paper form
+
+`paper/form.html` is the printable two-page form, and `paper/build-pdf.js` renders
+it to `paper/House5-comfort-survey-EN-SW.pdf`.
+
+The original PDF was produced by wkhtmltopdf and **its HTML source was never kept**
+— nothing on disk or in Drive contained the question text. `paper/form.html` is a
+rebuild from the v5 PDF, checked word for word against it: no wording was lost, and
+the only additions are the intended ones. Edit that file and re-render rather than
+editing a PDF.
+
+On paper, Q23's two conditional options cannot be hidden, so they carry a note in
+amber: *only ask if she ticked 1 My bedroom in Q22*, and likewise for the kitchen.
 
 ## Kept in step with the paper form
 

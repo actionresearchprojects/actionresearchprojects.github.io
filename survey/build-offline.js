@@ -10,10 +10,21 @@ const path = require('path');
 
 const dir = __dirname;
 const SRC = path.join(dir, 'index.html');
-const OUT = path.join(dir, 'survey-offline.html');
+
+/* Two builds from one source:
+     survey-offline.html        posts to the Google Sheet (Archie)
+     survey-offline-local.html  saves a CSV per survey onto the computer (Caren) */
+const LOCAL = process.argv.includes('--local');
+const OUT = path.join(dir, LOCAL ? 'survey-offline-local.html' : 'survey-offline.html');
 
 let html = fs.readFileSync(SRC, 'utf8');
 const before = Buffer.byteLength(html);
+
+if (LOCAL) {
+  if (!html.includes("sink: 'sheet'")) throw new Error("CFG.sink not found");
+  html = html.replace("sink: 'sheet'", "sink: 'file'");
+  html = html.replace(/endpoint: '[^']*'/, "endpoint: ''");   // cannot upload even by accident
+}
 
 const dataUri = (file, mime) =>
   `data:${mime};base64,${fs.readFileSync(path.join(dir, file)).toString('base64')}`;
@@ -41,15 +52,15 @@ html = html.replace(/<link rel="manifest"[^>]*>\n/, '');
 // 4. label it, so a stray copy is identifiable
 html = html.replace(
   /(<title>)(.*?)(<\/title>)/,
-  `$1$2 (offline copy)$3\n<!-- Built by build-offline.js from index.html on ${new Date().toISOString().slice(0, 10)}.\n     Self-contained: no network required. Edit index.html, not this file. -->`
+  `$1$2 (offline copy${LOCAL ? ', saves to this computer' : ''})$3\n<!-- Built by build-offline.js from index.html on ${new Date().toISOString().slice(0, 10)}.\n     Self-contained: no network required. Edit index.html, not this file. -->`
 );
 const ver = html.match(/version: '([\d.]+)'/);
 if (!ver) throw new Error('CFG.version not found');
-html = html.replace(ver[0], `version: '${ver[1]}-offline'`);
+html = html.replace(ver[0], `version: '${ver[1]}-offline${LOCAL ? '-local' : ''}'`);
 
 fs.writeFileSync(OUT, html);
 
 const after = Buffer.byteLength(html);
-console.log(`survey-offline.html  ${(after / 1024).toFixed(0)} KB  (from ${(before / 1024).toFixed(0)} KB + ${fontCount} fonts + icon)`);
+console.log(`${path.basename(OUT)}  ${(after / 1024).toFixed(0)} KB  (from ${(before / 1024).toFixed(0)} KB + ${fontCount} fonts + icon)`);
 const leftover = html.match(/(?:src|href)="(?!data:|#)(?:https?:)?\/\/[^"]*"|url\((?!data:|#)[^)]*\)/g);
 console.log(leftover ? `WARNING external refs remain: ${leftover.join(', ')}` : 'verified: no external references');

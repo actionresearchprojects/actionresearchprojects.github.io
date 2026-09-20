@@ -197,7 +197,7 @@ textarea{min-height:150px;line-height:1.4}
 
 .done-mark{width:110px;height:110px;margin:26px auto 18px;display:block;color:var(--green)}
 .done h2{text-align:center;font-size:30px;font-weight:500;margin-bottom:8px}
-.done p{text-align:center;color:var(--muted);font-size:17px;margin-bottom:22px}
+.done p{text-align:center;color:var(--muted);font-size:17px;margin-bottom:22px;white-space:pre-line;word-break:break-word}
 
 .note{background:#fff8e6;border:1px solid #e8d49a;border-radius:12px;padding:12px 14px;font-size:14.5px;color:#6b5626;margin-bottom:14px}
 .note.bad{background:#fdeceb;border-color:#e8b0ab;color:#83302a}
@@ -730,6 +730,12 @@ textarea{min-height:150px;line-height:1.4}
 
 /* ---------- CONFIG — edit these three things ---------- */
 var CFG = {
+  /* Where finished surveys go.
+       'sheet' — post to the Google Sheet, queueing and retrying as needed.
+       'file'  — save a CSV onto this computer after each survey and say where
+                 it went. Nothing is uploaded. Used for the copy sent to Caren. */
+  sink: 'sheet',
+
   /* Google Apps Script web-app URL, ending /exec. Until this is set,
      answers are stored on the device only and can be exported by hand. */
   endpoint: 'https://script.google.com/macros/s/AKfycbwQJ7ufGwegmo8T1IAUyrFXsLKnvso6710K89jqZHL5BsQAIize1rGUuTpu2ZQ6DVlH/exec',
@@ -1027,7 +1033,8 @@ var S = {
   i      : 0,
   started: 0,
   primed : false,        // true once the 7-point scale has been shown
-  sent   : false
+  sent   : false,
+  savedAs: ''            // filename written by the 'file' sink
 };
 
 var $wrap=document.getElementById('wrap'), $foot=document.getElementById('foot'),
@@ -1124,6 +1131,7 @@ function savePrefs(p){ try{ localStorage.setItem(LS_PREFS, JSON.stringify(p)); }
 function queue(){ try{ return JSON.parse(localStorage.getItem(LS_QUEUE))||[]; }catch(e){ return []; } }
 function setQueue(q){ try{ localStorage.setItem(LS_QUEUE, JSON.stringify(q)); }catch(e){} paintBadge(); paintDoneStatus(); }
 function paintBadge(){
+  if (CFG.sink === 'file'){ $badge.classList.add('hide'); return; }
   var n = queue().length;
   $badge.classList.toggle('hide', n===0);
   $badge.textContent = n + ' ⏳';
@@ -1484,6 +1492,11 @@ function renderReview(){
 
 /* ---------- done ---------- */
 function doneStatusText(){
+  if (CFG.sink === 'file'){
+    return (S.lang==='en'
+      ? 'Saved on this computer as:\n' + (S.savedAs||'') + '\nLook in your Downloads folder.'
+      : 'Imehifadhiwa kwenye kompyuta hii kama:\n' + (S.savedAs||'') + '\nAngalia katika folda ya Downloads.');
+  }
   var n = queue().length;
   if (n === 0) return S.lang==='en' ? 'Sent.' : 'Imetumwa.';
   if (navigator.onLine) return S.lang==='en' ? 'Saved. Sending…' : 'Imehifadhiwa. Inatumwa…';
@@ -1552,12 +1565,40 @@ function send(payload){
 }
 
 function submit(){
+  var payload = buildPayload();
+
+  if (CFG.sink === 'file'){
+    S.savedAs = saveOneToFile(payload);
+    var all = queue(); all.push(payload); setQueue(all);   // keeps Export data complete
+    clearDraft();
+    S.screen='done'; paintChrome(); renderDone();
+    return;
+  }
+
   var q = queue();
-  q.push(buildPayload());
+  q.push(payload);
   setQueue(q);
   clearDraft();
   S.screen='done'; paintChrome(); renderDone();
   flushQueue();               // in the background; the surveyor never waits on it
+}
+
+/* One CSV per survey, named so a month of them sorts and reads clearly.
+   Returns the filename so the finish screen can tell her what to look for. */
+function saveOneToFile(payload){
+  var safe = (payload.name||'survey').replace(/[^\w\u00c0-\u024f -]/g,'').trim().slice(0,40) || 'survey';
+  var stamp = (payload.date||today()) + ' ' + (payload.time||now()).replace(':','');
+  var fname = 'ARC survey - ' + safe + ' - ' + stamp + '.csv';
+  download(fname, toCSV([payload]));
+  return fname;
+}
+function download(filename, text){
+  var blob = new Blob(['\ufeff'+text], {type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
 }
 
 /* The link at House 5 drops often and a submission can take 20s, so a failed
@@ -1572,6 +1613,7 @@ function scheduleFlush(ms){
 }
 
 function flushQueue(){
+  if (CFG.sink === 'file') return;        // nothing is ever uploaded
   if (!CFG.endpoint || flushing) return;
   if (flushTimer){ clearTimeout(flushTimer); flushTimer = null; }
 

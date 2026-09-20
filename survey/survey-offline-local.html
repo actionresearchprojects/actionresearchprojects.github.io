@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1a6b4a">
-<title>ARC House 5 Comfort Survey (offline copy)</title>
+<title>ARC House 5 Comfort Survey (offline copy, saves to this computer)</title>
 <!-- Built by build-offline.js from index.html on 2026-09-20.
      Self-contained: no network required. Edit index.html, not this file. -->
 <script>
@@ -735,11 +735,11 @@ var CFG = {
        'sheet' — post to the Google Sheet, queueing and retrying as needed.
        'file'  — save a CSV onto this computer after each survey and say where
                  it went. Nothing is uploaded. Used for the copy sent to Caren. */
-  sink: 'sheet',
+  sink: 'file',
 
   /* Google Apps Script web-app URL, ending /exec. Until this is set,
      answers are stored on the device only and can be exported by hand. */
-  endpoint: 'https://script.google.com/macros/s/AKfycbwQJ7ufGwegmo8T1IAUyrFXsLKnvso6710K89jqZHL5BsQAIize1rGUuTpu2ZQ6DVlH/exec',
+  endpoint: '',
 
   /* Must match SUBMIT_TOKEN in apps-script.gs */
   token: 'arc-house5-2026',
@@ -749,7 +749,7 @@ var CFG = {
   roster: [],
 
   house: 'House 5',
-  version: '2.3-offline'
+  version: '2.3-offline-local'
 };
 /* ------------------------------------------------------ */
 
