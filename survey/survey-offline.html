@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1a6b4a">
 <title>ARC House 5 Comfort Survey (offline copy)</title>
-<!-- Built by build-offline.js from index.html on 2026-09-17.
+<!-- Built by build-offline.js from index.html on 2026-09-20.
      Self-contained: no network required. Edit index.html, not this file. -->
 <script>
 (function(){
@@ -342,20 +342,41 @@ textarea{min-height:150px;line-height:1.4}
 </symbol>
 
 <!-- ---- room conditions ---- -->
+<!-- three blades inside a guard ring, on a stand. The old version was three
+     bare curves with no ring, which just read as a scribble. -->
+<path id="b-blade" d="M32 22.6C29.3 14 33 9.4 37.6 11S39.6 20.2 32 22.6Z"
+      fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+<g id="b-fan" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="32" cy="26" r="17"/>
+  <use href="#b-blade"/>
+  <use href="#b-blade" transform="rotate(120 32 26)"/>
+  <use href="#b-blade" transform="rotate(240 32 26)"/>
+  <circle cx="32" cy="26" r="3.2"/>
+  <path d="M32 43v9M23 54h18"/>
+</g>
 <symbol id="i-fan-on" viewBox="0 0 64 64">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M32 30c0-9-5-13-11-11s-4 11 5 13M32 30c8-4 13-1 13 5s-8 8-11 0M32 30c-3 9-9 11-14 7s0-12 9-11"/>
-    <circle cx="32" cy="31" r="3.6"/><path d="M32 44v9M24 55h16"/>
-  </g>
-  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".55">
-    <path d="M52 16c3 2 3 6 0 8M57 11c5 4 5 14 0 18"/></g>
+  <use href="#b-fan"/>
+  <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" opacity=".6">
+    <path d="M52 19c2.5 2 2.5 6 0 8M57 15c4.5 4 4.5 14 0 18"/></g>
 </symbol>
 <symbol id="i-fan-off" viewBox="0 0 64 64">
-  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
-    <path d="M32 30c0-9-5-13-11-11s-4 11 5 13M32 30c8-4 13-1 13 5s-8 8-11 0M32 30c-3 9-9 11-14 7s0-12 9-11"/>
-    <circle cx="32" cy="31" r="3.6"/><path d="M32 44v9M24 55h16"/>
+  <g opacity=".45"><use href="#b-fan"/></g>
+  <path d="M11 11l42 42" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+</symbol>
+<!-- extra Section D places -->
+<symbol id="i-clothes-bag" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 9l5 2.5 5-2.5 6 3.5-2.5 6-2.5-1.5V30H14V16.5L11.5 18 9 12z"/>
+    <path d="M34 34h22l3 22H31z"/>
+    <path d="M39 34v-3.5a6 6 0 0 1 12 0V34"/>
   </g>
-  <path d="M12 12l40 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-food-bin" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 20h32l-3 34H19z"/>
+    <path d="M11 20h42M26 14h12"/>
+    <path d="M27 29v16M37 29v16" opacity=".5"/>
+  </g>
 </symbol>
 <symbol id="i-curtain-closed" viewBox="0 0 64 64">
   <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
@@ -722,7 +743,7 @@ var CFG = {
   roster: [],
 
   house: 'House 5',
-  version: '2.2-offline'
+  version: '2.3-offline'
 };
 /* ------------------------------------------------------ */
 
@@ -920,7 +941,8 @@ var QS = [
   /* ===== SECTION D — mosquitoes. About what she notices generally, not
      just last night: this is for working out where they get in. ===== */
   {id:'d21_mosquito_bother', sec:'D', type:'choice', layout:'g3',
-   sw:'Usiku uliopita, je, mbu walikusumbua?', en:'Last night, did mosquitoes bother you?',
+   sw:'Usiku uliopita, katika chumba chako cha kulala, je, mbu walikusumbua?',
+   en:'Last night, in your bedroom, did mosquitoes bother you?',
    opts:[{v:0, sw:'Hapana kabisa', en:'Not at all', icon:'i-mosq-none', c:'var(--yes)'},
          {v:1, sw:'Kidogo',        en:'A little',   icon:'i-mosq-few',  c:'var(--p1)'},
          {v:2, sw:'Sana',          en:'A lot',      icon:'i-mosq-many', c:'var(--p3)'}]},
@@ -942,8 +964,14 @@ var QS = [
    hintSw:'Weka alama kwenye zote.', hintEn:'Tick all that apply.',
    opts:[{v:1, sw:'Karibu na madirisha',      en:'Near the windows',          icon:'i-window'},
          {v:2, sw:'Karibu na milango',        en:'Near the doors',            icon:'i-door'},
-         {v:3, sw:'Karibu na kitanda',        en:'Near the bed',              icon:'i-room-bed'},
+         /* only worth asking about a bed if she named her bedroom in Q22 */
+         {v:3, sw:'Karibu na kitanda',        en:'Near the bed',              icon:'i-room-bed',
+          showIf:function(a){ return (a.d22_where_house||[]).indexOf(1) > -1; }},
+         /* and likewise food and bins only if she named the kitchen */
+         {v:7, sw:'Kwenye chakula au karibu na mapipa ya taka', en:'On food or near bins', icon:'i-food-bin',
+          showIf:function(a){ return (a.d22_where_house||[]).indexOf(3) > -1; }},
          {v:4, sw:'Karibu na sakafu au pembeni', en:'Near the floor or in corners', icon:'i-corner'},
+         {v:6, sw:'Kwenye nguo na mikoba',    en:'On clothes and bags',       icon:'i-clothes-bag'},
          {v:5, sw:'Kila mahali chumbani',     en:'Everywhere in the room',    icon:'i-everywhere'},
          {v:0, sw:'Sijui',                    en:'I do not know',             icon:'i-unknown', c:'var(--muted)', exclusive:true}]},
 
@@ -1053,6 +1081,27 @@ function steps(){
     return true;
   });
 }
+/* Options an option-level showIf currently allows. Used everywhere options are
+   drawn or read back, so a hidden option can never be rendered or scored. */
+function opts(q){
+  if (!q.opts) return [];
+  return q.opts.filter(function(o){ return !o.showIf || o.showIf(S.ans); });
+}
+
+/* If an earlier answer changes so that a chosen option no longer applies,
+   drop it rather than silently keeping an answer the surveyor cannot see. */
+function pruneHidden(q){
+  if (!q.opts) return;
+  var allowed = opts(q).map(function(o){ return o.v; });
+  var v = S.ans[q.id];
+  if (Array.isArray(v)){
+    var kept = v.filter(function(x){ return allowed.indexOf(x) > -1; });
+    if (kept.length !== v.length) S.ans[q.id] = kept;
+  } else if (v !== undefined && v !== null && v !== '' && allowed.indexOf(v) === -1){
+    delete S.ans[q.id];
+  }
+}
+
 function answered(q){
   var v = S.ans[q.id];
   if (q.type==='multi') return Array.isArray(v) && v.length>0;
@@ -1235,6 +1284,7 @@ function renderQ(){
   var q = st[S.i];
 
   if (q.primes) S.primed = true;   // the 7-point scale has now been seen
+  pruneHidden(q);
 
   var sec = SEC_NAME[q.sec];
   var secTxt = S.lang==='en' ? sec.en : (S.lang==='sw' ? sec.sw : sec.sw);
@@ -1262,7 +1312,7 @@ function optHTML(q,o,on,extra){
 }
 function scaleHTML(q){
   var cur = S.ans[q.id];
-  return '<div class="opts scale">'+q.opts.map(function(o){
+  return '<div class="opts scale">'+opts(q).map(function(o){
     var num = '<span class="num">'+(o.v>0?'+':'')+o.v+'</span>';
     var on = cur===o.v;
     return '<button class="opt'+(on?' on':'')+'" data-v="'+o.v+'" style="color:'+o.c+'">'+
@@ -1272,13 +1322,13 @@ function scaleHTML(q){
 function choiceHTML(q){
   var cur = S.ans[q.id];
   var cls = q.layout==='yn' ? 'yn' : 'opts '+(q.layout||'gauto');
-  return '<div class="'+cls+'">'+q.opts.map(function(o){
+  return '<div class="'+cls+'">'+opts(q).map(function(o){
     return optHTML(q,o,String(cur)===String(o.v));
   }).join('')+'</div>';
 }
 function multiHTML(q){
   var cur = S.ans[q.id]||[];
-  return '<div class="opts '+(q.layout||'gauto')+'">'+q.opts.map(function(o){
+  return '<div class="opts '+(q.layout||'gauto')+'">'+opts(q).map(function(o){
     return optHTML(q,o,cur.indexOf(o.v)>-1);
   }).join('')+'</div>';
 }
@@ -1339,8 +1389,8 @@ function wire(q){
       }
       S.ans[q.id]=cur;
       Array.prototype.forEach.call($wrap.querySelectorAll('.opt'), function(el){
-        el.classList.toggle('on', cur.indexOf(
-          q.opts.filter(function(y){ return String(y.v)===el.dataset.v; })[0].v) > -1);
+        var o2 = opts(q).filter(function(y){ return String(y.v)===el.dataset.v; })[0];
+        el.classList.toggle('on', !!o2 && cur.indexOf(o2.v) > -1);
       });
       $next.disabled = !(cur.length>0 || q.optional);
       saveDraft();
@@ -1392,7 +1442,7 @@ function shortAnswer(q){
   if (q.type==='count') return String(v);
   if (q.type==='multi'){
     return v.map(function(x){
-      var o=q.opts.filter(function(y){return y.v===x;})[0];
+      var o=opts(q).filter(function(y){return y.v===x;})[0];
       return o ? (S.lang==='en'?o.en:o.sw) : x;
     }).join(', ');
   }
