@@ -59,6 +59,9 @@ button,input{font-family:inherit}
 #drop .big{font-size:18px;font-weight:500;color:#222;margin-bottom:8px}
 #drop .small{font-size:13px;color:#777}
 #drop u{color:#1a6b4a;text-decoration:none;font-weight:500}
+.who{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px;color:#666}
+.who input{font-family:inherit;font-size:13px;padding:5px 7px;border:1px solid #ccc;border-radius:3px;width:200px;max-width:100%}
+.who input:focus{outline:none;border-color:#1a6b4a;box-shadow:0 0 0 2px rgba(26,107,74,.12)}
 .hint{font-size:11px;color:#888;line-height:1.5;margin-top:10px}
 #status{font-size:13px;margin:0 2px 10px;min-height:18px}
 #status.ok{color:#1a6b4a;font-weight:500}
@@ -96,10 +99,13 @@ button,input{font-family:inherit}
   <div class="card">
     <div id="drop" tabindex="0" role="button" aria-label="Choose .ttd files">
       <div class="big">Drop Tinytag <b>.ttd</b> files here</div>
-      <div class="small">or <u>choose files</u>. As many as you like at once.</div>
+      <div class="small">or <u>choose files</u></div>
     </div>
     <input type="file" id="fileInput" accept=".ttd" multiple hidden>
-    <p class="hint" id="hint"></p>
+    <div class="who" id="who" hidden>
+      <label for="sender">Your name</label>
+      <input type="text" id="sender" value="Lembeli" autocomplete="name">
+    </div>
   </div>
   <div id="status"></div>
   <div id="files"></div>
@@ -125,10 +131,6 @@ let uid = 1;
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const safeName = s => s.replace(/[\\/:*?"<>|]+/g, '_').trim() || 'tinytag';
-
-$('#hint').innerHTML = SENDS
-  ? 'Each file is converted to Excel (.xlsx) and CSV and <b>sent to the ARC team automatically</b>, so there is no need to email anything. You can also download the converted files here.'
-  : 'Each file is converted to Excel (.xlsx) and CSV in your browser. Nothing is uploaded.';
 
 /* ---------- conversion: always every channel, always both formats ---------- */
 const all = t => t.channels.map(() => true);
@@ -174,7 +176,7 @@ async function sendOne(it) {
   const r = await fetch(CFG.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // avoids a CORS preflight
-    body: JSON.stringify({ token: CFG.token, sender: 'Tinytag upload', files }),
+    body: JSON.stringify({ token: CFG.token, sender: $('#sender').value.trim() || 'Lembeli', files }),
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const t = await r.text();
@@ -292,6 +294,11 @@ $('#files').addEventListener('click', async e => {
 });
 
 if (SENDS) {
+  $('#who').hidden = false;
+  try { const v = localStorage.getItem('arc-tinytag-sender'); if (v) $('#sender').value = v; } catch (e) {}
+  $('#sender').addEventListener('input', () => {
+    try { localStorage.setItem('arc-tinytag-sender', $('#sender').value.trim()); } catch (e) {}
+  });
   window.addEventListener('beforeunload', e => {
     if (items.some(it => it.sent === 'waiting' || it.sent === 'sending')) { e.preventDefault(); e.returnValue = ''; }
   });
