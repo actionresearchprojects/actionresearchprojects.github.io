@@ -44,54 +44,46 @@ body{font-family:'Ubuntu',sans-serif;font-size:13px;background:#f8f9fa;color:#33
 #header{background:#fff;border-bottom:1px solid #ddd;padding:8px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:20;min-height:49px}
 #header h1{font-size:17px;font-weight:500;color:#222;white-space:nowrap}
 #header .spacer{flex:1}
-main{padding:14px;max-width:1100px;margin:0 auto}
+main{padding:14px;max-width:1000px;margin:0 auto}
 .card{background:#fff;border:1px solid #ddd;border-radius:4px;padding:12px;margin-bottom:12px}
-.card>h2{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-button{font-family:inherit;font-size:12px}
+button,input{font-family:inherit}
 .btn{background:#fff;border:1px solid #bbb;border-radius:3px;padding:4px 10px;cursor:pointer;color:#333;font-size:12px}
 .btn:hover{background:#f0f1f2;border-color:#999}
 .btn:disabled{opacity:.45;cursor:default;background:#fff;border-color:#bbb}
 .btn.primary{background:#1a6b4a;border-color:#1a6b4a;color:#fff}
 .btn.primary:hover{background:#155a3e}
 .btn.primary:disabled{background:#1a6b4a;border-color:#1a6b4a}
-.btn.sm{padding:2px 7px;font-size:11px;line-height:1.4}
-.seg{display:inline-flex;border:1px solid #bbb;border-radius:3px;overflow:hidden}
-.seg button{background:#fff;border:none;padding:4px 12px;cursor:pointer;color:#555;font-weight:500}
-.seg button+button{border-left:1px solid #bbb}
-.seg button.on{background:#1a6b4a;color:#fff}
-.seglabel{font-size:11px;color:#666;font-weight:500}
-#drop{border:2px dashed #c9cdd1;border-radius:4px;padding:34px 16px;text-align:center;cursor:pointer;transition:border-color .12s,background .12s;background:#fbfbfc}
+.btn.sm{padding:2px 8px;font-size:11px;line-height:1.5}
+#drop{border:2px dashed #c9cdd1;border-radius:4px;padding:48px 16px;text-align:center;cursor:pointer;transition:border-color .12s,background .12s;background:#fbfbfc}
 #drop:hover,#drop.over{border-color:#1a6b4a;background:#f1f7f4}
-#drop .big{font-size:15px;font-weight:500;color:#222;margin-bottom:6px}
-#drop .small{font-size:12px;color:#777}
+#drop .big{font-size:18px;font-weight:500;color:#222;margin-bottom:8px}
+#drop .small{font-size:13px;color:#777}
 #drop u{color:#1a6b4a;text-decoration:none;font-weight:500}
+.who{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:#666}
+.who input{font-size:13px;padding:5px 7px;border:1px solid #ccc;border-radius:3px;width:200px;max-width:100%}
+.who input:focus{outline:none;border-color:#1a6b4a;box-shadow:0 0 0 2px rgba(26,107,74,.12)}
 .hint{font-size:11px;color:#888;line-height:1.5;margin-top:10px}
-.filehead{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.filehead .name{flex:1;min-width:180px}
-.filehead .t{font-size:15px;font-weight:500;color:#222;word-break:break-word}
-.filehead .f{font-size:11px;color:#888;margin-top:2px;word-break:break-all}
-.filehead .acts{display:flex;gap:6px;flex-wrap:wrap}
-.facts{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:#666;margin:0 0 10px;padding:7px 9px;background:#f6f7f8;border-radius:3px}
-.facts b{color:#222;font-weight:600;font-variant-numeric:tabular-nums}
-.chans{display:flex;gap:6px 16px;flex-wrap:wrap;margin-bottom:10px;font-size:12px}
-.chans label{display:flex;align-items:center;gap:5px;cursor:pointer}
-.chans input{accent-color:#1a6b4a}
-.chans .sn{color:#999;font-size:11px}
-.tablewrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:12px}
-th,td{border:1px solid #e3e5e7;padding:3px 7px;text-align:left;white-space:nowrap}
-thead th{background:#f4f5f6;font-size:10px;font-weight:600;color:#555;text-transform:uppercase;letter-spacing:.03em;padding:5px 7px}
-td.n{text-align:right;font-variant-numeric:tabular-nums}
-td.gap{text-align:center;color:#aaa;font-size:11px;background:#fbfbfc}
+#status{font-size:13px;margin:0 2px 10px;min-height:18px}
+#status.ok{color:#1a6b4a;font-weight:500}
+#status.bad{color:#a32b2b}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.row .name{flex:1;min-width:200px}
+.row .t{font-size:14px;font-weight:500;color:#222;word-break:break-word}
+.row .f{font-size:11px;color:#888;margin-top:2px;word-break:break-word}
+.row .f b{color:#555;font-weight:500}
+.acts{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.chip{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;background:#eef0f2;color:#666;white-space:nowrap}
+.chip.sending{background:#fff4d6;color:#7a5a00}
+.chip.sent{background:#e2f2ea;color:#1a6b4a}
+.chip.failed{background:#fbe5e5;color:#a32b2b}
 .err{background:#fdf2f2;border-color:#e3c3c3}
 .err .t{color:#a32b2b}
-.err p{font-size:12px;color:#5c2a2a;line-height:1.5}
 .x{background:none;border:none;color:#999;font-size:18px;line-height:1;cursor:pointer;padding:0 2px}
 .x:hover{color:#a32b2b}
-.busy{color:#888;font-size:12px}
 @media (max-width:560px){
   #header h1{font-size:15px}
   main{padding:10px}
+  #drop{padding:34px 12px}
 }
 </style>
 </head>
@@ -100,27 +92,24 @@ td.gap{text-align:center;color:#aaa;font-size:11px;background:#fbfbfc}
 <div id="header">
   <h1>Tinytag Converter</h1>
   <div class="spacer"></div>
-  <span class="seglabel">Convert to</span>
-  <div class="seg" id="fmt">
-    <button data-fmt="xlsx" class="on">Excel .xlsx</button>
-    <button data-fmt="csv">CSV</button>
-  </div>
-  <button class="btn primary" id="btnAll" disabled>Download all</button>
+  <button class="btn" id="btnAll" disabled>Download all (.zip)</button>
 </div>
 
 <main>
   <div class="card">
     <div id="drop" tabindex="0" role="button" aria-label="Choose .ttd files">
       <div class="big">Drop Tinytag <b>.ttd</b> files here</div>
-      <div class="small">or <u>choose files</u>. Several at once is fine.</div>
+      <div class="small">or <u>choose files</u>. As many as you like at once.</div>
     </div>
     <input type="file" id="fileInput" accept=".ttd" multiple hidden>
-    <p class="hint">
-      Files are converted in your browser and are not uploaded anywhere.
-      Values and times are exactly as Tinytag Explorer shows them: calibrated, in the logger's own clock, with dew point where the file has it.
-      Excel files have a <b>Readings</b> sheet and a <b>Statistics</b> sheet; CSV gives the readings, with the statistics as a separate file.
-    </p>
+    <div class="who" id="who" hidden>
+      <label for="sender">Your name</label>
+      <input type="text" id="sender" placeholder="e.g. Saidi" autocomplete="name">
+      <span>(remembered on this computer)</span>
+    </div>
+    <p class="hint" id="hint"></p>
   </div>
+  <div id="status"></div>
   <div id="files"></div>
 </main>
 
@@ -128,33 +117,34 @@ td.gap{text-align:center;color:#aaa;font-size:11px;background:#fbfbfc}
 <script>
 (function () {
 'use strict';
-const { readTtd, readingsTable, statisticsTable, toXlsx, toCsvBlob, zip } = window.TTD;
+const { readTtd, readingsTable, toXlsx, toCsvBlob, zip } = window.TTD;
 
-let fmt = 'xlsx';
-try { if (localStorage.getItem('arc-tinytag-fmt') === 'csv') fmt = 'csv'; } catch (e) {}
-const items = [];   // { id, file, base, ttd?, keep?, error? }
+// Google Apps Script web app that saves uploads to the ARC Google Drive (see
+// README.md). Leave endpoint blank and the page only converts, sending nothing.
+const CFG = {
+  endpoint: '',
+  token: 'arc-tinytag-2026',
+};
+const SENDS = !!CFG.endpoint;
+
+const items = [];   // { id, file, base, ttd?, error?, sent?: 'waiting'|'sending'|'sent'|'failed', why? }
 let uid = 1;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const safeName = s => s.replace(/[\\/:*?"<>|]+/g, '_').trim() || 'tinytag';
 
-function statRow(ttd, key) {
-  const r = ttd.statistics.find(r => r[0] === key);
-  return r ? r.slice(1).find(v => v) || '' : '';
-}
-function prettyInterval(s) {
-  const n = parseInt(s, 10);
-  if (!n) return s;
-  if (n % 3600 === 0) return (n / 3600) + ' h';
-  if (n % 60 === 0) return (n / 60) + ' min';
-  return n + ' s';
-}
-function fmtNum(v) {
-  return typeof v === 'number' ? String(v) : v == null ? '' : esc(v);
-}
+$('#hint').innerHTML = SENDS
+  ? 'Each file is converted to Excel (.xlsx) and CSV and <b>sent to the ARC team automatically</b>, so there is no need to email anything. You can also download the converted files here.'
+  : 'Each file is converted to Excel (.xlsx) and CSV in your browser. Nothing is uploaded.';
 
-/* ---------- adding files ---------- */
+/* ---------- conversion: always every channel, always both formats ---------- */
+const all = t => t.channels.map(() => true);
+const outputs = it => [
+  { name: it.base + '.xlsx', make: () => toXlsx(it.ttd, all(it.ttd)) },
+  { name: it.base + '.csv', make: async () => toCsvBlob(readingsTable(it.ttd, all(it.ttd))) },
+];
+
 async function addFiles(list) {
   const fresh = [];
   for (const file of list) {
@@ -164,24 +154,58 @@ async function addFiles(list) {
   render();
   for (const it of fresh) {
     try {
-      if (!/\.ttd$/i.test(it.file.name)) throw new Error('Only Tinytag .ttd files can be converted here.');
+      if (!/\.ttd$/i.test(it.file.name)) throw new Error('Not a Tinytag .ttd file, so it was skipped.');
       it.ttd = await readTtd(await it.file.arrayBuffer());
-      it.keep = it.ttd.channels.map(() => true);
+      if (SENDS) it.sent = 'waiting';
     } catch (e) {
       it.error = e.message || String(e);
     }
     render();
   }
+  pump();
 }
 
-/* ---------- outputs ---------- */
-function outputsFor(it) {
-  const keep = it.keep;
-  if (fmt === 'xlsx') return [{ name: it.base + '.xlsx', make: () => toXlsx(it.ttd, keep) }];
-  const out = [{ name: it.base + '.csv', make: async () => toCsvBlob(readingsTable(it.ttd, keep)) }];
-  if (it.ttd.statistics.length) out.push({ name: it.base + ' statistics.csv', make: async () => toCsvBlob(statisticsTable(it.ttd, keep)) });
-  return out;
+/* ---------- sending ---------- */
+const toB64 = blob => new Promise((res, rej) => {
+  const r = new FileReader();
+  r.onload = () => res(String(r.result).split(',')[1] || '');
+  r.onerror = () => rej(r.error);
+  r.readAsDataURL(blob);
+});
+
+async function sendOne(it) {
+  const files = [{ name: it.file.name, mime: 'application/octet-stream', b64: await toB64(it.file) }];
+  for (const o of outputs(it)) {
+    const b = await o.make();
+    files.push({ name: o.name, mime: b.type, b64: await toB64(b) });
+  }
+  const r = await fetch(CFG.endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // avoids a CORS preflight
+    body: JSON.stringify({ token: CFG.token, sender: $('#sender').value.trim(), files }),
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const t = await r.text();
+  if (t.indexOf('OK') !== 0) throw new Error(t.slice(0, 160));
 }
+
+// One upload at a time, in the order the files were dropped.
+let pumping = false;
+async function pump() {
+  if (!SENDS || pumping) return;
+  pumping = true;
+  try {
+    let it;
+    while ((it = items.find(x => x.sent === 'waiting'))) {
+      it.sent = 'sending'; render();
+      try { await sendOne(it); it.sent = 'sent'; }
+      catch (e) { it.sent = 'failed'; it.why = e.message || String(e); }
+      render();
+    }
+  } finally { pumping = false; }
+}
+
+/* ---------- downloads ---------- */
 function save(blob, name) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -189,86 +213,61 @@ function save(blob, name) {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-async function download(it, which) {
-  const o = outputsFor(it)[which];
-  save(await o.make(), o.name);
-}
 async function downloadAll() {
-  const ready = items.filter(it => it.ttd && it.keep.some(Boolean));
+  const ready = items.filter(it => it.ttd);
   if (!ready.length) return;
-  const btn = $('#btnAll');
-  btn.disabled = true; const label = btn.textContent; btn.textContent = 'Preparing…';
+  const btn = $('#btnAll'); btn.disabled = true; btn.textContent = 'Preparing…';
   try {
-    if (ready.length === 1 && fmt === 'xlsx') return download(ready[0], 0);
     const used = {}, entries = [];
-    for (const it of ready) {
-      for (const o of outputsFor(it)) {
-        let name = o.name;
-        if (used[name]) { const dot = name.lastIndexOf('.'); name = name.slice(0, dot) + ' (' + (++used[o.name]) + ')' + name.slice(dot); }
-        else used[name] = 1;
-        entries.push({ name, data: new Uint8Array(await (await o.make()).arrayBuffer()) });
-      }
+    for (const it of ready) for (const o of outputs(it)) {
+      let name = o.name;
+      if (used[name]) { const dot = name.lastIndexOf('.'); name = name.slice(0, dot) + ' (' + (++used[o.name]) + ')' + name.slice(dot); }
+      else used[name] = 1;
+      entries.push({ name, data: new Uint8Array(await (await o.make()).arrayBuffer()) });
     }
-    save(await zip(entries), 'tinytag-' + fmt + '.zip');
-  } finally {
-    btn.textContent = label; syncHeader();
-  }
+    save(await zip(entries), 'tinytag-converted.zip');
+  } finally { btn.textContent = 'Download all (.zip)'; render(); }
 }
 
 /* ---------- rendering ---------- */
-function previewTable(it) {
-  const rows = readingsTable(it.ttd, it.keep);
-  if (rows.length < 2) return '<p class="busy">No readings in the selected channels.</p>';
-  const head = rows[0], body = rows.slice(1);
-  const shown = body.length > 7 ? [...body.slice(0, 5), null, body[body.length - 1]] : body;
-  const tr = r => r === null
-    ? `<tr><td class="gap" colspan="${head.length}">… ${(body.length - 6).toLocaleString()} more rows …</td></tr>`
-    : '<tr>' + r.map((v, i) => `<td class="${i === 1 ? '' : 'n'}">${fmtNum(v)}</td>`).join('') + '</tr>';
-  return `<div class="tablewrap"><table><thead><tr>${head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${shown.map(tr).join('')}</tbody></table></div>`;
-}
+const CHIP = { waiting: 'Waiting to send', sending: 'Sending…', sent: 'Sent to ARC ✓', failed: 'Not sent' };
 
 function card(it) {
-  const x = `<button class="x" data-remove="${it.id}" title="Remove" aria-label="Remove">×</button>`;
+  const x = `<button class="x" data-remove="${it.id}" title="Remove from list" aria-label="Remove">×</button>`;
   if (it.error) {
-    return `<div class="card err"><div class="filehead"><div class="name"><div class="t">Could not convert</div><div class="f">${esc(it.file.name)}</div></div>${x}</div><p>${esc(it.error)}</p></div>`;
+    return `<div class="card err"><div class="row"><div class="name"><div class="t">${esc(it.file.name)}</div><div class="f">${esc(it.error)}</div></div>${x}</div></div>`;
   }
   if (!it.ttd) {
-    return `<div class="card"><div class="filehead"><div class="name"><div class="t">${esc(it.file.name)}</div></div>${x}</div><p class="busy">Reading…</p></div>`;
+    return `<div class="card"><div class="row"><div class="name"><div class="t">${esc(it.file.name)}</div><div class="f">Converting…</div></div></div></div>`;
   }
-  const t = it.ttd;
-  const serials = [...new Set(t.channels.map(c => c.serial).filter(Boolean))];
-  const r = t.readings;
-  const any = it.keep.some(Boolean);
-  const outs = outputsFor(it);
-  const btns = outs.map((o, i) => `<button class="btn ${i ? '' : 'primary'} sm" data-dl="${it.id}:${i}" ${any ? '' : 'disabled'}>${i ? 'Statistics .csv' : 'Download ' + (fmt === 'xlsx' ? '.xlsx' : '.csv')}</button>`).join('');
-  const chans = t.channels.map((c, k) => `<label><input type="checkbox" data-ch="${it.id}:${k}" ${it.keep[k] ? 'checked' : ''}>${esc(c.property)}${c.unit ? ' (' + esc(c.unit) + ')' : ''}${serials.length > 1 || /\[run/.test(c.label) ? ` <span class="sn">${esc(c.serial)}${/\[run (\d+)\]/.test(c.label) ? ' · run ' + c.label.match(/\[run (\d+)\]/)[1] : ''}</span>` : ''}</label>`).join('');
-  const interval = statRow(t, 'Interval');
-  return `<div class="card">
-    <div class="filehead">
-      <div class="name"><div class="t">${esc(t.title || it.base)}</div><div class="f">${esc(it.file.name)}</div></div>
-      <div class="acts">${btns}</div>${x}
-    </div>
-    <div class="facts">
-      <span>Logger <b>${esc(serials.join(', ') || '—')}</b></span>
-      <span>Readings <b>${r.length.toLocaleString()}</b></span>
-      ${interval ? `<span>Interval <b>${esc(prettyInterval(interval))}</b></span>` : ''}
-      ${r.length ? `<span>From <b>${esc(r[0].time)}</b></span><span>To <b>${esc(r[r.length - 1].time)}</b></span>` : ''}
-    </div>
-    <div class="chans">${chans}</div>
-    ${previewTable(it)}
-  </div>`;
+  const t = it.ttd, r = t.readings;
+  const serials = [...new Set(t.channels.map(c => c.serial).filter(Boolean))].join(', ');
+  const facts = [
+    serials && `Logger <b>${esc(serials)}</b>`,
+    `<b>${r.length.toLocaleString()}</b> readings`,
+    r.length && `<b>${esc(r[0].time.slice(0, 10))}</b> to <b>${esc(r[r.length - 1].time.slice(0, 10))}</b>`,
+  ].filter(Boolean).join(' · ');
+  const chip = it.sent ? `<span class="chip ${it.sent}" ${it.why ? `title="${esc(it.why)}"` : ''}>${CHIP[it.sent]}</span>` : '';
+  const retry = it.sent === 'failed' ? `<button class="btn primary sm" data-retry="${it.id}">Try again</button>` : '';
+  return `<div class="card"><div class="row">
+    <div class="name"><div class="t">${esc(t.title || it.base)}</div><div class="f">${esc(it.file.name)} · ${facts}</div></div>
+    <div class="acts">${chip}${retry}<button class="btn sm" data-dl="${it.id}:0">.xlsx</button><button class="btn sm" data-dl="${it.id}:1">.csv</button>${it.sent === 'sending' ? '' : x}</div>
+  </div></div>`;
 }
 
-function syncHeader() {
-  const ready = items.filter(it => it.ttd && it.keep.some(Boolean));
-  const btn = $('#btnAll');
-  btn.disabled = !ready.length;
-  btn.textContent = ready.length > 1 || (ready.length === 1 && fmt === 'csv') ? 'Download all (.zip)' : 'Download all';
-  document.querySelectorAll('#fmt button').forEach(b => b.classList.toggle('on', b.dataset.fmt === fmt));
-}
 function render() {
-  $('#files').innerHTML = items.map(card).join('');
-  syncHeader();
+  $('#files').innerHTML = items.slice().reverse().map(card).join('');
+  $('#btnAll').disabled = !items.some(it => it.ttd);
+  const st = $('#status');
+  const n = k => items.filter(it => it.sent === k).length;
+  const done = n('sent'), fail = n('failed'), left = n('waiting') + n('sending');
+  const conv = items.filter(it => it.ttd).length, bad = items.filter(it => it.error).length;
+  st.className = '';
+  if (!items.length) st.textContent = '';
+  else if (!SENDS) st.textContent = `${conv} converted` + (bad ? `, ${bad} skipped` : '') + '.';
+  else if (left) st.textContent = `Sending to ARC… ${done} of ${done + fail + left} sent. Keep this page open.`;
+  else if (fail) { st.className = 'bad'; st.innerHTML = `${done} sent, ${fail} not sent. Check the internet connection, then <button class="btn primary sm" id="retryAll">Try again</button>`; }
+  else if (done) { st.className = 'ok'; st.textContent = `All done: ${done} file${done === 1 ? '' : 's'} sent to ARC. Nothing else to do.`; }
 }
 
 /* ---------- events ---------- */
@@ -282,35 +281,34 @@ input.addEventListener('change', () => { addFiles([...input.files]); input.value
   e.preventDefault(); drop.classList.remove('over');
 }));
 document.addEventListener('drop', e => { if (e.dataTransfer && e.dataTransfer.files.length) addFiles([...e.dataTransfer.files]); });
-
-$('#fmt').addEventListener('click', e => {
-  const b = e.target.closest('button[data-fmt]');
-  if (!b) return;
-  fmt = b.dataset.fmt;
-  try { localStorage.setItem('arc-tinytag-fmt', fmt); } catch (e) {}
-  render();
-});
 $('#btnAll').addEventListener('click', downloadAll);
-
-$('#files').addEventListener('click', e => {
-  const rm = e.target.closest('[data-remove]');
-  if (rm) { const i = items.findIndex(it => it.id === +rm.dataset.remove); if (i >= 0) items.splice(i, 1); render(); return; }
-  const dl = e.target.closest('[data-dl]');
-  if (dl) {
-    const [id, w] = dl.dataset.dl.split(':').map(Number);
-    const it = items.find(it => it.id === id);
-    if (it) download(it, w);
-  }
-});
-$('#files').addEventListener('change', e => {
-  const cb = e.target.closest('[data-ch]');
-  if (!cb) return;
-  const [id, k] = cb.dataset.ch.split(':').map(Number);
-  const it = items.find(it => it.id === id);
-  if (it) { it.keep[k] = cb.checked; render(); }
+$('#status').addEventListener('click', e => {
+  if (!e.target.closest('#retryAll')) return;
+  items.forEach(it => { if (it.sent === 'failed') { it.sent = 'waiting'; it.why = ''; } });
+  render(); pump();
 });
 
-syncHeader();
+$('#files').addEventListener('click', async e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  const id = +(b.dataset.remove || b.dataset.retry || (b.dataset.dl || '').split(':')[0]);
+  const it = items.find(x => x.id === id);
+  if (!it) return;
+  if (b.dataset.remove) { items.splice(items.indexOf(it), 1); render(); }
+  else if (b.dataset.retry) { it.sent = 'waiting'; it.why = ''; render(); pump(); }
+  else if (b.dataset.dl) { const o = outputs(it)[+b.dataset.dl.split(':')[1]]; save(await o.make(), o.name); }
+});
+
+if (SENDS) {
+  $('#who').hidden = false;
+  try { $('#sender').value = localStorage.getItem('arc-tinytag-sender') || ''; } catch (e) {}
+  $('#sender').addEventListener('input', () => {
+    try { localStorage.setItem('arc-tinytag-sender', $('#sender').value.trim()); } catch (e) {}
+  });
+  window.addEventListener('beforeunload', e => {
+    if (items.some(it => it.sent === 'waiting' || it.sent === 'sending')) { e.preventDefault(); e.returnValue = ''; }
+  });
+}
 })();
 </script>
 </body>
