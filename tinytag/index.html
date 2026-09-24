@@ -59,9 +59,6 @@ button,input{font-family:inherit}
 #drop .big{font-size:18px;font-weight:500;color:#222;margin-bottom:8px}
 #drop .small{font-size:13px;color:#777}
 #drop u{color:#1a6b4a;text-decoration:none;font-weight:500}
-.who{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:#666}
-.who input{font-size:13px;padding:5px 7px;border:1px solid #ccc;border-radius:3px;width:200px;max-width:100%}
-.who input:focus{outline:none;border-color:#1a6b4a;box-shadow:0 0 0 2px rgba(26,107,74,.12)}
 .hint{font-size:11px;color:#888;line-height:1.5;margin-top:10px}
 #status{font-size:13px;margin:0 2px 10px;min-height:18px}
 #status.ok{color:#1a6b4a;font-weight:500}
@@ -102,11 +99,6 @@ button,input{font-family:inherit}
       <div class="small">or <u>choose files</u>. As many as you like at once.</div>
     </div>
     <input type="file" id="fileInput" accept=".ttd" multiple hidden>
-    <div class="who" id="who" hidden>
-      <label for="sender">Your name</label>
-      <input type="text" id="sender" placeholder="e.g. Saidi" autocomplete="name">
-      <span>(remembered on this computer)</span>
-    </div>
     <p class="hint" id="hint"></p>
   </div>
   <div id="status"></div>
@@ -182,7 +174,7 @@ async function sendOne(it) {
   const r = await fetch(CFG.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },  // avoids a CORS preflight
-    body: JSON.stringify({ token: CFG.token, sender: $('#sender').value.trim(), files }),
+    body: JSON.stringify({ token: CFG.token, sender: 'Tinytag upload', files }),
   });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const t = await r.text();
@@ -267,7 +259,7 @@ function render() {
   else if (!SENDS) st.textContent = `${conv} converted` + (bad ? `, ${bad} skipped` : '') + '.';
   else if (left) st.textContent = `Sending to ARC… ${done} of ${done + fail + left} sent. Keep this page open.`;
   else if (fail) { st.className = 'bad'; st.innerHTML = `${done} sent, ${fail} not sent. Check the internet connection, then <button class="btn primary sm" id="retryAll">Try again</button>`; }
-  else if (done) { st.className = 'ok'; st.textContent = `All done: ${done} file${done === 1 ? '' : 's'} sent to ARC. Nothing else to do.`; }
+  else if (done) { st.className = 'ok'; st.textContent = `${done} file${done === 1 ? '' : 's'} sent successfully`; }
 }
 
 /* ---------- events ---------- */
@@ -300,11 +292,6 @@ $('#files').addEventListener('click', async e => {
 });
 
 if (SENDS) {
-  $('#who').hidden = false;
-  try { $('#sender').value = localStorage.getItem('arc-tinytag-sender') || ''; } catch (e) {}
-  $('#sender').addEventListener('input', () => {
-    try { localStorage.setItem('arc-tinytag-sender', $('#sender').value.trim()); } catch (e) {}
-  });
   window.addEventListener('beforeunload', e => {
     if (items.some(it => it.sent === 'waiting' || it.sent === 'sending')) { e.preventDefault(); e.returnValue = ''; }
   });
