@@ -25,8 +25,9 @@ script or a file.
 
 ### Connecting it (one-off, has to be done by hand)
 
-Until `CFG.endpoint` in `index.html` is set, sheets are kept on the device and
-the start screen says so; **Export data** gets them off as a CSV. To connect:
+**Connected 18 Oct 2026** — `CFG.endpoint` is set and a test sheet was verified
+landing in the sheet with every column correct. If the deployment ever has to be
+recreated:
 
 1. Open the sheet → **Extensions → Apps Script**
 2. Delete the placeholder, paste in all of `apps-script.gs`, save
@@ -37,6 +38,15 @@ the start screen says so; **Export data** gets them off as a CSV. To connect:
    `sw.js`, rebuild the offline files, commit
 
 Opening the `/exec` URL in a browser should say `OK ARC tank endpoint is live.`
+*Who has access* must be **Anyone** — "Anyone with a Google account" sends the
+phones to a sign-in page and every submission fails.
+
+**Retries never duplicate a row.** A send can reach the script and still look
+failed to the phone (signal drops while waiting 10–20 s for the reply, or the app
+is closed). The phone then sends it again. The script recognises the repeat by
+its `submitted_at`, which is fixed when the sheet is finished and kept through
+every retry, and answers `OK duplicate ignored` without writing. Found in testing:
+before this, reloading during a send wrote the same sheet three times.
 `survey/README.md` explains why this step cannot be automated.
 
 ## Offline

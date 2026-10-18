@@ -474,7 +474,7 @@ var CFG = {
   tanks: ['1','2','3'],
 
   site: "Children's Ecovillage",
-  version: '1.0-offline-local'
+  version: '1.0.1-offline-local'
 };
 /* ------------------------------------------------------ */
 
@@ -922,7 +922,7 @@ function renderStart(){
 function alertish(msg){
   var n=document.createElement('div');
   n.textContent=msg;
-  n.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#2b2f2d;color:#fff;padding:14px 20px;border-radius:12px;font-size:16px;z-index:9999;max-width:88%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25)';
+  n.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#2b2f2d;color:#fff;padding:14px 20px;border-radius:12px;font-size:16px;z-index:9999;max-width:88%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25);pointer-events:none';
   document.body.appendChild(n);
   setTimeout(function(){ n.remove(); }, 2600);
 }

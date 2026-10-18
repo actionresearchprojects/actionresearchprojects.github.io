@@ -52,6 +52,16 @@ function doPost(e) {
       }
     });
 
+    // A retry of a sheet that already landed (the reply was lost to a dropped
+    // connection or a closed app) carries the same submitted_at. Accept it
+    // without writing it again, so the app stops retrying.
+    var idCol = header.indexOf('submitted_at');
+    if (idCol > -1 && row.submitted_at && sh.getLastRow() > 1) {
+      var dup = sh.getRange(2, idCol + 1, sh.getLastRow() - 1, 1)
+        .createTextFinder(String(row.submitted_at)).matchEntireCell(true).findNext();
+      if (dup) return text('OK duplicate ignored');
+    }
+
     sh.appendRow(header.map(function (h) {
       var v = row[h];
       return (v === undefined || v === null) ? '' : v;
