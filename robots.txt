@@ -3,6 +3,7 @@ Allow: /
 
 Disallow: /admin/
 Disallow: /survey/
+Disallow: /tanks/
 Disallow: /embedded/
 
 Sitemap: https://actionresearchprojects.net/sitemap.xml

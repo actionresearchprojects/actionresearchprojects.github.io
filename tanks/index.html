@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a6b4a">
+<title>ARC Tank Monitoring</title>
+<script>
+(function(){
+  if(sessionStorage.getItem('arc_auth')==='1')return;
+  var s=document.createElement('style');
+  s.textContent='body{visibility:hidden}';
+  document.head.appendChild(s);
+  document.addEventListener('DOMContentLoaded',function(){
+    s.remove();
+    var o=document.createElement('div');
+    o.id='pw-overlay';
+    o.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:#111;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#fff;';
+    o.innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:20px;font-weight:500">Enter password</div><input id="pw-in" type="password" placeholder="Password" style="padding:10px 14px;font-size:16px;background:#222;color:#fff;border:1px solid #555;border-radius:4px;width:220px;outline:none;display:block;margin:0 auto 8px"><div id="pw-err" style="color:#f66;font-size:13px;height:20px"></div><button id="pw-btn" style="padding:10px 28px;background:#fff;color:#111;border:none;border-radius:4px;font-size:15px;cursor:pointer;margin-top:4px">Enter</button></div>';
+    document.body.appendChild(o);
+    document.getElementById('pw-in').focus();
+    async function check(){
+      var val=document.getElementById('pw-in').value;
+      var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
+      var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+      if(hash==='52e32618b274e60e320245f222a7a50dd485ea0e3edcf48cb2873977502b5f19'){
+        sessionStorage.setItem('arc_auth','1');
+        o.remove();
+      }else{
+        document.getElementById('pw-err').textContent='Incorrect password';
+      }
+    }
+    document.getElementById('pw-btn').addEventListener('click',check);
+    document.getElementById('pw-in').addEventListener('keydown',function(e){if(e.key==='Enter')check();});
+  });
+})();
+</script>
+<link rel="icon" type="image/png" sizes="any" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ARC Tanks">
+<style>
+/* Ubuntu, self-hosted so the page works with no network at all.
+   Ubuntu Font Licence 1.0 — see survey/README.md. BUILD_INLINE_FONTS */
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:300;font-display:swap;src:url(fonts/ubuntu-300.woff2) format('woff2')}
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ubuntu-400.woff2) format('woff2')}
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ubuntu-500.woff2) format('woff2')}
+@font-face{font-family:'Ubuntu';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/ubuntu-700.woff2) format('woff2')}
+:root{
+  --green:#1a6b4a; --green-d:#125239; --green-l:#e7f2ec;
+  --ink:#1c2321; --muted:#5d6b66; --line:#d6ded9; --bg:#f4f7f5; --card:#fff;
+  --s3:#2b6cb0; --s2:#3182ce; --s1:#5b9bd5; --s0:#38a169;
+  --p1:#d99a3c; --p2:#ed8936; --p3:#e53e3e;
+  --yes:#2f855a; --no:#b03a3a; --brown:#8a5a2b;
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:'Ubuntu',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+  font-size:17px;line-height:1.35;overscroll-behavior:none;
+}
+button,input,textarea,select{font-family:inherit}
+.hide{display:none !important}
+
+/* ---------- shell ---------- */
+#app{min-height:100%;min-height:100dvh;display:flex;flex-direction:column}
+#bar{
+  background:var(--green);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+#bar .who{font-size:15px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bar .step{font-size:14px;opacity:.85;font-variant-numeric:tabular-nums}
+#bar button{
+  background:rgba(255,255,255,.16);border:none;color:#fff;border-radius:10px;
+  padding:8px 12px;font-size:14px;font-weight:500;cursor:pointer;
+}
+#bar button:active{background:rgba(255,255,255,.3)}
+#prog{height:6px;background:rgba(0,0,0,.12);flex-shrink:0}
+#prog>i{display:block;height:100%;background:#8fd6b4;width:0;transition:width .25s ease}
+
+#stage{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 14px 8px;display:flex;justify-content:center}
+#stage>.wrap{width:100%;max-width:960px;display:flex;flex-direction:column}
+
+#foot{
+  flex-shrink:0;padding:10px 14px calc(12px + env(safe-area-inset-bottom));
+  display:flex;gap:10px;background:var(--bg);border-top:1px solid var(--line);
+}
+#foot button{
+  flex:1;border:none;border-radius:14px;padding:18px 14px;font-size:19px;font-weight:500;cursor:pointer;
+}
+#btn-back{flex:0 0 33%;background:#e3e9e6;color:var(--muted)}
+#btn-next{background:var(--green);color:#fff;box-shadow:0 2px 0 var(--green-d)}
+#btn-next:disabled{background:#c3cdc8;box-shadow:none;color:#fff}
+#btn-next:active:not(:disabled){transform:translateY(1px);box-shadow:none}
+
+/* ---------- question ---------- */
+.sec{
+  display:inline-block;align-self:flex-start;background:var(--green-l);color:var(--green-d);
+  font-size:13px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  padding:5px 11px;border-radius:999px;margin-bottom:12px;
+}
+.q-sw{font-size:29px;font-weight:500;line-height:1.2;margin-bottom:4px}
+.q-en{font-size:20px;font-weight:300;color:var(--muted);line-height:1.25;margin-bottom:4px}
+.q-hint{font-size:15px;color:var(--muted);margin-top:8px;font-style:italic}
+.q-head{margin-bottom:20px}
+
+/* option grids */
+.opts{display:grid;gap:11px;margin-bottom:6px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.gauto{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+
+.opt{
+  background:var(--card);border:3px solid var(--line);border-radius:var(--r);
+  padding:14px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;
+  gap:8px;text-align:center;transition:border-color .12s,background .12s,transform .08s;
+  color:var(--muted);min-height:118px;justify-content:center;
+}
+.opt:active{transform:scale(.97)}
+.opt svg{width:56px;height:56px;flex-shrink:0;display:block}
+.opt .lab-sw{font-size:18px;font-weight:500;color:var(--ink);line-height:1.15}
+.opt .lab-en{font-size:14px;font-weight:300;color:var(--muted);line-height:1.15}
+.opt.on{border-color:currentColor;background:#fff;box-shadow:0 0 0 4px rgba(0,0,0,.06)}
+.opt.on{box-shadow:0 0 0 4px color-mix(in srgb,currentColor 16%,transparent)}
+.opt.on .lab-sw{color:currentColor}
+
+/* 0–5 scale (Q12) */
+.scale{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+.scale .opt{padding:12px 4px;min-height:150px;gap:6px;justify-content:flex-start}
+.scale .opt svg{width:52px;height:52px}
+.scale .opt .lab-sw{font-size:14px}
+.scale .opt .lab-en{font-size:12px}
+.scale .num{
+  font-size:15px;font-weight:700;color:currentColor;border-radius:999px;
+  background:#eef1f0;
+  background:color-mix(in srgb,currentColor 18%,#fff);
+  padding:2px 11px;font-variant-numeric:tabular-nums;line-height:1.3;
+}
+.scale .txt{display:flex;flex-direction:column;align-items:center;gap:4px}
+
+/* yes / no */
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.yn .opt{min-height:140px}
+.yn .opt svg{width:64px;height:64px}
+.yn .opt .lab-sw{font-size:24px}
+
+/* text */
+textarea,input[type=text]{
+  width:100%;border:3px solid var(--line);border-radius:var(--r);padding:14px;
+  font-size:21px;background:#fff;color:var(--ink);outline:none;resize:vertical;
+}
+textarea:focus,input[type=text]:focus{border-color:var(--green)}
+textarea{min-height:150px;line-height:1.4}
+
+/* number (Q15 depth) */
+.numrow{display:flex;align-items:center;justify-content:center;gap:14px;margin:10px 0 18px;font-size:22px;color:var(--muted)}
+.numrow input{width:170px;text-align:center;font-size:48px;font-weight:500;padding:10px;font-variant-numeric:tabular-nums}
+
+/* month / year (Q19) */
+.mgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px}
+.mgrid .chip,.ygrid .chip{text-align:center;padding:12px 6px;border-radius:14px;font-size:17px}
+.ygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mlab{font-size:15px;font-weight:500;color:var(--muted);margin:4px 0 8px}
+
+/* chips (tank / rain / language) */
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:12px}
+.chip{
+  background:#fff;border:3px solid var(--line);border-radius:999px;padding:12px 20px;
+  font-size:19px;cursor:pointer;color:var(--ink);
+}
+.chip.on{border-color:var(--green);background:var(--green-l);color:var(--green-d);font-weight:500}
+.chips.tanks .chip{min-width:84px;font-size:26px;font-weight:500;padding:12px 24px}
+
+/* ---------- start / review / done ---------- */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.panel h2{font-size:22px;font-weight:500;margin-bottom:4px}
+.panel p.sub{font-size:15px;color:var(--muted);margin-bottom:14px}
+.field{margin-bottom:16px}
+.field>label{display:block;font-size:15px;font-weight:500;margin-bottom:8px;color:var(--muted)}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo .mark{width:46px;height:46px;border-radius:12px;background:var(--green);display:grid;place-items:center;flex-shrink:0}
+.logo .mark svg{width:30px;height:30px;color:#fff}
+.logo h1{font-size:25px;font-weight:500;line-height:1.15}
+.logo .sub{font-size:14px;color:var(--muted)}
+.instr p{font-size:15px;line-height:1.45;margin-bottom:8px}
+.instr p.en{color:var(--muted);font-weight:300}
+.instr summary{cursor:pointer;font-weight:500;font-size:15px;color:var(--green-d)}
+.instr[open] summary{margin-bottom:10px}
+
+.review{list-style:none}
+.review li{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px;align-items:flex-start}
+.review li:last-child{border-bottom:none}
+.review .rq{flex:1;color:var(--muted)}
+.review .ra{font-weight:500;text-align:right;max-width:52%;word-break:break-word}
+.review .ra.empty{color:#b4bfba;font-weight:300}
+.review li button{background:none;border:none;color:var(--green);font-size:14px;cursor:pointer;padding:2px 4px;text-decoration:underline}
+
+.done-mark{width:110px;height:110px;margin:26px auto 18px;display:block;color:var(--green)}
+.done h2{text-align:center;font-size:30px;font-weight:500;margin-bottom:8px}
+.done p{text-align:center;color:var(--muted);font-size:17px;margin-bottom:22px;white-space:pre-line;word-break:break-word}
+
+.note{background:#fff8e6;border:1px solid #e8d49a;border-radius:12px;padding:12px 14px;font-size:14.5px;color:#6b5626;margin-bottom:14px}
+.note.bad{background:#fdeceb;border-color:#e8b0ab;color:#83302a}
+.note.ok{background:var(--green-l);border-color:#a9cfbc;color:var(--green-d)}
+.queue-badge{background:#fff;color:var(--green-d);border-radius:999px;padding:3px 9px;font-size:13px;font-weight:500}
+.offdot{background:rgba(0,0,0,.22);color:#ffd9a0;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:500;white-space:nowrap}
+
+.mini{display:flex;gap:8px;flex-wrap:wrap}
+.mini button{
+  background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 14px;
+  font-size:14px;cursor:pointer;color:var(--muted);
+}
+.mini button:active{background:var(--green-l)}
+
+/* ---------- responsive ---------- */
+@media (max-width:820px){
+  .scale{grid-template-columns:repeat(3,1fr)}
+  .mgrid{grid-template-columns:repeat(4,1fr)}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .q-sw{font-size:25px}
+  .q-en{font-size:17px}
+  .scale{grid-template-columns:repeat(2,1fr)}
+  .scale .opt{min-height:112px}
+  .g3{grid-template-columns:repeat(2,1fr)}
+  .mgrid{grid-template-columns:repeat(3,1fr)}
+  .numrow input{font-size:40px;width:140px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== ICON SPRITE ===================== -->
+<!-- Drawn on a 64×64 grid in currentColor, same conventions as survey/. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+
+<!-- ---- yes / no ---- -->
+<symbol id="i-yes" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="3.4"/>
+  <path d="M21 33l8 8 15-17" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-no" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="24" fill="none" stroke="currentColor" stroke-width="3.4"/>
+  <path d="M23 23l18 18M41 23L23 41" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round"/>
+</symbol>
+
+<!-- ---- the tank itself (logo mark) ---- -->
+<symbol id="i-tank" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 22h52v8H6z"/>
+    <path d="M10 30v24h44V30"/>
+    <path d="M18 22v-8M18 16q-6-1-7-7 6 0 7 7zM46 22v-8M46 16q6-1 7-7-6 0-7 7z"/>
+  </g>
+</symbol>
+
+<!-- ---- Q12 plant growth: one plant, drawn about its base, scaled up ---- -->
+<g id="b-plant" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M0 0v-34"/>
+  <path d="M0-10q-13-1-15-13 13 0 15 13z"/>
+  <path d="M0-20q13-1 15-13-13 0-15 13z"/>
+  <circle cx="0" cy="-38" r="4.2"/>
+</g>
+<symbol id="i-grow0" viewBox="0 0 64 64"><path d="M8 56h48" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <use href="#b-plant" transform="translate(32 56) scale(.8)"/></symbol>
+<symbol id="i-grow1" viewBox="0 0 64 64"><path d="M8 56h48" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <use href="#b-plant" transform="translate(32 56) scale(.9)"/></symbol>
+<symbol id="i-grow2" viewBox="0 0 64 64"><path d="M8 56h48" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <use href="#b-plant" transform="translate(32 56) scale(1)"/></symbol>
+<symbol id="i-grow3" viewBox="0 0 64 64"><path d="M8 56h48" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <use href="#b-plant" transform="translate(32 56) scale(1.08)"/></symbol>
+<symbol id="i-grow4" viewBox="0 0 64 64"><path d="M8 56h48" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <use href="#b-plant" transform="translate(32 56) scale(1.12)"/>
+  <use href="#b-plant" transform="translate(12 56) scale(.6)"/></symbol>
+<symbol id="i-grow5" viewBox="0 0 64 64"><path d="M4 56h56" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <use href="#b-plant" transform="translate(32 56) scale(1.15)"/>
+  <use href="#b-plant" transform="translate(11 56) scale(.7)"/>
+  <use href="#b-plant" transform="translate(53 56) scale(.7)"/></symbol>
+
+<!-- ---- smell: rising wavy lines ---- -->
+<path id="b-wave" d="M0 0c-4-4 4-8 0-12s4-8 0-12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+<symbol id="i-smell-none" viewBox="0 0 64 64">
+  <g opacity=".4"><use href="#b-wave" transform="translate(32 46)"/></g>
+  <path d="M11 11l42 42" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-smell-slight" viewBox="0 0 64 64">
+  <use href="#b-wave" transform="translate(32 46)"/>
+  <path d="M18 52h28" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+</symbol>
+<symbol id="i-smell-strong" viewBox="0 0 64 64">
+  <use href="#b-wave" transform="translate(18 46)"/>
+  <use href="#b-wave" transform="translate(32 42)"/>
+  <use href="#b-wave" transform="translate(46 46)"/>
+  <path d="M8 52h48" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+</symbol>
+
+<!-- ---- Q13 jam jar ---- -->
+<g id="b-jar" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M22 10h20v6H22z"/>
+  <path d="M22 16c-3 2-4 4-4 7v27a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4V23c0-3-1-5-4-7"/>
+  <path d="M18.5 30h27"/>
+  <path d="M42 13q10-4 10 8" opacity=".55"/>
+</g>
+<symbol id="i-jar-clear" viewBox="0 0 64 64"><use href="#b-jar"/>
+  <path d="M25 37v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" opacity=".5"/></symbol>
+<symbol id="i-jar-cloudy" viewBox="0 0 64 64"><use href="#b-jar"/>
+  <g fill="currentColor" opacity=".6"><circle cx="25" cy="36" r="1.8"/><circle cx="33" cy="40" r="1.8"/><circle cx="40" cy="35" r="1.8"/>
+  <circle cx="27" cy="46" r="1.8"/><circle cx="37" cy="48" r="1.8"/><circle cx="31" cy="34" r="1.4"/><circle cx="41" cy="44" r="1.4"/></g></symbol>
+<symbol id="i-jar-brown" viewBox="0 0 64 64">
+  <path d="M18.5 30h27v20a4 4 0 0 1-4 4H22.5a4 4 0 0 1-4-4z" fill="currentColor" opacity=".45"/>
+  <use href="#b-jar"/></symbol>
+
+<!-- ---- Q15 standing water: the open tank in section ---- -->
+<path id="b-box" d="M8 12v42h48V12" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+<symbol id="i-water-none" viewBox="0 0 64 64"><use href="#b-box"/>
+  <g fill="currentColor" opacity=".45"><circle cx="18" cy="49" r="1.8"/><circle cx="27" cy="47" r="1.8"/><circle cx="36" cy="49" r="1.8"/><circle cx="45" cy="47" r="1.8"/></g></symbol>
+<symbol id="i-water-puddles" viewBox="0 0 64 64"><use href="#b-box"/>
+  <g fill="currentColor" opacity=".5"><ellipse cx="20" cy="49" rx="7" ry="2.6"/><ellipse cx="42" cy="49" rx="8" ry="2.8"/></g></symbol>
+<symbol id="i-water-full" viewBox="0 0 64 64">
+  <path d="M10 30h44v22H10z" fill="currentColor" opacity=".35"/>
+  <path d="M10 30q5.5-4 11 0t11 0 11 0 11 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+  <use href="#b-box"/></symbol>
+
+<!-- ---- Q17 creatures ---- -->
+<!-- Mosquito seen from above, as in survey/. -->
+<g id="b-mosq" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M0-26v8" stroke-width="2"/>
+  <path d="M-3-20l-5-6M3-20l5-6" stroke-width="2"/>
+  <circle cx="0" cy="-15" r="4.4" fill="currentColor" stroke="none"/>
+  <path d="M0-9v20" stroke-width="7"/>
+  <path d="M0 11v6" stroke-width="3.4"/>
+  <path d="M-5-8q-14-5-16 5t13 8" stroke-width="2.4"/>
+  <path d="M5-8q14-5 16 5t-13 8" stroke-width="2.4"/>
+  <path d="M-4-4l-9-3M-4 2l-10 4M-4 8l-8 8" stroke-width="2"/>
+  <path d="M4-4l9-3M4 2l10 4M4 8l8 8" stroke-width="2"/>
+</g>
+<symbol id="i-mosq" viewBox="0 0 64 64"><use href="#b-mosq" transform="translate(32 33)"/></symbol>
+<symbol id="i-larvae" viewBox="0 0 64 64">
+  <path d="M6 12q6.5-4 13 0t13 0 13 0 13 0" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" opacity=".5"/>
+  <g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
+    <path d="M16 18c5 4-5 8 0 12s-5 8 0 12"/><path d="M32 22c5 4-5 8 0 12s-5 8 0 12"/><path d="M48 16c5 4-5 8 0 12s-5 8 0 12"/>
+  </g>
+  <g fill="currentColor"><circle cx="16" cy="44" r="3"/><circle cx="32" cy="48" r="3"/><circle cx="48" cy="42" r="3"/></g>
+</symbol>
+<symbol id="i-fly" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="20" cy="26" rx="12" ry="7" transform="rotate(-25 20 26)" opacity=".7"/>
+    <ellipse cx="44" cy="26" rx="12" ry="7" transform="rotate(25 44 26)" opacity=".7"/>
+    <path d="M26 38l-9 4M26 44l-8 8M38 38l9 4M38 44l8 8"/>
+  </g>
+  <ellipse cx="32" cy="40" rx="7" ry="12" fill="currentColor"/>
+  <circle cx="32" cy="24" r="5.4" fill="currentColor"/>
+</symbol>
+<symbol id="i-cockroach" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M29 16q-6-9-17-8M35 16q6-9 17-8"/>
+    <path d="M22 28l-11-5M21 37l-12 1M23 46l-9 9M42 28l11-5M43 37l12 1M41 46l9 9"/>
+    <ellipse cx="32" cy="37" rx="11" ry="17"/>
+    <path d="M32 24v29" opacity=".5"/>
+  </g>
+  <ellipse cx="32" cy="18" rx="6.5" ry="4.2" fill="currentColor"/>
+</symbol>
+<symbol id="i-lizard" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 16v22" stroke-width="8"/>
+    <path d="M32 38q0 12 10 13t5 9" stroke-width="3.6"/>
+    <path d="M32 21l-10-3-3-5M32 21l10-3 3-5M32 34l-10 3-3 5M32 34l10 3 3 5" stroke-width="3"/>
+  </g>
+  <ellipse cx="32" cy="12" rx="5" ry="6.5" fill="currentColor"/>
+</symbol>
+<symbol id="i-worm" viewBox="0 0 64 64">
+  <path d="M8 40c6-12 12-12 17 0s11 12 16 0 10-12 15-4" fill="none" stroke="currentColor" stroke-width="5.5" stroke-linecap="round"/>
+  <path d="M8 50h48" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" opacity=".4"/>
+</symbol>
+<symbol id="i-millipede" viewBox="0 0 64 64">
+  <g fill="none" stroke="currentColor" stroke-linecap="round">
+    <path d="M10 26l-2 -7M16 26l-2-7M22 26l-2-7M28 26l-2-7M34 26l-2-7M40 26l-2-7M46 26l-2-7M10 38l-2 7M16 38l-2 7M22 38l-2 7M28 38l-2 7M34 38l-2 7M40 38l-2 7M46 38l-2 7" stroke-width="2.2"/>
+    <path d="M8 32h42" stroke-width="9"/>
+    <path d="M55 29q4-6 6-7M55 35q4 6 6 7" stroke-width="2.2"/>
+  </g>
+  <circle cx="53" cy="32" r="5" fill="currentColor"/>
+</symbol>
+<g id="b-ant" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+  <path d="M0 0l-4-6M0 0l0-7M0 0l4-6M0 0l-4 6M0 0l0 7M0 0l4 6"/>
+  <circle cx="-7" cy="0" r="2.8" fill="currentColor" stroke="none"/>
+  <circle cx="0" cy="0" r="2.2" fill="currentColor" stroke="none"/>
+  <ellipse cx="8" cy="0" rx="4.6" ry="3.6" fill="currentColor" stroke="none"/>
+</g>
+<symbol id="i-ants" viewBox="0 0 64 64">
+  <use href="#b-ant" transform="translate(20 18) rotate(-20)"/>
+  <use href="#b-ant" transform="translate(44 32) rotate(15)"/>
+  <use href="#b-ant" transform="translate(22 48) rotate(-5)"/>
+</symbol>
+
+<!-- ---- Q20 compost ---- -->
+<path id="b-pile" d="M6 52c6-16 14-24 26-24s20 8 26 24z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+<symbol id="i-compost-raw" viewBox="0 0 64 64"><use href="#b-pile"/>
+  <g fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 44l9-6M30 36l7 5M40 46l8-6"/><path d="M26 22q-10-2-11-11 10 0 11 11z"/><path d="M40 24q8-4 6-12"/></g></symbol>
+<symbol id="i-compost-mid" viewBox="0 0 64 64"><use href="#b-pile"/>
+  <g fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+    <path d="M24 22c-3-3 3-6 0-9M34 22c-3-3 3-6 0-9M44 22c-3-3 3-6 0-9" opacity=".7"/></g>
+  <g fill="currentColor" opacity=".55"><circle cx="20" cy="45" r="2"/><circle cx="31" cy="40" r="2"/><circle cx="42" cy="46" r="2"/></g></symbol>
+<symbol id="i-compost-done" viewBox="0 0 64 64">
+  <path d="M6 52c6-16 14-24 26-24s20 8 26 24z" fill="currentColor" opacity=".35"/>
+  <use href="#b-pile"/>
+  <g fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 28V14M32 22q-9-1-10-9 9 0 10 9zM32 19q9-1 10-9-9 0-10 9z"/></g></symbol>
+
+<!-- ---- Q24 metal sheet ---- -->
+<g id="b-sheet" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 20l52-6v34L6 54z"/>
+  <path d="M15 19v34M24 18v34M33 17v34M42 16v34M51 15v34" opacity=".4"/>
+</g>
+<symbol id="i-sheet-good" viewBox="0 0 64 64"><use href="#b-sheet"/>
+  <circle cx="44" cy="40" r="1.8" fill="currentColor" opacity=".6"/></symbol>
+<symbol id="i-sheet-rusty" viewBox="0 0 64 64"><use href="#b-sheet"/>
+  <g fill="currentColor" opacity=".6"><circle cx="18" cy="40" r="4"/><circle cx="34" cy="30" r="5"/><circle cx="47" cy="40" r="3.4"/><circle cx="27" cy="46" r="2.4"/></g></symbol>
+<symbol id="i-sheet-holed" viewBox="0 0 64 64"><use href="#b-sheet"/>
+  <g fill="#fff" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round">
+    <path d="M27 28l6-3 5 4-1 7-7 2-4-5z"/><path d="M13 40l4-2 3 3-2 4-4 0z"/><path d="M44 38l4-1 2 4-3 3-4-2z"/></g></symbol>
+
+<!-- ---- misc ---- -->
+<symbol id="i-done" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="4"/>
+  <path d="M19 33l9 9 17-19" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</defs></svg>
+
+<div id="app">
+  <div id="bar">
+    <button id="btn-home" title="Anza upya / Start again">&#8962;</button>
+    <div class="who" id="who"></div>
+    <span class="offdot hide" id="offdot" title="No connection — answers are saved on this device">&#9679;&nbsp;nje ya mtandao</span>
+    <span class="queue-badge hide" id="qbadge"></span>
+    <div class="step" id="stepno"></div>
+  </div>
+  <div id="prog"><i id="progbar"></i></div>
+  <div id="stage"><div class="wrap" id="wrap"></div></div>
+  <div id="foot" class="hide">
+    <button id="btn-back">&#8592;</button>
+    <button id="btn-next">Endelea</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ARC Tank Monitoring  ·  v1.0
+   Digital version of "Tank Monitoring Sheet / Rekodi ya Ukaguzi
+   wa Tangi" (paper sheet v2, 17 Sep 2026). Built on the same
+   shell as /survey/ — see tanks/README.md.
+   ============================================================ */
+
+/* ---------- CONFIG ---------- */
+var CFG = {
+  /* Where finished sheets go.
+       'sheet' — post to the Google Sheet, queueing and retrying as needed.
+       'file'  — save a CSV onto this computer after each sheet. Nothing is uploaded. */
+  sink: 'sheet',
+
+  /* Google Apps Script web-app URL, ending /exec. Until this is set,
+     answers are stored on the device only and can be exported by hand. */
+  endpoint: '',
+
+  /* Must match SUBMIT_TOKEN in apps-script.gs */
+  token: 'arc-tanks-2026',
+
+  /* The tanks this sheet covers. Tank 4 (CEV test unit) needs its own sheet. */
+  tanks: ['1','2','3'],
+
+  site: "Children's Ecovillage",
+  version: '1.0'
+};
+/* ------------------------------------------------------ */
+
+var LS_DRAFT = 'arc_tank_draft', LS_QUEUE = 'arc_tank_queue', LS_PREFS = 'arc_tank_prefs';
+
+/* ---------- shared option sets ---------- */
+function YN(iconYes, iconNo){
+  return [{v:1, sw:'Ndiyo', en:'Yes', icon:iconYes||'i-yes', c:'var(--yes)'},
+          {v:0, sw:'Hapana',en:'No',  icon:iconNo ||'i-no',  c:'var(--no)'}];
+}
+/* Q1–11 are all "is something wrong?" except Q3 and Q6, where yes is the good answer.
+   Colour follows good/bad rather than yes/no so a glance at the screen reads right. */
+function YNbad(){
+  return [{v:1, sw:'Ndiyo', en:'Yes', icon:'i-yes', c:'var(--no)'},
+          {v:0, sw:'Hapana',en:'No',  icon:'i-no',  c:'var(--yes)'}];
+}
+var SMELL3 = [
+  {v:0, sw:'Hakuna', en:'No smell', icon:'i-smell-none',   c:'var(--yes)'},
+  {v:1, sw:'Kidogo', en:'Slight',   icon:'i-smell-slight', c:'var(--p1)'},
+  {v:2, sw:'Kali',   en:'Strong',   icon:'i-smell-strong', c:'var(--p3)'}
+];
+var MONTHS = [
+  ['Januari','Jan'],['Februari','Feb'],['Machi','Mar'],['Aprili','Apr'],['Mei','May'],['Juni','Jun'],
+  ['Julai','Jul'],['Agosti','Aug'],['Septemba','Sep'],['Oktoba','Oct'],['Novemba','Nov'],['Desemba','Dec']
+];
+
+/* ---------- the questions ---------- */
+/* Numbering follows the paper sheet (v2) so the two can be cross-referenced.
+   Heavy rain is asked on the start screen, as in the paper header, because
+   Q4 depends on it. */
+var QS = [
+  /* ===== SECTION A — outside the tank, lid on ===== */
+  {id:'a1_lid_damaged', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Je, kifuniko cha nyuzi za nazi kimeharibika?', en:'Is the coir lid damaged?',
+   hintSw:'Kabla ya kuinua kifuniko, angalia kifuniko, kuta, mimea na mtaro unaozunguka tangi.',
+   hintEn:'Before you lift the lid, look at the lid, the walls, the plants and the trench around the tank.'},
+
+  {id:'a2_lid_missing', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Je, kifuniko hakipo?', en:'Is the coir lid missing?'},
+
+  {id:'a3_coir_topped_up', sec:'A', type:'choice', layout:'yn', opts:YN(),
+   sw:'Je, nyuzi za nazi kwenye kifuniko zimejazwa?', en:'Is the coir in the lid topped up (full)?'},
+
+  {id:'a4_unusually_full', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   showIf:function(a){ return a.rain_2days === 1; },
+   sw:'Je, tangi limejaa maji kuliko kawaida?', en:'Is the tank unusually full of water?',
+   hintSw:'Kama tu kumenyesha mvua kubwa: inua pembe moja ya kifuniko.',
+   hintEn:'Only if there has been heavy rain: lift one corner of the lid.'},
+
+  {id:'a5_walls_leaking', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Je, kuta za matofali zinavuja?', en:'Are the block walls leaking?',
+   hintSw:'Kama una shaka, iite uvujaji. Maji yanayopenya kwenye matofali yanahesabika.',
+   hintEn:'If in doubt, call it a leak. Water seeping through the blocks counts.'},
+
+  {id:'a5_leak_where', sec:'A', type:'text',
+   showIf:function(a){ return a.a5_walls_leaking === 1; },
+   sw:'Kama ndiyo, wapi?', en:'If yes, where?'},
+
+  {id:'a6_plants_healthy', sec:'A', type:'choice', layout:'yn', opts:YN(),
+   sw:'Je, mimea karibu na tangi ina afya?', en:'Are the plants around the tank healthy?',
+   hintSw:'Sphagneticola trilobata, maua ya njano', hintEn:'Sphagneticola trilobata, yellow flowers'},
+
+  {id:'a7_smell_outside', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Je, kuna harufu mbaya karibu na tangi?', en:'Is there an unpleasant smell around the tank?'},
+
+  {id:'a8_animal_damage', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Kuna uharibifu wa wanyama, k.m. mashimo kuzunguka tangi?',
+   en:'Any damage from animals, e.g. burrows or holes dug around the tank?'},
+
+  {id:'a9_insect_signs', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Kuna uharibifu au dalili za wadudu karibu na tangi?',
+   en:'Any damage or signs of insects around the tank?'},
+
+  {id:'a10_mosquitoes_outside', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Je, kuna mbu nje ya tangi?', en:'Are there mosquitoes around the outside of the tank?'},
+
+  {id:'a11_flies_outside', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   sw:'Je, kuna inzi nje ya tangi?', en:'Are there flies around the outside of the tank?'},
+
+  {id:'a12_plant_growth', sec:'A', type:'scale',
+   sw:'Mimea inakua vizuri kiasi gani?', en:'How well are the plants growing?',
+   opts:[{v:0, sw:'Kawaida ya eneo hili', en:'Normal for this area', icon:'i-grow0', c:'#6b8a7c'},
+         {v:1, sw:'', en:'', icon:'i-grow1', c:'#4f9a6f'},
+         {v:2, sw:'', en:'', icon:'i-grow2', c:'#38a169'},
+         {v:3, sw:'', en:'', icon:'i-grow3', c:'#2f855a'},
+         {v:4, sw:'', en:'', icon:'i-grow4', c:'#276749'},
+         {v:5, sw:'Bora kupita kiasi', en:'Exceptional, best possible', icon:'i-grow5', c:'#1a6b4a'}]},
+
+  {id:'a13_trench_water', sec:'A', type:'choice', layout:'yn', opts:YN(),
+   sw:'Je, kuna maji kwenye mtaro karibu na tangi?', en:'Is there water in the trench around the tank?'},
+
+  {id:'a13_jar_looks', sec:'A', type:'multi', layout:'g3',
+   showIf:function(a){ return a.a13_trench_water === 1; },
+   sw:'Jaribio la chupa · Inavyoonekana', en:'Jam jar test · Looks',
+   hintSw:'Chota maji karibu na tangi kwa chupa yenye mpini wa waya, iinue kwenye mwanga. Weka alama zote.',
+   hintEn:'Scoop water from near the tank with the jar on its wire handle and hold it up to the light. Tick all.',
+   opts:[{v:1, sw:'Safi',    en:'Clear',  icon:'i-jar-clear',  c:'var(--s2)'},
+         {v:2, sw:'Hafifu',  en:'Cloudy', icon:'i-jar-cloudy', c:'var(--muted)'},
+         {v:3, sw:'Kahawia', en:'Brown',  icon:'i-jar-brown',  c:'var(--brown)'}]},
+
+  {id:'a13_jar_smell', sec:'A', type:'choice', layout:'g3', opts:SMELL3,
+   showIf:function(a){ return a.a13_trench_water === 1; },
+   sw:'Jaribio la chupa · Harufu', en:'Jam jar test · Smell'},
+
+  /* Only asked when Q13 found water: with a dry trench there is no surface to look at. */
+  {id:'a14_oily_film', sec:'A', type:'choice', layout:'yn', opts:YNbad(),
+   showIf:function(a){ return a.a13_trench_water === 1; },
+   sw:'Je, kuna utando unaong\'aa kama mafuta juu ya maji kwenye mtaro?',
+   en:'Is there an oily, shiny film on the water surface in the trench?'},
+
+  {id:'a14_film_where', sec:'A', type:'text',
+   showIf:function(a){ return a.a13_trench_water === 1 && a.a14_oily_film === 1; },
+   sw:'Kama ndiyo, unaanzia wapi?', en:'If yes, where does it start?'},
+
+  /* ===== SECTION B — inside the tank ===== */
+  {id:'b15_standing_water', sec:'B', type:'choice', layout:'g3',
+   sw:'Maji yaliyosimama', en:'Standing water',
+   hintSw:'Sasa inua kifuniko. Maji yaliyosimama ndilo jambo muhimu zaidi kuripoti: inamaanisha tangi halitoi maji.',
+   hintEn:'Now lift the lid. Standing water is the most important thing to report: it means the tank is not draining.',
+   opts:[{v:0, sw:'Hakuna',                      en:'None',            icon:'i-water-none',    c:'var(--yes)'},
+         {v:1, sw:'Madimbwi madogo',             en:'Small puddles',   icon:'i-water-puddles', c:'var(--p2)'},
+         {v:2, sw:'Juu yote imefunikwa na maji', en:'Surface covered', icon:'i-water-full',    c:'var(--p3)'}]},
+
+  {id:'b15_depth_cm', sec:'B', type:'number', unit:'cm', optional:true,
+   showIf:function(a){ return a.b15_standing_water > 0; },
+   sw:'Kama kuna maji, chomeka kijiti ukadirie kina', en:'If there is water, push a stick in and estimate the depth',
+   hintSw:'takriban, kwa sentimita', hintEn:'about, in centimetres'},
+
+  {id:'b16_smell_inside', sec:'B', type:'choice', layout:'g3',
+   sw:'Harufu ndani ya tangi', en:'Smell inside the tank',
+   opts:[{v:0, sw:'Hakuna harufu',         en:'No smell',            icon:'i-smell-none',   c:'var(--yes)'},
+         {v:1, sw:'Harufu kidogo ya choo', en:'Slight sewage smell', icon:'i-smell-slight', c:'var(--p1)'},
+         {v:2, sw:'Harufu kali ya choo',   en:'Strong sewage smell', icon:'i-smell-strong', c:'var(--p3)'}]},
+
+  {id:'b17_creatures', sec:'B', type:'multi', layout:'g3',
+   sw:'Wadudu na wanyama ndani ya tangi', en:'Insects and animals in the tank',
+   hintSw:'Weka alama kwenye vyote unavyoona.', hintEn:'Tick all you see.',
+   opts:[{v:1, sw:'Mbu wanaoruka',        en:'Flying mosquitoes',                     icon:'i-mosq',      c:'var(--p3)'},
+         {v:2, sw:'Viluwiluwi vya mbu',   en:'Mosquito larvae (wriggling in water)',  icon:'i-larvae',    c:'var(--p3)'},
+         {v:3, sw:'Inzi',                 en:'Flies',                                 icon:'i-fly',       c:'var(--p2)'},
+         {v:4, sw:'Mende',                en:'Cockroaches',                           icon:'i-cockroach', c:'var(--brown)'},
+         {v:5, sw:'Mijusi',               en:'Lizards',                               icon:'i-lizard',    c:'var(--green)'},
+         {v:6, sw:'Minyoo ya ardhini',    en:'Earthworms',                            icon:'i-worm',      c:'var(--brown)'},
+         {v:7, sw:'Majongoo',             en:'Millipedes',                            icon:'i-millipede', c:'var(--brown)'},
+         {v:8, sw:'Sisimizi',             en:'Ants',                                  icon:'i-ants',      c:'var(--ink)'},
+         {v:0, sw:'Hakuna',               en:'None',                                  icon:'i-no',        c:'var(--muted)', exclusive:true}]},
+
+  {id:'b17_other', sec:'B', type:'text', optional:true,
+   sw:'Wengine, andika ulichoona', en:'Other, write what you saw',
+   hintSw:'Acha wazi kama hakuna.', hintEn:'Leave blank if there are none.'},
+
+  {id:'b18_alien_objects', sec:'B', type:'text', optional:true,
+   sw:'Vitu visivyofaa kuwemo (miswaki, pedi, plastiki, nguo)',
+   en:'Alien objects: things that should not be in the tank (toothbrushes, sanitary pads, plastic, cloth)',
+   hintSw:'Andika kilichomo. Ukiweza, kitoe kwa kijiti. Acha wazi kama hakuna.',
+   hintEn:'Write down what is in there. If you can, hook it out with a stick. Leave blank if there are none.'},
+
+  /* ===== SECTION C — compost section, look only ===== */
+  {id:'c19_last_raked', sec:'C', type:'month', optional:true,
+   sw:'Kilikwanguliwa lini mara ya mwisho nyuma ya kizuizi?', en:'When was it last raked behind the divider?',
+   hintSw:'Hiki ni kilichowekwa nyuma ya kizuizi mwaka uliopita. Angalia tu, usichimbe, usiguse wala kunusa.',
+   hintEn:'This is last year\'s material behind the divider. Look only, do not dig, touch or smell it.'},
+
+  {id:'c20_compost_look', sec:'C', type:'choice', layout:'g3',
+   sw:'Kinaonekanaje?', en:'How does it look?',
+   hintSw:'Angalia tu, usichimbe, usiguse wala kunusa.', hintEn:'Look only, do not dig, touch or smell it.',
+   opts:[{v:1, sw:'Hakijaanza kuoza',                     en:'Not decomposing',                   icon:'i-compost-raw',  c:'var(--p2)'},
+         {v:2, sw:'Kinaoza vizuri, bado hakijawa tayari', en:'Decomposing well, not ready',       icon:'i-compost-mid',  c:'var(--brown)'},
+         {v:3, sw:'Mbolea iliyooza vizuri, isiyo na harufu', en:'Odourless, well-composted material', icon:'i-compost-done', c:'var(--yes)'}]},
+
+  /* ===== SECTION D — once a year. The paper says "leave blank in other
+     months"; here one gate question skips the section instead. ===== */
+  {id:'d_yearly_reset', sec:'D', type:'choice', layout:'yn', opts:YN(),
+   sw:'Je, tangi limeandaliwa upya kwa mwaka leo?', en:'Has the tank been re-set for the year today?',
+   hintSw:'Fanya Sehemu D mara moja kwa mwaka tu. Kama hapana, Sehemu D inarukwa.',
+   hintEn:'Do Section D once a year only. If no, Section D is skipped.'},
+
+  {id:'d21_compost_removed', sec:'D', type:'choice', layout:'yn', opts:YN(),
+   showIf:function(a){ return a.d_yearly_reset === 1; },
+   sw:'Mbolea ya mwaka uliopita imetolewa na kupelekwa kwenye miti?',
+   en:'Has last year\'s compost been removed and taken to the trees?'},
+
+  {id:'d22_raked', sec:'D', type:'choice', layout:'yn', opts:YN(),
+   showIf:function(a){ return a.d_yearly_reset === 1; },
+   sw:'Kilichokusanyika mwaka huu kimekwanguliwa nyuma ya kizuizi kiozeshwe?',
+   en:'Has this year\'s material been raked behind the divider to compost?'},
+
+  {id:'d23_layers_replaced', sec:'D', type:'choice', layout:'yn', opts:YN(),
+   showIf:function(a){ return a.d_yearly_reset === 1; },
+   sw:'Tabaka za mchanga na nyuzi za nazi zimewekwa upya?',
+   en:'Have the sand and coir layers been replaced?'},
+
+  {id:'d24_metal_sheet', sec:'D', type:'choice', layout:'g3',
+   showIf:function(a){ return a.d_yearly_reset === 1; },
+   sw:'Bati chini ya mchanga (linaonekana siku hii tu)',
+   en:'Metal sheet under the sand (you can only see it on this day)',
+   opts:[{v:1, sw:'Zuri, kutu kidogo',    en:'Good, little rust',  icon:'i-sheet-good',  c:'var(--yes)'},
+         {v:2, sw:'Lina kutu, bado zima', en:'Rusty, still whole', icon:'i-sheet-rusty', c:'var(--p2)'},
+         {v:3, sw:'Kutu imetoboa',        en:'Rusted through',     icon:'i-sheet-holed', c:'var(--p3)'}]},
+
+  /* ===== SECTION E ===== */
+  {id:'e_notes', sec:'E', type:'text', optional:true,
+   sw:'Kuna kitu kingine chochote?', en:'Anything else?',
+   hintSw:'Chochote kingine ulichoona ambacho maswali hapo juu hayakukigusa.',
+   hintEn:'Anything else you noticed that the questions above did not cover.'}
+];
+
+var SEC_NAME = {
+  A:{sw:'Sehemu A · Nje ya tangi, kifuniko kikiwa kimefungwa', en:'Section A · Outside the tank, lid on'},
+  B:{sw:'Sehemu B · Ndani ya tangi',                           en:'Section B · Inside the tank'},
+  C:{sw:'Sehemu C · Sehemu ya mbolea',                         en:'Section C · Compost section'},
+  D:{sw:'Sehemu D · Mara moja kwa mwaka',                      en:'Section D · Once a year'},
+  E:{sw:'Sehemu E · Maelezo',                                  en:'Section E · Notes'}
+};
+
+/* the column order written to the sheet */
+var FIELDS = ['submitted_at','local_time','lang','site','tank','checked_by','date','time','rain_2days',
+  'a1_lid_damaged','a2_lid_missing','a3_coir_topped_up','a4_unusually_full','a5_walls_leaking','a5_leak_where',
+  'a6_plants_healthy','a7_smell_outside','a8_animal_damage','a9_insect_signs','a10_mosquitoes_outside','a11_flies_outside',
+  'a12_plant_growth','a13_trench_water','a13_jar_looks','a13_jar_smell','a14_oily_film','a14_film_where',
+  'b15_standing_water','b15_depth_cm','b16_smell_inside','b17_creatures','b17_other','b18_alien_objects',
+  'c19_last_raked','c20_compost_look',
+  'd_yearly_reset','d21_compost_removed','d22_raked','d23_layers_replaced','d24_metal_sheet',
+  'e_notes','duration_seconds','app_version','device'];
+
+/* ============================================================
+   state
+   ============================================================ */
+var S = {
+  screen : 'start',
+  lang   : 'both',       // both | sw | en
+  meta   : {tank:'', checked_by:'', date:'', time:''},
+  ans    : {},           // also holds rain_2days, set on the start screen
+  i      : 0,
+  started: 0,
+  savedAs: ''            // filename written by the 'file' sink
+};
+
+var $wrap=document.getElementById('wrap'), $foot=document.getElementById('foot'),
+    $back=document.getElementById('btn-back'), $next=document.getElementById('btn-next'),
+    $bar=document.getElementById('bar'), $who=document.getElementById('who'),
+    $stepno=document.getElementById('stepno'), $prog=document.getElementById('progbar'),
+    $badge=document.getElementById('qbadge'), $stage=document.getElementById('stage');
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function pad(n){ return (n<10?'0':'')+n; }
+function today(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function now(){ var d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function icon(id,cls){ return '<svg class="'+(cls||'')+'"><use href="#'+id+'"/></svg>'; }
+function T(sw,en){ return S.lang==='en' ? en : (S.lang==='sw' ? sw : sw+' / '+en); }
+
+function qTitleHTML(q){
+  if (S.lang==='sw') return '<div class="q-sw">'+esc(q.sw)+'</div>';
+  if (S.lang==='en') return '<div class="q-sw">'+esc(q.en)+'</div>';
+  return '<div class="q-sw">'+esc(q.sw)+'</div><div class="q-en">'+esc(q.en)+'</div>';
+}
+function qHintHTML(q){
+  if (!q.hintSw && !q.hintEn) return '';
+  var txt = S.lang==='en' ? esc(q.hintEn) : (S.lang==='sw' ? esc(q.hintSw) : esc(q.hintSw)+' &nbsp;·&nbsp; '+esc(q.hintEn));
+  return '<div class="q-hint">'+txt+'</div>';
+}
+function optLabelHTML(o){
+  if (S.lang==='sw') return '<span class="lab-sw">'+esc(o.sw)+'</span>';
+  if (S.lang==='en') return '<span class="lab-sw">'+esc(o.en)+'</span>';
+  return '<span class="lab-sw">'+esc(o.sw)+'</span><span class="lab-en">'+esc(o.en)+'</span>';
+}
+
+/* ============================================================
+   which questions apply
+   ============================================================ */
+function steps(){
+  return QS.filter(function(q){
+    if (q.showIf && !q.showIf(S.ans)) return false;
+    return true;
+  });
+}
+
+function answered(q){
+  var v = S.ans[q.id];
+  if (q.type==='multi')  return Array.isArray(v) && v.length>0;
+  if (q.type==='text')   return typeof v==='string' && v.trim()!=='';
+  if (q.type==='month')  return !!(v && v.y && v.m);
+  if (q.type==='number') return typeof v==='number' && isFinite(v);
+  return v !== undefined && v !== null && v !== '';
+}
+
+/* ============================================================
+   persistence
+   ============================================================ */
+function saveDraft(){
+  try{ localStorage.setItem(LS_DRAFT, JSON.stringify({
+    lang:S.lang, meta:S.meta, ans:S.ans, i:S.i, started:S.started, at:Date.now()
+  })); }catch(e){}
+}
+function clearDraft(){ try{ localStorage.removeItem(LS_DRAFT); }catch(e){} }
+function loadDraft(){ try{ var s=localStorage.getItem(LS_DRAFT); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function prefs(){ try{ return JSON.parse(localStorage.getItem(LS_PREFS))||{}; }catch(e){ return {}; } }
+function savePrefs(p){ try{ localStorage.setItem(LS_PREFS, JSON.stringify(p)); }catch(e){} }
+function queue(){ try{ return JSON.parse(localStorage.getItem(LS_QUEUE))||[]; }catch(e){ return []; } }
+function setQueue(q){ try{ localStorage.setItem(LS_QUEUE, JSON.stringify(q)); }catch(e){} paintBadge(); paintDoneStatus(); }
+function paintBadge(){
+  if (CFG.sink === 'file'){ $badge.classList.add('hide'); return; }
+  var n = queue().length;
+  $badge.classList.toggle('hide', n===0);
+  $badge.textContent = n + ' ⏳';
+  $badge.title = n+' not yet sent';
+}
+
+/* ============================================================
+   chrome
+   ============================================================ */
+function paintChrome(){
+  var st = steps(), on = S.screen==='q';
+  $stepno.textContent = on ? (S.i+1)+' / '+st.length : '';
+  $prog.style.width = on ? ((S.i)/st.length*100)+'%' : (S.screen==='done'?'100%':'0%');
+  var bits=[];
+  if (S.meta.tank) bits.push((S.lang==='en'?'Tank ':'Tangi ')+S.meta.tank);
+  if (S.meta.checked_by && S.screen!=='start') bits.push(S.meta.checked_by);
+  $who.textContent = bits.join(' · ');
+  $foot.classList.toggle('hide', S.screen==='start' || S.screen==='done');
+  paintBadge();
+}
+
+/* ============================================================
+   screens
+   ============================================================ */
+function render(){
+  if (S.screen==='start')  renderStart();
+  else if (S.screen==='q') renderQ();
+  else if (S.screen==='review') renderReview();
+  else if (S.screen==='done')   renderDone();
+  paintChrome();
+  $stage.scrollTop = 0;
+}
+
+/* ---------- start ---------- */
+function renderStart(){
+  var p = prefs();
+  if (p.lang) S.lang = p.lang;
+  if (p.checked_by && !S.meta.checked_by) S.meta.checked_by = p.checked_by;
+  if (!S.meta.date) S.meta.date = today();
+  if (!S.meta.time) S.meta.time = now();
+
+  var draft = loadDraft();
+  var hasDraft = draft && draft.ans && Object.keys(draft.ans).some(function(k){ return k!=='rain_2days'; });
+
+  var inputCss = 'flex:1;border:3px solid var(--line);border-radius:16px;padding:14px;font-size:18px;background:#fff;color:var(--ink);outline:none';
+
+  $wrap.innerHTML =
+  '<div class="logo"><div class="mark">'+icon('i-tank')+'</div>'+
+    '<div><h1>Rekodi ya Ukaguzi wa Tangi</h1><div class="sub">ARC &middot; '+esc(CFG.site)+' &middot; Tank Monitoring</div></div></div>'+
+
+  (hasDraft ? '<div class="note" id="resume-note"><b>Kuna ukaguzi ambao haujakamilika.</b> There is an unfinished sheet'+
+     (draft.meta&&draft.meta.tank?' for tank '+esc(draft.meta.tank):'')+'.<div class="mini" style="margin-top:10px">'+
+     '<button id="btn-resume">Endelea nao / Resume</button><button id="btn-discard">Anza upya / Start fresh</button></div></div>' : '')+
+
+  '<details class="panel instr"'+(p.seenInstr?'':' open')+' id="instr">'+
+    '<summary>Maelekezo kwa anayekagua / Instructions for the checker</summary>'+
+    '<p>Tumia karatasi moja kwa kila tangi. Fanya <b>Sehemu A, B na C kila mwezi</b>. Fanya <b>Sehemu D mara moja kwa mwaka tu</b>. '+
+      'Jibu <b>Sehemu A kifuniko kikiwa bado kimefungwa</b>, kisha inua kifuniko kwa Sehemu B. Vaa glavu na tumia kijiti; usiguse kilichomo ndani ya tangi kwa mikono. '+
+      'Hakuna haja ya kupiga picha, <b>isipokuwa kama kitu kinatia wasiwasi sana</b>.</p>'+
+    '<p class="en">Use one sheet for each tank. Do <b>Sections A, B and C every month</b>. Do <b>Section D once a year</b> only. '+
+      'Answer <b>Section A with the lid still on</b>, then lift the lid for Section B. Wear gloves and use a stick; do not touch the contents of the tank with your hands. '+
+      'You do not need to take photos, <b>only if something looks very worrying</b>.</p>'+
+  '</details>'+
+
+  '<div class="panel">'+
+    '<div class="field"><label>Lugha / Language</label>'+
+      '<div class="chips" id="lang">'+
+        ['sw|Kiswahili','both|Zote mbili / Both','en|English'].map(function(s){
+          var b=s.split('|'); return '<button class="chip'+(S.lang===b[0]?' on':'')+'" data-lang="'+b[0]+'">'+b[1]+'</button>';
+        }).join('')+
+      '</div></div>'+
+
+    '<div class="field"><label>Tangi / Tank</label>'+
+      '<div class="chips tanks" id="tank">'+CFG.tanks.map(function(t){
+        return '<button class="chip'+(S.meta.tank===t?' on':'')+'" data-tank="'+esc(t)+'">'+esc(t)+'</button>';
+      }).join('')+'</div></div>'+
+
+    '<div class="field"><label>Aliyekagua / Checked by</label>'+
+      '<input type="text" id="f-checked" placeholder="Jina lako / Your name" value="'+esc(S.meta.checked_by)+'"></div>'+
+
+    '<div class="field"><label>Tarehe na saa / Date and time</label>'+
+      '<div style="display:flex;gap:10px">'+
+        '<input type="date" id="f-date" value="'+esc(S.meta.date)+'" style="'+inputCss+'">'+
+        '<input type="time" id="f-time" value="'+esc(S.meta.time)+'" style="'+inputCss+'">'+
+      '</div></div>'+
+
+    '<div class="field"><label>Mvua kubwa siku 2 zilizopita? / Heavy rain in last 2 days?</label>'+
+      '<div class="chips" id="rain">'+
+        '<button class="chip'+(S.ans.rain_2days===1?' on':'')+'" data-rain="1">Ndiyo / Yes</button>'+
+        '<button class="chip'+(S.ans.rain_2days===0?' on':'')+'" data-rain="0">Hapana / No</button>'+
+      '</div></div>'+
+  '</div>'+
+
+  '<button id="btn-start" style="border:none;border-radius:16px;padding:22px;font-size:23px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">Anza / Start</button>'+
+
+  '<div class="mini" style="margin-top:20px;justify-content:center">'+
+    '<button id="btn-export">Hifadhi nakala / Export data ('+queue().length+')</button>'+
+  '</div>'+
+  (CFG.endpoint || CFG.sink==='file' ? '' :
+    '<div class="note" style="margin-top:14px">No Google Sheet is connected yet. Answers are saved on this device and can be exported with the button above. See <b>tanks/README.md</b>.</div>');
+
+  document.getElementById('instr').addEventListener('toggle', function(){
+    var p=prefs(); p.seenInstr=true; savePrefs(p);
+  });
+  document.getElementById('lang').addEventListener('click', function(e){
+    var b=e.target.closest('[data-lang]'); if(!b) return;
+    S.lang=b.dataset.lang; var p=prefs(); p.lang=S.lang; savePrefs(p); paintOnline(); render();
+  });
+  document.getElementById('tank').addEventListener('click', function(e){
+    var b=e.target.closest('[data-tank]'); if(!b) return;
+    S.meta.tank = (S.meta.tank===b.dataset.tank) ? '' : b.dataset.tank; render();
+  });
+  document.getElementById('rain').addEventListener('click', function(e){
+    var b=e.target.closest('[data-rain]'); if(!b) return;
+    S.ans.rain_2days = parseInt(b.dataset.rain,10); render();
+  });
+  document.getElementById('f-checked').addEventListener('input', function(){ S.meta.checked_by=this.value; });
+  document.getElementById('f-date').addEventListener('input', function(){ S.meta.date=this.value; });
+  document.getElementById('f-time').addEventListener('input', function(){ S.meta.time=this.value; });
+
+  document.getElementById('btn-start').addEventListener('click', function(){
+    if (!S.meta.tank){ alertish('Tafadhali chagua tangi. / Please choose a tank.'); return; }
+    if (!S.meta.checked_by || !S.meta.checked_by.trim()){ alertish('Tafadhali andika jina lako. / Please enter your name.'); return; }
+    if (S.ans.rain_2days!==0 && S.ans.rain_2days!==1){ alertish('Tafadhali jibu swali la mvua. / Please answer the rain question.'); return; }
+    var p=prefs(); p.checked_by=S.meta.checked_by; savePrefs(p);
+    S.started = Date.now(); S.i=0; S.screen='q'; saveDraft(); render();
+  });
+  document.getElementById('btn-export').addEventListener('click', exportQueue);
+
+  if (hasDraft){
+    document.getElementById('btn-resume').addEventListener('click', function(){
+      S.lang=draft.lang; S.meta=draft.meta; S.ans=draft.ans;
+      S.i=draft.i||0; S.started=draft.started||Date.now();
+      S.screen='q'; render();
+    });
+    document.getElementById('btn-discard').addEventListener('click', function(){
+      clearDraft(); S.ans={}; S.i=0; render();
+    });
+  }
+}
+
+function alertish(msg){
+  var n=document.createElement('div');
+  n.textContent=msg;
+  n.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#2b2f2d;color:#fff;padding:14px 20px;border-radius:12px;font-size:16px;z-index:9999;max-width:88%;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.25)';
+  document.body.appendChild(n);
+  setTimeout(function(){ n.remove(); }, 2600);
+}
+
+/* ---------- a question ---------- */
+function renderQ(){
+  var st = steps();
+  if (S.i >= st.length){ S.screen='review'; render(); return; }
+  var q = st[S.i];
+
+  var sec = SEC_NAME[q.sec];
+  var secTxt = S.lang==='en' ? sec.en : sec.sw;
+  var html = '<div class="sec">'+esc(secTxt)+'</div><div class="q-head">'+qTitleHTML(q)+qHintHTML(q)+'</div>';
+
+  if (q.type==='scale')       html += scaleHTML(q);
+  else if (q.type==='choice') html += choiceHTML(q);
+  else if (q.type==='multi')  html += multiHTML(q);
+  else if (q.type==='text')   html += textHTML(q);
+  else if (q.type==='number') html += numberHTML(q);
+  else if (q.type==='month')  html += monthHTML(q);
+
+  $wrap.innerHTML = html;
+  wire(q);
+
+  $back.disabled = false;
+  $next.textContent = (S.i===st.length-1)
+    ? (S.lang==='en' ? 'Check answers' : 'Angalia majibu')
+    : (S.lang==='en' ? 'Next' : 'Endelea');
+  $next.disabled = !(answered(q) || q.optional);
+}
+
+function optHTML(q,o,on){
+  return '<button class="opt'+(on?' on':'')+'" data-v="'+esc(o.v)+'" style="color:'+(o.c||'var(--green)')+'">'+
+         icon(o.icon)+optLabelHTML(o)+'</button>';
+}
+function scaleHTML(q){
+  var cur = S.ans[q.id];
+  return '<div class="opts scale">'+q.opts.map(function(o){
+    return '<button class="opt'+(cur===o.v?' on':'')+'" data-v="'+o.v+'" style="color:'+o.c+'">'+
+           icon(o.icon)+'<span class="txt"><span class="num">'+o.v+'</span>'+(o.sw?optLabelHTML(o):'')+'</span></button>';
+  }).join('')+'</div>';
+}
+function choiceHTML(q){
+  var cur = S.ans[q.id];
+  var cls = q.layout==='yn' ? 'yn' : 'opts '+(q.layout||'gauto');
+  return '<div class="'+cls+'">'+q.opts.map(function(o){
+    return optHTML(q,o,String(cur)===String(o.v));
+  }).join('')+'</div>';
+}
+function multiHTML(q){
+  var cur = S.ans[q.id]||[];
+  return '<div class="opts '+(q.layout||'gauto')+'">'+q.opts.map(function(o){
+    return optHTML(q,o,cur.indexOf(o.v)>-1);
+  }).join('')+'</div>';
+}
+function textHTML(q){
+  var v = S.ans[q.id]||'';
+  return '<textarea id="ta" placeholder="'+(S.lang==='en'?'Type here…':'Andika hapa…')+'">'+esc(v)+'</textarea>';
+}
+function numberHTML(q){
+  var v = S.ans[q.id];
+  return '<div class="numrow"><span>'+(S.lang==='en'?'about':'takriban')+'</span>'+
+    '<input type="text" id="num" inputmode="decimal" autocomplete="off" value="'+(v===undefined?'':esc(v))+'">'+
+    '<span>'+esc(q.unit||'')+'</span></div>';
+}
+function monthHTML(q){
+  var v = S.ans[q.id]||{};
+  var y0 = new Date().getFullYear();
+  return '<div class="mlab">'+T('Mwezi','Month')+'</div>'+
+    '<div class="mgrid" id="mgrid">'+MONTHS.map(function(m,k){
+      var mm = pad(k+1);
+      return '<button class="chip'+(v.m===mm?' on':'')+'" data-m="'+mm+'">'+(S.lang==='en'?m[1]:m[0])+'</button>';
+    }).join('')+'</div>'+
+    '<div class="mlab">'+T('Mwaka','Year')+'</div>'+
+    '<div class="ygrid" id="ygrid">'+[y0, y0-1, y0-2].map(function(y){
+      return '<button class="chip'+(v.y===String(y)?' on':'')+'" data-y="'+y+'">'+y+'</button>';
+    }).join('')+'</div>';
+}
+
+function wire(q){
+  $wrap.onclick = null;
+  if (q.type==='scale' || q.type==='choice'){
+    $wrap.onclick = function(e){
+      var b=e.target.closest('.opt'); if(!b) return;
+      var o = q.opts.filter(function(x){ return String(x.v)===b.dataset.v; })[0];
+      S.ans[q.id] = o.v;
+      Array.prototype.forEach.call($wrap.querySelectorAll('.opt'), function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      $next.disabled = false;
+      saveDraft();
+      setTimeout(function(){ if (S.screen==='q' && steps()[S.i]===q) go(1); }, 280);
+    };
+  }
+  if (q.type==='multi'){
+    $wrap.onclick = function(e){
+      var b=e.target.closest('.opt'); if(!b) return;
+      var o = q.opts.filter(function(x){ return String(x.v)===b.dataset.v; })[0];
+      var cur = (S.ans[q.id]||[]).slice();
+      var k = cur.indexOf(o.v);
+      if (k>-1){
+        cur.splice(k,1);
+      } else if (o.exclusive){
+        cur = [o.v];                       // "None" stands alone
+      } else {
+        cur = cur.filter(function(v){       // anything else clears it
+          var x = q.opts.filter(function(y){ return y.v===v; })[0];
+          return !(x && x.exclusive);
+        });
+        cur.push(o.v);
+      }
+      S.ans[q.id]=cur;
+      Array.prototype.forEach.call($wrap.querySelectorAll('.opt'), function(el){
+        el.classList.toggle('on', cur.map(String).indexOf(el.dataset.v) > -1);
+      });
+      $next.disabled = !(cur.length>0 || q.optional);
+      saveDraft();
+    };
+  }
+  if (q.type==='text'){
+    var ta=document.getElementById('ta');
+    ta.addEventListener('input', function(){
+      S.ans[q.id]=this.value;
+      $next.disabled = !(this.value.trim()!=='' || q.optional);
+      saveDraft();
+    });
+    if (!('ontouchstart' in window)) ta.focus();
+  }
+  if (q.type==='number'){
+    var inp=document.getElementById('num');
+    inp.addEventListener('input', function(){
+      var t=this.value.replace(',','.').trim();
+      var n=parseFloat(t);
+      if (t==='' || !isFinite(n) || n<0) delete S.ans[q.id]; else S.ans[q.id]=n;
+      $next.disabled = !(answered(q) || q.optional);
+      saveDraft();
+    });
+    if (!('ontouchstart' in window)) inp.focus();
+  }
+  if (q.type==='month'){
+    $wrap.onclick = function(e){
+      var b=e.target.closest('[data-m],[data-y]'); if(!b) return;
+      var v = Object.assign({}, S.ans[q.id]||{});
+      if (b.dataset.m) v.m = (v.m===b.dataset.m) ? '' : b.dataset.m;
+      if (b.dataset.y) v.y = (v.y===b.dataset.y) ? '' : b.dataset.y;
+      S.ans[q.id]=v;
+      Array.prototype.forEach.call($wrap.querySelectorAll('[data-m]'), function(el){ el.classList.toggle('on', el.dataset.m===v.m); });
+      Array.prototype.forEach.call($wrap.querySelectorAll('[data-y]'), function(el){ el.classList.toggle('on', el.dataset.y===v.y); });
+      $next.disabled = !(answered(q) || q.optional);
+      saveDraft();
+    };
+  }
+}
+
+function go(d){
+  var st = steps();
+  if (d>0){
+    var q = st[S.i];
+    if (q && !answered(q) && !q.optional){ return; }
+    if (S.i >= st.length-1){ S.screen='review'; saveDraft(); render(); return; }
+    S.i++;
+  } else {
+    if (S.i===0){ S.screen='start'; saveDraft(); render(); return; }
+    S.i--;
+  }
+  saveDraft(); render();
+}
+
+/* ---------- review ---------- */
+function monthLabel(v){
+  if (!v || !v.m || !v.y) return null;
+  var m = MONTHS[parseInt(v.m,10)-1];
+  return (S.lang==='en' ? m[1] : m[0]) + ' ' + v.y;
+}
+function shortAnswer(q){
+  var v = S.ans[q.id];
+  if (q.type==='month') return monthLabel(v);
+  if (v===undefined || v===null || v==='' || (Array.isArray(v)&&!v.length)) return null;
+  if (q.type==='text')   return v;
+  if (q.type==='number') return v + ' ' + (q.unit||'');
+  if (q.type==='multi'){
+    return v.map(function(x){
+      var o=q.opts.filter(function(y){return y.v===x;})[0];
+      return o ? (S.lang==='en'?o.en:o.sw) : x;
+    }).join(', ');
+  }
+  var o = q.opts.filter(function(y){ return String(y.v)===String(v); })[0];
+  if (!o) return String(v);
+  var lab = S.lang==='en' ? o.en : o.sw;
+  return q.type==='scale' ? (String(o.v) + (lab ? '  '+lab : '')) : lab;
+}
+
+function renderReview(){
+  var st = steps();
+  var rows = st.map(function(q,k){
+    var a = shortAnswer(q);
+    var qt = S.lang==='en' ? q.en : q.sw;
+    return '<li><span class="rq">'+esc(qt)+'</span>'+
+      '<span class="ra'+(a?'':' empty')+'">'+esc(a || '—')+'</span>'+
+      '<button data-k="'+k+'">'+(S.lang==='en'?'edit':'badili')+'</button></li>';
+  }).join('');
+
+  var q = queue().length;
+  var rain = S.ans.rain_2days===1 ? T('Mvua kubwa','Heavy rain') : T('Hakuna mvua kubwa','No heavy rain');
+  $wrap.innerHTML =
+    '<div class="sec">'+(S.lang==='en'?'Check before sending':'Angalia kabla ya kutuma')+'</div>'+
+    '<div class="q-head">'+
+      '<div class="q-sw">'+(S.lang==='en'?'Tank ':'Tangi ')+esc(S.meta.tank)+'</div>'+
+      '<div class="q-en">'+esc(S.meta.date)+' &middot; '+esc(S.meta.time)+' &middot; '+esc(S.meta.checked_by)+' &middot; '+esc(rain)+'</div></div>'+
+    (q ? '<div class="note">'+q+' '+(S.lang==='en'?'earlier sheet(s) still waiting to be sent.':'rekodi zilizopita bado hazijatumwa.')+'</div>' : '')+
+    '<div class="panel"><ul class="review" id="rev">'+rows+'</ul></div>';
+
+  document.getElementById('rev').addEventListener('click', function(e){
+    var b=e.target.closest('[data-k]'); if(!b) return;
+    S.i = parseInt(b.dataset.k,10); S.screen='q'; render();
+  });
+
+  $back.disabled=false;
+  $next.disabled=false;
+  $next.textContent = S.lang==='en' ? 'Send' : 'Tuma';
+}
+
+/* ---------- done ---------- */
+function doneStatusText(){
+  if (CFG.sink === 'file'){
+    return (S.lang==='en'
+      ? 'Saved on this computer as:\n' + (S.savedAs||'') + '\nLook in your Downloads folder.'
+      : 'Imehifadhiwa kwenye kompyuta hii kama:\n' + (S.savedAs||'') + '\nAngalia katika folda ya Downloads.');
+  }
+  var n = queue().length;
+  if (n === 0) return S.lang==='en' ? 'Sent.' : 'Imetumwa.';
+  if (!CFG.endpoint) return S.lang==='en' ? 'Saved on this device. Use Export data to send it.'
+                                          : 'Imehifadhiwa kwenye kifaa hiki. Tumia Hifadhi nakala kuituma.';
+  if (navigator.onLine) return S.lang==='en' ? 'Saved. Sending…' : 'Imehifadhiwa. Inatumwa…';
+  return S.lang==='en' ? 'Saved on this device. It will send itself when there is internet.'
+                       : 'Imehifadhiwa kwenye kifaa hiki. Itatumwa yenyewe kukiwa na intaneti.';
+}
+function paintDoneStatus(){
+  var el = document.getElementById('done-status');
+  if (el) el.textContent = doneStatusText();
+}
+function renderDone(){
+  $wrap.innerHTML =
+    '<div class="done">'+icon('i-done','done-mark')+
+    '<h2>'+(S.lang==='en'?'Thank you!':'Asante sana!')+'</h2>'+
+    '<p id="done-status">'+esc(doneStatusText())+'</p>'+
+    '<button id="btn-again" style="border:none;border-radius:16px;padding:20px;font-size:21px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">'+
+      (S.lang==='en'?'Next tank':'Tangi lingine')+'</button>'+
+    '<div class="mini" style="margin-top:18px;justify-content:center">'+
+      '<button id="btn-export2">'+(S.lang==='en'?'Export data':'Hifadhi nakala')+' ('+queue().length+')</button></div>'+
+    '</div>';
+  document.getElementById('btn-again').addEventListener('click', function(){
+    /* Same checker, same day, same rain: only the tank and the answers change. */
+    var rain = S.ans.rain_2days;
+    S.ans={rain_2days:rain}; S.i=0; S.meta.tank=''; S.meta.time=now();
+    S.screen='start'; clearDraft(); render();
+  });
+  document.getElementById('btn-export2').addEventListener('click', exportQueue);
+}
+
+/* ============================================================
+   submission
+   ============================================================ */
+function buildPayload(){
+  var p = {};
+  p.submitted_at   = new Date().toISOString();
+  p.local_time     = new Date().toString();
+  p.lang           = S.lang;
+  p.site           = CFG.site;
+  p.tank           = S.meta.tank;
+  p.checked_by     = S.meta.checked_by;
+  p.date           = S.meta.date;
+  p.time           = S.meta.time;
+  p.rain_2days     = S.ans.rain_2days;
+  var shown = steps();
+  QS.forEach(function(q){
+    var v = shown.indexOf(q) > -1 ? S.ans[q.id] : undefined;   // a skipped question is blank, not stale
+    if (q.type==='month') v = (v && v.y && v.m) ? v.y+'-'+v.m : '';
+    if (Array.isArray(v)) v = v.slice().sort(function(a,b){return a-b;}).join(',');
+    p[q.id] = (v===undefined||v===null) ? '' : v;
+  });
+  p.duration_seconds = S.started ? Math.round((Date.now()-S.started)/1000) : '';
+  p.app_version      = CFG.version;
+  p.device           = navigator.userAgent;
+  return p;
+}
+
+function send(payload){
+  if (!CFG.endpoint) return Promise.reject(new Error('no endpoint'));
+  return fetch(CFG.endpoint, {
+    method : 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},  // avoids a CORS preflight
+    body   : JSON.stringify({token:CFG.token, fields:FIELDS, row:payload})
+  }).then(function(r){
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(t){
+    if (t.indexOf('OK')!==0) throw new Error(t.slice(0,120));
+    return true;
+  });
+}
+
+function submit(){
+  var payload = buildPayload();
+
+  if (CFG.sink === 'file'){
+    S.savedAs = saveOneToFile(payload);
+    var all = queue(); all.push(payload); setQueue(all);   // keeps Export data complete
+    clearDraft();
+    S.screen='done'; paintChrome(); renderDone();
+    return;
+  }
+
+  var q = queue();
+  q.push(payload);
+  setQueue(q);
+  clearDraft();
+  S.screen='done'; paintChrome(); renderDone();
+  flushQueue();               // in the background; the checker never waits on it
+}
+
+/* One CSV per sheet, named so a month of them sorts by tank and by date. */
+function saveOneToFile(payload){
+  var stamp = (payload.date||today()) + ' ' + (payload.time||now()).replace(':','');
+  var fname = 'ARC tank ' + (payload.tank||'') + ' - ' + stamp + '.csv';
+  download(fname, toCSV([payload]));
+  return fname;
+}
+function download(filename, text){
+  var blob = new Blob(['﻿'+text], {type:'text/csv;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+
+/* The link at the Ecovillage drops often, so a failed flush retries itself. */
+var flushTimer = null, flushWait = 15000, flushing = false;
+var FLUSH_MIN = 15000, FLUSH_MAX = 300000;
+
+function scheduleFlush(ms){
+  if (flushTimer) clearTimeout(flushTimer);
+  flushTimer = setTimeout(flushQueue, ms);
+}
+
+function flushQueue(){
+  if (CFG.sink === 'file') return;        // nothing is ever uploaded
+  if (!CFG.endpoint || flushing) return;
+  if (flushTimer){ clearTimeout(flushTimer); flushTimer = null; }
+
+  var q = queue();
+  if (!q.length){ flushWait = FLUSH_MIN; return; }
+  if (!navigator.onLine){ scheduleFlush(FLUSH_MIN); return; }
+
+  flushing = true;
+  send(q[0]).then(function(){
+    flushing = false;
+    var cur = queue(); cur.shift(); setQueue(cur);
+    flushWait = FLUSH_MIN;
+    scheduleFlush(600);                       // straight on to the next one
+  }).catch(function(){
+    flushing = false;
+    flushWait = Math.min(flushWait * 2, FLUSH_MAX);
+    scheduleFlush(flushWait);                 // back off, but never give up
+  });
+}
+
+/* ---------- manual export, so nothing is ever stranded ---------- */
+function toCSV(rows){
+  var out = [FIELDS.join(',')];
+  rows.forEach(function(r){
+    out.push(FIELDS.map(function(f){
+      var v = r[f]==null ? '' : String(r[f]);
+      return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
+    }).join(','));
+  });
+  return out.join('\n');
+}
+function exportQueue(){
+  var rows = queue();
+  if (!rows.length){ alertish(S.lang==='en'?'Nothing waiting to send.':'Hakuna kilichosalia.'); return; }
+  download('arc-tanks-'+today()+'.csv', toCSV(rows));
+}
+
+/* ============================================================
+   wiring
+   ============================================================ */
+$next.addEventListener('click', function(){
+  if (S.screen==='review'){ submit(); return; }
+  go(1);
+});
+$back.addEventListener('click', function(){
+  if (S.screen==='review'){ S.screen='q'; S.i=steps().length-1; render(); return; }
+  go(-1);
+});
+document.getElementById('btn-home').addEventListener('click', function(){
+  if (S.screen==='start') return;
+  saveDraft();
+  S.screen='start'; render();
+});
+document.addEventListener('keydown', function(e){
+  if (S.screen!=='q') return;
+  if (e.key==='Enter' && e.target.tagName!=='TEXTAREA' && !$next.disabled){ go(1); }
+});
+
+/* ---------- offline ---------- */
+/* BUILD_STRIP_SW_START */
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){ /* not fatal */ });
+  });
+}
+/* BUILD_STRIP_SW_END */
+
+function paintOnline(){
+  var off = !navigator.onLine, el = document.getElementById('offdot');
+  el.classList.toggle('hide', !off);
+  el.textContent = '● ' + (S.lang==='en' ? 'offline' : 'nje ya mtandao');
+}
+window.addEventListener('online',  function(){ paintOnline(); flushQueue(); });
+window.addEventListener('offline', paintOnline);
+
+paintOnline();
+paintBadge();
+flushQueue();
+render();
+</script>
+</body>
+</html>
