@@ -41,7 +41,7 @@ Opening the `/exec` URL in a browser should say `OK ARC tank endpoint is live.`
 *Who has access* must be **Anyone** — "Anyone with a Google account" sends the
 phones to a sign-in page and every submission fails.
 
-**Retries never duplicate a row.** A send can reach the script and still look
+**Retries never duplicate a row** (matched on `uid`; see `survey/README.md`). A send can reach the script and still look
 failed to the phone (signal drops while waiting 10–20 s for the reply, or the app
 is closed). The phone then sends it again. The script recognises the repeat by
 its `submitted_at`, which is fixed when the sheet is finished and kept through
@@ -65,6 +65,11 @@ Local-build files are named `ARC tank <n> - <date> <time>.csv`.
 
 Same phone layout as the survey (see "Phones" in `survey/README.md`); the CSS
 block is shared word for word, so change both.
+
+## Not losing data
+
+Identical to the survey — see "Not losing data" in `survey/README.md`. Sent
+copies stay on the phone for a year here (`KEEP_SENT_DAYS = 365`).
 
 ## How it differs from the paper sheet
 

@@ -52,15 +52,35 @@ function doPost(e) {
       }
     });
 
-    // A retry of a sheet that already landed (the reply was lost to a dropped
-    // connection or a closed app) carries the same submitted_at. Accept it
-    // without writing it again, so the app stops retrying.
-    var idCol = header.indexOf('submitted_at');
-    if (idCol > -1 && row.submitted_at && sh.getLastRow() > 1) {
+    // A retry of a record that already landed (the reply was lost to a dropped
+    // connection or a closed app) carries the same uid — or, from older app
+    // versions, the same submitted_at. Accept it without writing it again, so
+    // the phone stops retrying.
+    var key = row.uid ? 'uid' : 'submitted_at';
+    var idCol = header.indexOf(key);
+    if (idCol > -1 && row[key] && sh.getLastRow() > 1) {
       var dup = sh.getRange(2, idCol + 1, sh.getLastRow() - 1, 1)
-        .createTextFinder(String(row.submitted_at)).matchEntireCell(true).findNext();
+        .createTextFinder(String(row[key])).matchEntireCell(true).findNext();
       if (dup) return text('OK duplicate ignored');
     }
+
+    // When it reached Google, by Google's clock: a phone's own clock can be wrong.
+    row.received_at = new Date().toISOString();
+    if (header.indexOf('received_at') === -1) {
+      sh.getRange(1, header.length + 1).setValue('received_at').setFontWeight('bold');
+      header.push('received_at');
+    }
+
+    // An untouched copy of every record, one JSON per line, in its own tab.
+    // If rows in the main tab are ever edited, sorted or deleted, the
+    // original is still here.
+    var raw = ss.getSheetByName('Raw') || ss.insertSheet('Raw');
+    if (raw.getLastRow() === 0) {
+      raw.appendRow(['received_at', 'uid', 'submitted_at', 'json']);
+      raw.setFrozenRows(1);
+    }
+    raw.appendRow([row.received_at, row.uid || '', row.submitted_at || '', JSON.stringify(row)]);
+
 
     sh.appendRow(header.map(function (h) {
       var v = row[h];

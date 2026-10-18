@@ -183,13 +183,64 @@ means there is more to scroll to. Narrow phones get tighter type; short screens
 (a phone on its side) put each picture beside its two labels. The phone CSS block
 is shared word for word with `tanks/index.html` — change both.
 
-## Repeated submissions
+## Not losing data
 
-`apps-script.gs` ignores a row whose `submitted_at` is already in the sheet and
-answers `OK duplicate ignored`. A send that reached Google but whose reply was lost
-(signal dropped, app closed) is retried by the phone; before this, each retry
-wrote another copy. Redeploy as **Manage deployments → edit → New version** so the
-`/exec` URL does not change.
+The field sites have patchy signal and phones go flat, so the app is built on
+the assumption that any step can be interrupted. The same code is in
+`tanks/index.html` (the block headed "persistence — shared word for word").
+
+**On the phone**
+
+- Every record gets its own `uid` on its first tap. Unfinished records are kept
+  separately, so several can be in progress and starting a new one never touches
+  another. (Before Oct 2026 there was one draft slot: tapping home and starting
+  the next girl carried the previous girl's answers into the new survey and
+  overwrote her draft.)
+- Every answer is written as it is given — to `localStorage` and to IndexedDB.
+  On each launch `recover()` restores from whichever copy still has it, and never
+  resurrects a record the phone knows was sent.
+- The start screen lists unfinished records with **Resume**. Resuming finds the
+  question by its id, so it lands on the right question even after an app update.
+- Deleting an unfinished record takes two taps; deleted ones are kept 14 days and
+  can be restored from **Records on this phone**.
+- If storage is full when **Tuma** is tapped, the app frees space from old sent
+  copies; if it still cannot queue the record it saves it as a file and keeps the
+  draft, so it exists twice.
+- The app asks the browser to make its storage persistent (`navigator.storage
+  .persist()`); the records screen says whether that was granted.
+
+**Getting it to Google**
+
+- The page sends whenever it is open, retries with back-off, and tries again as
+  soon as it comes back to the front.
+- On Android Chrome the queue is also handed to the service worker (Background
+  Sync, tag `arc-send`), which the browser wakes when the connection returns —
+  even with the app closed.
+- A record waiting more than a day puts a red warning on the start screen with
+  **Share file**, which opens the phone's share sheet (WhatsApp, email,
+  Bluetooth). On a phone without one it downloads the CSV.
+
+**After sending**
+
+- A copy of each sent record stays on the phone for `KEEP_SENT_DAYS` (30 here,
+  because these are answers about children; 365 for tanks).
+- **Records on this phone** shows unfinished / waiting / sent / deleted, with
+  Send now, Share and **Export everything** (one CSV with a `status` column).
+
+**In Google** (`apps-script.gs`)
+
+- A record already present (same `uid`, or the same `submitted_at` from older app
+  versions) is answered `OK duplicate ignored` and not written again — so the page
+  and the service worker can both send it safely.
+- `received_at` is stamped by Google's clock; a phone's clock can be wrong.
+- Every record is also written, untouched, as JSON to a **Raw** tab, so the
+  original survives edits, sorts or deleted rows in the main tab.
+
+Tested in Chrome against a stand-in endpoint with the same rules: two records in
+progress at once, the tab killed mid-record, offline finish then send on reopen,
+a lost reply after Google saved it, localStorage wiped, storage full at Tuma, the
+service worker sending with no page open, and old-format data from the previous
+version migrating on first launch.
 
 ## Two modes
 

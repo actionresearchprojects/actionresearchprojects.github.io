@@ -295,6 +295,20 @@ textarea{min-height:150px;line-height:1.4}
   #foot button{padding:11px 12px;font-size:17px}
   .done-mark{width:70px;height:70px;margin:8px auto 10px}
 }
+
+/* records: unfinished list on the start screen, and the records screen */
+.dlist{list-style:none;margin:8px 0 4px}
+.dlist li{display:flex;align-items:center;gap:10px;padding:7px 0;border-top:1px solid #ecdcae}
+.dlist li span{flex:1}
+.dlist button,.rbtns button{background:#fff;border:2px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;cursor:pointer;color:var(--green-d);font-weight:500;white-space:nowrap}
+.rlist{list-style:none}
+.rlist li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.rlist li:last-child{border-bottom:none}
+.rmain{flex:1 1 60%}
+.rside{color:var(--muted);font-size:13.5px}
+.rbtns{display:flex;gap:8px;flex-basis:100%;justify-content:flex-end}
+button.danger{border-color:var(--no) !important;color:#fff !important;background:var(--no) !important}
+.bigbtn{border:none;border-radius:16px;padding:18px;font-size:20px;font-weight:500;background:#e3e9e6;color:var(--muted);cursor:pointer;width:100%}
 </style>
 </head>
 <body>
@@ -537,11 +551,13 @@ var CFG = {
   tanks: ['1','2','3'],
 
   site: "Children's Ecovillage",
-  version: '1.0.2-offline-local'
+  version: '1.1-offline-local'
 };
 /* ------------------------------------------------------ */
 
-var LS_DRAFT = 'arc_tank_draft', LS_QUEUE = 'arc_tank_queue', LS_PREFS = 'arc_tank_prefs';
+var PREFIX = 'arc_tank_', IDB_NAME = 'arc-tanks', FILE_PREFIX = 'arc-tanks';
+var KEEP_SENT_DAYS = 365;   // a second copy of what was sent stays on the phone this long
+var TXT = {unfinishedSw:'Rekodi ambazo hazijakamilika', unfinishedEn:'Unfinished sheets'};
 
 /* ---------- shared option sets ---------- */
 function YN(iconYes, iconNo){
@@ -761,12 +777,13 @@ var FIELDS = ['submitted_at','local_time','lang','site','tank','checked_by','dat
   'b15_standing_water','b15_depth_cm','b16_smell_inside','b17_creatures','b17_other','b18_alien_objects',
   'c19_last_raked','c20_compost_look',
   'd_yearly_reset','d21_compost_removed','d22_raked','d23_layers_replaced','d24_metal_sheet',
-  'e_notes','duration_seconds','app_version','device'];
+  'e_notes','duration_seconds','app_version','device','uid'];
 
 /* ============================================================
    state
    ============================================================ */
 var S = {
+  uid    : null,       // this record's id, from its first tap until Google has it
   screen : 'start',
   lang   : 'both',       // both | sw | en
   meta   : {tank:'', checked_by:'', date:'', time:''},
@@ -828,17 +845,334 @@ function answered(q){
 /* ============================================================
    persistence
    ============================================================ */
-function saveDraft(){
-  try{ localStorage.setItem(LS_DRAFT, JSON.stringify({
-    lang:S.lang, meta:S.meta, ans:S.ans, i:S.i, started:S.started, at:Date.now()
-  })); }catch(e){}
+/* ============================================================
+   persistence — shared word for word with survey/index.html; keep in step.
+
+   Nothing is ever held only in memory. Every answer is written the moment
+   it is given, to localStorage and to IndexedDB, and a finished record stays
+   on the device until Google has confirmed it — and for KEEP_SENT_DAYS after
+   that, as a second copy. Each record carries its own uid from the first
+   tap, so several can be in progress at once and Google can recognise a
+   retry of one it already has.
+   ============================================================ */
+var K = { drafts:PREFIX+'drafts', queue:PREFIX+'queue', sent:PREFIX+'sent', trash:PREFIX+'trash', prefs:PREFIX+'prefs' };
+var KEEP_TRASH_DAYS = 14, DAY = 864e5;
+
+function newUid(){ return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); }
+function recId(p){ return (p && (p.uid || p.submitted_at)) || ''; }
+function lsGet(k, dflt){ try{ var s = localStorage.getItem(k); return s ? JSON.parse(s) : dflt; }catch(e){ return dflt; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+
+/* IndexedDB copy. It survives localStorage being cleared or filling up on its
+   own, and it is the only store the service worker can read — which is what
+   lets a waiting record send itself after the app has been closed. */
+var idbP = null;
+function idbOpen(){
+  if (!idbP) idbP = new Promise(function(res, rej){
+    if (!window.indexedDB) return rej(new Error('no indexedDB'));
+    var r = indexedDB.open(IDB_NAME, 1);
+    r.onupgradeneeded = function(){ r.result.createObjectStore('kv'); };
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror = function(){ rej(r.error); };
+  });
+  return idbP;
 }
-function clearDraft(){ try{ localStorage.removeItem(LS_DRAFT); }catch(e){} }
-function loadDraft(){ try{ var s=localStorage.getItem(LS_DRAFT); return s?JSON.parse(s):null; }catch(e){ return null; } }
-function prefs(){ try{ return JSON.parse(localStorage.getItem(LS_PREFS))||{}; }catch(e){ return {}; } }
-function savePrefs(p){ try{ localStorage.setItem(LS_PREFS, JSON.stringify(p)); }catch(e){} }
-function queue(){ try{ return JSON.parse(localStorage.getItem(LS_QUEUE))||[]; }catch(e){ return []; } }
-function setQueue(q){ try{ localStorage.setItem(LS_QUEUE, JSON.stringify(q)); }catch(e){} paintBadge(); paintDoneStatus(); }
+function idbSet(k, v){
+  return idbOpen().then(function(db){ return new Promise(function(res, rej){
+    var t = db.transaction('kv', 'readwrite', {durability:'strict'});   // on disk before it counts
+    t.objectStore('kv').put(v, k);
+    t.oncomplete = function(){ res(true); };
+    t.onerror = t.onabort = function(){ rej(t.error); };
+  }); }).catch(function(){ return false; });
+}
+function idbGet(k){
+  return idbOpen().then(function(db){ return new Promise(function(res, rej){
+    var r = db.transaction('kv').objectStore('kv').get(k);
+    r.onsuccess = function(){ res(r.result); };
+    r.onerror = function(){ rej(r.error); };
+  }); }).catch(function(){ return undefined; });
+}
+/* both copies; the return value is the synchronous one, which is what a
+   caller can act on before moving on */
+function keep(k, v){ var ok = lsSet(k, v); idbSet(k, v); return ok; }
+
+function prefs(){ return lsGet(K.prefs, {}); }
+function savePrefs(p){ lsSet(K.prefs, p); }
+
+function drafts(){ return lsGet(K.drafts, {}); }
+function setDrafts(d){ return keep(K.drafts, d); }
+function hasAnswers(d){ return !!d && Object.keys(d.ans || {}).some(function(k){ return k !== 'rain_2days'; }); }
+
+function queue(){ return lsGet(K.queue, []); }
+function setQueue(q){ var ok = keep(K.queue, q); paintBadge(); paintDoneStatus(); return ok; }
+
+function sentLog(){ return lsGet(K.sent, []); }
+function addSent(p, how){
+  var now = Date.now();
+  var s = sentLog().filter(function(x){ return recId(x.p) !== recId(p) && now - x.at < KEEP_SENT_DAYS * DAY; });
+  s.push({p:p, at:now, how:how || 'sent'});
+  if (s.length > 500) s = s.slice(-500);
+  keep(K.sent, s);
+}
+function trash(){ return lsGet(K.trash, []); }
+
+/* Before the uid existed there was one draft under one key. */
+function migrateOldDraft(){
+  var old = lsGet(PREFIX + 'draft', null);
+  if (!old) return;
+  if (hasAnswers(old)){ var d = drafts(); old.uid = newUid(); d[old.uid] = old; setDrafts(d); }
+  try{ localStorage.removeItem(PREFIX + 'draft'); }catch(e){}
+}
+
+/* On every launch: put back anything the IndexedDB copy has that
+   localStorage lost, and never resurrect what is known to be sent. */
+function recover(){
+  migrateOldDraft();
+  return Promise.all([idbGet(K.queue), idbGet(K.drafts), idbGet(K.sent)]).then(function(r){
+    var sent = sentLog(), sentIds = sent.map(function(x){ return recId(x.p); });
+    (r[2] || []).forEach(function(x){                       // the service worker records what it sent here
+      if (sentIds.indexOf(recId(x.p)) === -1){ sent.push(x); sentIds.push(recId(x.p)); }
+    });
+    keep(K.sent, sent);
+
+    var q = queue(), qIds = q.map(recId);
+    (r[0] || []).forEach(function(p){ if (qIds.indexOf(recId(p)) === -1){ q.push(p); qIds.push(recId(p)); } });
+    q = q.filter(function(p){ return sentIds.indexOf(recId(p)) === -1; });
+    setQueue(q);
+
+    var d = drafts(), dd = r[1] || {};
+    Object.keys(dd).forEach(function(k){ if (!d[k] || (dd[k].at || 0) > (d[k].at || 0)) d[k] = dd[k]; });
+    var done = qIds.concat(sentIds);
+    Object.keys(d).forEach(function(k){ if (done.indexOf(k) > -1) delete d[k]; });   // already submitted
+    setDrafts(d);
+
+    var t = trash().filter(function(x){ return Date.now() - x.deletedAt < KEEP_TRASH_DAYS * DAY; });
+    keep(K.trash, t);
+  });
+}
+
+function askPersist(){
+  try{
+    if (navigator.storage && navigator.storage.persist)
+      navigator.storage.persisted().then(function(p){ if (!p) navigator.storage.persist(); });
+  }catch(e){}
+}
+
+/* ---------- drafts ---------- */
+function saveDraft(){
+  if (!S.uid) return;
+  var st = steps();
+  var d = drafts();
+  d[S.uid] = {
+    uid:S.uid, lang:S.lang, mode:S.mode, meta:JSON.parse(JSON.stringify(S.meta)), ans:S.ans,
+    i:S.i, qid: S.screen === 'review' ? '__review' : (st[S.i] ? st[S.i].id : null),
+    started:S.started, primed:S.primed, at:Date.now()
+  };
+  setDrafts(d);
+}
+function deleteDraft(uid){ var d = drafts(); delete d[uid]; setDrafts(d); }
+function draftList(){
+  var d = drafts();
+  return Object.keys(d).map(function(k){ return d[k]; })
+    .filter(function(x){ return x.uid !== S.uid && hasAnswers(x); })
+    .sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+}
+function discardDraft(uid){
+  var d = drafts(), x = d[uid]; if (!x) return;
+  var t = trash(); x.deletedAt = Date.now(); t.push(x); keep(K.trash, t);
+  delete d[uid]; setDrafts(d);
+}
+function restoreDraft(uid){
+  var t = trash(), x = t.filter(function(y){ return y.uid === uid; })[0]; if (!x) return;
+  var d = drafts(); delete x.deletedAt; d[uid] = x; setDrafts(d);
+  keep(K.trash, t.filter(function(y){ return y.uid !== uid; }));
+}
+/* what the steps and answers of a stored draft look like, without disturbing S */
+function withDraft(dr, fn){
+  var keepS = {ans:S.ans, mode:S.mode, meta:S.meta, uid:S.uid, started:S.started, lang:S.lang};
+  S.ans = dr.ans || {}; S.mode = dr.mode || S.mode; S.meta = dr.meta || S.meta; S.uid = dr.uid; S.started = dr.started; S.lang = dr.lang || S.lang;
+  try{ return fn(); } finally { for (var k in keepS) S[k] = keepS[k]; }
+}
+function progressOf(dr){
+  return withDraft(dr, function(){
+    var st = steps(); return st.filter(answered).length + '/' + st.length;
+  });
+}
+function resumeDraft(uid){
+  var dr = drafts()[uid]; if (!dr) return;
+  S.uid = dr.uid; S.lang = dr.lang || S.lang; if (dr.mode) S.mode = dr.mode;
+  S.meta = dr.meta; S.ans = dr.ans || {}; S.started = dr.started || Date.now(); S.primed = !!dr.primed;
+  var st = steps();
+  if (dr.qid === '__review'){ S.screen = 'review'; S.i = st.length - 1; }
+  else {
+    var k = st.map(function(q){ return q.id; }).indexOf(dr.qid);   // by question, not position: survives an app update
+    S.i = k > -1 ? k : Math.max(0, Math.min(dr.i || 0, st.length - 1));
+    S.screen = 'q';
+  }
+  render();
+}
+function newSurvey(){
+  S.uid = newUid(); S.ans = freshAns(); S.i = 0; S.primed = false; S.started = Date.now(); S.screen = 'q';
+  askPersist();
+  saveDraft();
+}
+function resetToStart(){
+  S.uid = null; S.ans = freshAns(); S.i = 0; S.primed = false; S.started = 0;
+  resetMeta(); S.meta.time = now(); S.meta.date = today();
+  S.screen = 'start'; render();
+}
+function fmtWhen(ms){
+  var d = new Date(ms); return d.getDate() + ' ' + MONTH_SHORT[d.getMonth()] + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+var MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* the unfinished ones, on the start screen */
+function draftsNoteHTML(){
+  var dl = draftList(); if (!dl.length) return '';
+  var shown = dl.slice(0, 3);
+  return '<div class="note" id="drafts-note"><b>'+TXT.unfinishedSw+'</b> &middot; '+TXT.unfinishedEn+
+    '<ul class="dlist">'+shown.map(function(d){
+      return '<li><span><b>'+esc(recLabel(d.meta))+'</b> &middot; '+esc(d.meta.date||'')+' &middot; '+progressOf(d)+'</span>'+
+        '<button data-resume="'+esc(d.uid)+'">Endelea / Resume</button></li>';
+    }).join('')+'</ul>'+
+    (dl.length > shown.length ? '<div class="mini"><button data-go-records="1">+'+(dl.length-shown.length)+' &middot; Rekodi zote / All records</button></div>' : '')+
+    '</div>';
+}
+/* records that have waited more than a day: say so, loudly, with a way out */
+function staleNoteHTML(){
+  if (CFG.sink === 'file') return '';
+  var q = queue(); if (!q.length) return '';
+  var oldest = Math.min.apply(null, q.map(function(p){ return Date.parse(p.submitted_at) || Date.now(); }));
+  if (Date.now() - oldest < DAY) return '';
+  return '<div class="note bad"><b>'+q.length+(q.length===1 ? ' haijatumwa' : ' hazijatumwa')+' tangu '+esc(fmtWhen(oldest))+'.</b> '+
+    q.length+' not sent since '+esc(fmtWhen(oldest))+'.<br>'+
+    'Unganisha intaneti, au tuma faili kwa WhatsApp. / Connect to the internet, or send the file on WhatsApp.'+
+    '<div class="mini" style="margin-top:10px"><button data-share-waiting="1">Tuma faili / Share file</button>'+
+    '<button data-send-now="1">Jaribu tena / Try again</button></div></div>';
+}
+/* one click handler for the buttons above, wherever they are drawn */
+function wireRecordButtons(root){
+  root.addEventListener('click', function(e){
+    var b = e.target.closest('[data-resume],[data-go-records],[data-share-waiting],[data-send-now],[data-del],[data-restore],[data-export-all]');
+    if (!b) return;
+    if (b.dataset.resume) resumeDraft(b.dataset.resume);
+    else if (b.dataset.goRecords){ S.screen = 'records'; render(); }
+    else if (b.dataset.shareWaiting) shareRows(queue().map(function(p){ return withStatus(p, 'waiting'); }), FILE_PREFIX + '-waiting-' + today() + '.csv');
+    else if (b.dataset.sendNow){ flushWait = FLUSH_MIN; flushQueue(); alertish(S.lang==='en' ? 'Sending…' : 'Inatumwa…'); }
+    else if (b.dataset.exportAll) exportAll();
+    else if (b.dataset.restore){ restoreDraft(b.dataset.restore); render(); }
+    else if (b.dataset.del){
+      /* two taps, so a stray finger cannot throw a survey away */
+      if (b.dataset.armed){ discardDraft(b.dataset.del); render(); return; }
+      b.dataset.armed = '1'; b.textContent = S.lang==='en' ? 'Tap again to delete' : 'Gusa tena kufuta';
+      b.classList.add('danger');
+      setTimeout(function(){ if (b.isConnected){ delete b.dataset.armed; b.textContent = S.lang==='en' ? 'Delete' : 'Futa'; b.classList.remove('danger'); } }, 3000);
+    }
+  });
+}
+
+/* ---------- the records screen ---------- */
+function renderRecords(){
+  var dl = draftList(), q = queue(), s = sentLog().slice().reverse(), t = trash().slice().reverse();
+  var L = function(sw, en){ return S.lang==='en' ? en : (S.lang==='sw' ? sw : sw+' / '+en); };
+  var row = function(main, side, btns){ return '<li><span class="rmain">'+main+'</span><span class="rside">'+side+'</span>'+(btns||'')+'</li>'; };
+
+  $wrap.innerHTML =
+    '<div class="sec">'+L('Rekodi kwenye simu hii','Records on this phone')+'</div>'+
+
+    '<div class="panel"><h2>'+L(TXT.unfinishedSw, TXT.unfinishedEn)+' ('+dl.length+')</h2>'+
+      (dl.length ? '<ul class="rlist">'+dl.map(function(d){
+        return row('<b>'+esc(recLabel(d.meta))+'</b> &middot; '+esc(d.meta.date||''), progressOf(d)+' &middot; '+esc(fmtWhen(d.at)),
+          '<span class="rbtns"><button data-resume="'+esc(d.uid)+'">'+L('Endelea','Resume')+'</button>'+
+          '<button data-del="'+esc(d.uid)+'">'+L('Futa','Delete')+'</button></span>');
+      }).join('')+'</ul>' : '<p class="sub">'+L('Hakuna','None')+'</p>')+
+    '</div>'+
+
+    (CFG.sink === 'file' ? '' :
+    '<div class="panel"><h2>'+L('Zinasubiri kutumwa','Waiting to send')+' ('+q.length+')</h2>'+
+      (q.length ? '<ul class="rlist">'+q.map(function(p){
+        return row('<b>'+esc(recLabel(p))+'</b> &middot; '+esc(p.date||''), esc(fmtWhen(Date.parse(p.submitted_at)||Date.now())));
+      }).join('')+'</ul>'+
+      '<div class="mini" style="margin-top:12px"><button data-send-now="1">'+L('Tuma sasa','Send now')+'</button>'+
+      '<button data-share-waiting="1">'+L('Tuma faili (WhatsApp)','Share file (WhatsApp)')+'</button></div>'
+      : '<p class="sub">'+L('Zote zimetumwa.','Everything has been sent.')+'</p>')+
+    '</div>')+
+
+    '<div class="panel"><h2>'+(CFG.sink === 'file' ? L('Zimehifadhiwa','Saved') : L('Zimetumwa','Sent'))+' ('+s.length+')</h2>'+
+      '<p class="sub">'+L('Nakala inabaki hapa kwa siku '+KEEP_SENT_DAYS+'.','A copy stays here for '+KEEP_SENT_DAYS+' days.')+'</p>'+
+      (s.length ? '<ul class="rlist">'+s.slice(0, 30).map(function(x){
+        return row('<b>'+esc(recLabel(x.p))+'</b> &middot; '+esc(x.p.date||''), '&#10003; '+esc(fmtWhen(x.at)));
+      }).join('')+'</ul>' : '')+
+    '</div>'+
+
+    (t.length ? '<div class="panel"><h2>'+L('Zilizofutwa','Deleted')+' ('+t.length+')</h2>'+
+      '<p class="sub">'+L('Zinarudishwa ndani ya siku '+KEEP_TRASH_DAYS+'.','Can be restored for '+KEEP_TRASH_DAYS+' days.')+'</p>'+
+      '<ul class="rlist">'+t.map(function(d){
+        return row('<b>'+esc(recLabel(d.meta||{}))+'</b> &middot; '+esc((d.meta||{}).date||''), esc(fmtWhen(d.deletedAt)),
+          '<span class="rbtns"><button data-restore="'+esc(d.uid)+'">'+L('Rudisha','Restore')+'</button></span>');
+      }).join('')+'</ul></div>' : '')+
+
+    '<div class="mini" style="justify-content:center;margin:6px 0 10px"><button data-export-all="1">'+L('Hifadhi nakala ya zote','Export everything')+'</button></div>'+
+    '<div class="q-hint" id="persist-line" style="text-align:center"></div>'+
+    '<button id="btn-rec-back" class="bigbtn" style="margin-top:14px">'+L('Rudi','Back')+'</button>';
+
+  document.getElementById('btn-rec-back').addEventListener('click', function(){ S.screen = 'start'; render(); });
+  try{
+    navigator.storage.persisted().then(function(p){
+      var el = document.getElementById('persist-line'); if (!el) return;
+      el.textContent = p ? L('Hifadhi ya kudumu: imewashwa','Persistent storage: on')
+                         : L('Hifadhi ya kudumu: haijawashwa. Kuweka programu kwenye skrini ya mwanzo husaidia.','Persistent storage: off. Adding the app to the home screen helps.');
+    });
+  }catch(e){}
+}
+
+/* ---------- getting files off the phone ---------- */
+function withStatus(p, st){ var o = {}; for (var k in p) o[k] = p[k]; o.status = st; return o; }
+function exportAll(){
+  var rows = sentLog().map(function(x){ return withStatus(x.p, x.how || 'sent'); })
+    .concat(queue().map(function(p){ return withStatus(p, 'waiting'); }))
+    .concat(draftList().map(function(d){ return withStatus(withDraft(d, buildPayload), 'unfinished'); }));
+  if (!rows.length){ alertish(S.lang==='en' ? 'Nothing on this phone yet.' : 'Hakuna kitu bado.'); return; }
+  shareOrDownload(rows, FILE_PREFIX + '-all-' + today() + '.csv', false);
+}
+function shareRows(rows, fname){
+  if (!rows.length){ alertish(S.lang==='en' ? 'Nothing waiting to send.' : 'Hakuna kilichosalia.'); return; }
+  shareOrDownload(rows, fname, true);
+}
+/* The share sheet (WhatsApp, email, Bluetooth…) where the phone has one,
+   otherwise an ordinary download. */
+function shareOrDownload(rows, fname, preferShare){
+  var csv = toCSV(rows, true);
+  if (preferShare){
+    try{
+      var f = new File(['﻿' + csv], fname, {type:'text/csv'});
+      if (navigator.canShare && navigator.canShare({files:[f]})){
+        navigator.share({files:[f], title:fname}).catch(function(){});
+        return;
+      }
+    }catch(e){}
+  }
+  download(fname, csv);
+}
+
+/* ---------- background sending (Android Chrome) ---------- */
+/* Hands the queue to the service worker, which the browser wakes when the
+   connection comes back, whether or not the app is open. Harmless where
+   unsupported: the page still sends whenever it is open. */
+function armBackgroundSend(){
+  if (CFG.sink === 'file' || !CFG.endpoint) return;
+  idbSet('config', {endpoint:CFG.endpoint, token:CFG.token, fields:FIELDS, queueKey:K.queue, sentKey:K.sent});
+  if (!('serviceWorker' in navigator) || location.protocol.indexOf('http') !== 0) return;
+  navigator.serviceWorker.ready.then(function(reg){
+    if (reg.sync && queue().length) return reg.sync.register('arc-send');
+  }).catch(function(){});
+}
+
+/* ---------- what differs between the two apps ---------- */
+function recLabel(m){ return (S.lang==='en' ? 'Tank ' : 'Tangi ') + ((m && m.tank) || '?'); }
+function freshAns(){ return S.ans && S.ans.rain_2days !== undefined ? {rain_2days:S.ans.rain_2days} : {}; }   // same round, same rain
+function resetMeta(){ S.meta.tank = ''; }
+
 function paintBadge(){
   if (CFG.sink === 'file'){ $badge.classList.add('hide'); return; }
   var n = queue().length;
@@ -855,10 +1189,10 @@ function paintChrome(){
   $stepno.textContent = on ? (S.i+1)+' / '+st.length : '';
   $prog.style.width = on ? ((S.i)/st.length*100)+'%' : (S.screen==='done'?'100%':'0%');
   var bits=[];
-  if (S.meta.tank) bits.push((S.lang==='en'?'Tank ':'Tangi ')+S.meta.tank);
-  if (S.meta.checked_by && S.screen!=='start') bits.push(S.meta.checked_by);
+  if (S.screen!=='records' && S.meta.tank) bits.push((S.lang==='en'?'Tank ':'Tangi ')+S.meta.tank);
+  if (S.meta.checked_by && S.screen!=='start' && S.screen!=='records') bits.push(S.meta.checked_by);
   $who.textContent = bits.join(' · ');
-  $foot.classList.toggle('hide', S.screen==='start' || S.screen==='done');
+  $foot.classList.toggle('hide', S.screen==='start' || S.screen==='done' || S.screen==='records');
   paintBadge();
 }
 
@@ -870,6 +1204,7 @@ function render(){
   else if (S.screen==='q') renderQ();
   else if (S.screen==='review') renderReview();
   else if (S.screen==='done')   renderDone();
+  else if (S.screen==='records') renderRecords();
   paintChrome();
   $stage.scrollTop = 0;
   paintMore();
@@ -888,8 +1223,6 @@ function renderStart(){
   if (!S.meta.date) S.meta.date = today();
   if (!S.meta.time) S.meta.time = now();
 
-  var draft = loadDraft();
-  var hasDraft = draft && draft.ans && Object.keys(draft.ans).some(function(k){ return k!=='rain_2days'; });
 
   var inputCss = 'flex:1;border:3px solid var(--line);border-radius:16px;padding:14px;font-size:18px;background:#fff;color:var(--ink);outline:none';
 
@@ -897,9 +1230,7 @@ function renderStart(){
   '<div class="logo"><div class="mark">'+icon('i-tank')+'</div>'+
     '<div><h1>Rekodi ya Ukaguzi wa Tangi</h1><div class="sub">ARC &middot; '+esc(CFG.site)+' &middot; Tank Monitoring</div></div></div>'+
 
-  (hasDraft ? '<div class="note" id="resume-note"><b>Kuna ukaguzi ambao haujakamilika.</b> There is an unfinished sheet'+
-     (draft.meta&&draft.meta.tank?' for tank '+esc(draft.meta.tank):'')+'.<div class="mini" style="margin-top:10px">'+
-     '<button id="btn-resume">Endelea nao / Resume</button><button id="btn-discard">Anza upya / Start fresh</button></div></div>' : '')+
+  staleNoteHTML() + draftsNoteHTML() +
 
   '<details class="panel instr"'+(p.seenInstr?'':' open')+' id="instr">'+
     '<summary>Maelekezo kwa anayekagua / Instructions for the checker</summary>'+
@@ -940,10 +1271,10 @@ function renderStart(){
       '</div></div>'+
   '</div>'+
 
-  '<button id="btn-start" style="border:none;border-radius:16px;padding:22px;font-size:23px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">Anza / Start</button>'+
+  '<button id="btn-start" style="border:none;border-radius:16px;padding:22px;font-size:23px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">'+(S.uid ? 'Endelea / Continue' : 'Anza / Start')+'</button>'+
 
   '<div class="mini" style="margin-top:20px;justify-content:center">'+
-    '<button id="btn-export">Hifadhi nakala / Export data ('+queue().length+')</button>'+
+    '<button data-go-records="1">Rekodi kwenye simu hii / Records on this phone</button>'+
   '</div>'+
   (CFG.endpoint || CFG.sink==='file' ? '' :
     '<div class="note" style="margin-top:14px">No Google Sheet is connected yet. Answers are saved on this device and can be exported with the button above. See <b>tanks/README.md</b>.</div>');
@@ -972,20 +1303,10 @@ function renderStart(){
     if (!S.meta.checked_by || !S.meta.checked_by.trim()){ alertish('Tafadhali andika jina lako. / Please enter your name.'); return; }
     if (S.ans.rain_2days!==0 && S.ans.rain_2days!==1){ alertish('Tafadhali jibu swali la mvua. / Please answer the rain question.'); return; }
     var p=prefs(); p.checked_by=S.meta.checked_by; savePrefs(p);
-    S.started = Date.now(); S.i=0; S.screen='q'; saveDraft(); render();
+    if (S.uid){ S.i=0; S.screen='q'; saveDraft(); } else newSurvey();
+    render();
   });
-  document.getElementById('btn-export').addEventListener('click', exportQueue);
 
-  if (hasDraft){
-    document.getElementById('btn-resume').addEventListener('click', function(){
-      S.lang=draft.lang; S.meta=draft.meta; S.ans=draft.ans;
-      S.i=draft.i||0; S.started=draft.started||Date.now();
-      S.screen='q'; render();
-    });
-    document.getElementById('btn-discard').addEventListener('click', function(){
-      clearDraft(); S.ans={}; S.i=0; render();
-    });
-  }
 }
 
 function alertish(msg){
@@ -1241,15 +1562,9 @@ function renderDone(){
     '<button id="btn-again" style="border:none;border-radius:16px;padding:20px;font-size:21px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer;width:100%">'+
       (S.lang==='en'?'Next tank':'Tangi lingine')+'</button>'+
     '<div class="mini" style="margin-top:18px;justify-content:center">'+
-      '<button id="btn-export2">'+(S.lang==='en'?'Export data':'Hifadhi nakala')+' ('+queue().length+')</button></div>'+
+      '<button data-go-records="1">'+(S.lang==='en'?'Records on this phone':'Rekodi kwenye simu hii')+'</button></div>'+
     '</div>';
-  document.getElementById('btn-again').addEventListener('click', function(){
-    /* Same checker, same day, same rain: only the tank and the answers change. */
-    var rain = S.ans.rain_2days;
-    S.ans={rain_2days:rain}; S.i=0; S.meta.tank=''; S.meta.time=now();
-    S.screen='start'; clearDraft(); render();
-  });
-  document.getElementById('btn-export2').addEventListener('click', exportQueue);
+  document.getElementById('btn-again').addEventListener('click', resetToStart);
 }
 
 /* ============================================================
@@ -1276,6 +1591,7 @@ function buildPayload(){
   p.duration_seconds = S.started ? Math.round((Date.now()-S.started)/1000) : '';
   p.app_version      = CFG.version;
   p.device           = navigator.userAgent;
+  p.uid              = S.uid;
   return p;
 }
 
@@ -1299,18 +1615,31 @@ function submit(){
 
   if (CFG.sink === 'file'){
     S.savedAs = saveOneToFile(payload);
-    var all = queue(); all.push(payload); setQueue(all);   // keeps Export data complete
-    clearDraft();
+    addSent(payload, 'saved to file');
+    deleteDraft(S.uid);
     S.screen='done'; paintChrome(); renderDone();
     return;
   }
 
   var q = queue();
-  q.push(payload);
-  setQueue(q);
-  clearDraft();
+  if (q.map(recId).indexOf(recId(payload)) === -1) q.push(payload);
+  var ok = setQueue(q);
+  if (!ok){                                    // storage full: make room from the sent copies and try again
+    keep(K.sent, sentLog().slice(-20)); keep(K.trash, []);
+    ok = setQueue(q);
+  }
+  if (!ok){
+    /* Still nowhere to put it. Keep the draft (it is already on the phone)
+       and put the record in a file as well, so it exists twice. */
+    download(FILE_PREFIX + ' - ' + recLabel(payload) + ' - ' + (payload.date||today()) + '.csv', toCSV([withStatus(payload, 'waiting')], true));
+    alertish(S.lang==='en' ? 'Phone storage is full. The record was saved as a file in Downloads.'
+                           : 'Simu imejaa. Rekodi imehifadhiwa kama faili kwenye Downloads.');
+  } else {
+    deleteDraft(S.uid);
+  }
   S.screen='done'; paintChrome(); renderDone();
-  flushQueue();               // in the background; the checker never waits on it
+  flushQueue();               // in the background; nobody waits on it
+  armBackgroundSend();
 }
 
 /* One CSV per sheet, named so a month of them sorts by tank and by date. */
@@ -1350,7 +1679,9 @@ function flushQueue(){
   flushing = true;
   send(q[0]).then(function(){
     flushing = false;
-    var cur = queue(); cur.shift(); setQueue(cur);
+    var sentP = q[0];
+    setQueue(queue().filter(function(p){ return recId(p) !== recId(sentP); }));
+    addSent(sentP, 'sent');
     flushWait = FLUSH_MIN;
     scheduleFlush(600);                       // straight on to the next one
   }).catch(function(){
@@ -1361,20 +1692,16 @@ function flushQueue(){
 }
 
 /* ---------- manual export, so nothing is ever stranded ---------- */
-function toCSV(rows){
-  var out = [FIELDS.join(',')];
+function toCSV(rows, withStatusCol){
+  var cols = withStatusCol ? FIELDS.concat(['status']) : FIELDS;
+  var out = [cols.join(',')];
   rows.forEach(function(r){
-    out.push(FIELDS.map(function(f){
+    out.push(cols.map(function(f){
       var v = r[f]==null ? '' : String(r[f]);
       return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v;
     }).join(','));
   });
   return out.join('\n');
-}
-function exportQueue(){
-  var rows = queue();
-  if (!rows.length){ alertish(S.lang==='en'?'Nothing waiting to send.':'Hakuna kilichosalia.'); return; }
-  download('arc-tanks-'+today()+'.csv', toCSV(rows));
 }
 
 /* ============================================================
@@ -1389,9 +1716,9 @@ $back.addEventListener('click', function(){
   go(-1);
 });
 document.getElementById('btn-home').addEventListener('click', function(){
-  if (S.screen==='start') return;
+  if (S.screen==='start' && !S.uid) return;
   saveDraft();
-  S.screen='start'; render();
+  resetToStart();
 });
 document.addEventListener('keydown', function(e){
   if (S.screen!=='q') return;
@@ -1408,10 +1735,20 @@ function paintOnline(){
 window.addEventListener('online',  function(){ paintOnline(); flushQueue(); });
 window.addEventListener('offline', paintOnline);
 
+/* back in front: try the queue again; going to the background: make sure the draft is down */
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden) saveDraft(); else flushQueue();
+});
+window.addEventListener('pagehide', saveDraft);
+
+wireRecordButtons($wrap);   // once: the buttons it serves are redrawn, the listener is not
 paintOnline();
 paintBadge();
-flushQueue();
 render();
+recover().then(function(){
+  if (S.screen==='start' || S.screen==='records') render();
+  paintBadge(); flushQueue(); armBackgroundSend();
+});
 </script>
 </body>
 </html>
