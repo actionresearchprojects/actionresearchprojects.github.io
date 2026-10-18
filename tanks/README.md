@@ -61,6 +61,11 @@ node build-offline.js --local   # tanks-offline-local.html  -> saves a CSV per s
 
 Local-build files are named `ARC tank <n> - <date> <time>.csv`.
 
+## Phones
+
+Same phone layout as the survey (see "Phones" in `survey/README.md`); the CSS
+block is shared word for word, so change both.
+
 ## How it differs from the paper sheet
 
 - **Heavy rain** is asked on the start screen with the tank, the checker and the

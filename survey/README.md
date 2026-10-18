@@ -173,6 +173,24 @@ on one phone.
 Ubuntu is redistributed here under the **Ubuntu Font Licence 1.0**, which permits
 it. Files are the latin subset only, four weights, 14 KB each, in `fonts/`.
 
+## Phones
+
+Checked at 360×640 (small Android), 390×844 and 640×360 (landscape) on every
+question. The top bar and the Back/Next row are pinned and only the middle
+scrolls (`#app` is `height:100dvh`; it used to be `min-height`, which let a long
+question push the Next button below the screen). A shadow over the Back/Next row
+means there is more to scroll to. Narrow phones get tighter type; short screens
+(a phone on its side) put each picture beside its two labels. The phone CSS block
+is shared word for word with `tanks/index.html` — change both.
+
+## Repeated submissions
+
+`apps-script.gs` ignores a row whose `submitted_at` is already in the sheet and
+answers `OK duplicate ignored`. A send that reached Google but whose reply was lost
+(signal dropped, app closed) is retried by the phone; before this, each retry
+wrote another copy. Redeploy as **Manage deployments → edit → New version** so the
+`/exec` URL does not change.
+
 ## Two modes
 
 Picked on the start screen.

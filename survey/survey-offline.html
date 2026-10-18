@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1a6b4a">
 <title>ARC House 5 Comfort Survey (offline copy)</title>
-<!-- Built by build-offline.js from index.html on 2026-09-20.
+<!-- Built by build-offline.js from index.html on 2026-10-18.
      Self-contained: no network required. Edit index.html, not this file. -->
 <script>
 (function(){
@@ -236,6 +236,70 @@ textarea{min-height:150px;line-height:1.4}
 }
 @media (max-width:560px){
   .scale .num{align-self:flex-start}
+}
+
+/* ---------- phones (shared with tanks/ — keep the two in step) ---------- */
+/* The bar and the Back/Next row stay put; only #stage scrolls. With
+   min-height the page grew past the screen on any long question and
+   the Next button ended up below the fold. dvh also shrinks with the
+   Android keyboard, so the buttons sit above it rather than under it. */
+#app{height:100%;height:100dvh;min-height:0}
+#bar button{min-width:44px;min-height:44px}
+.review li button{padding:14px 10px;margin:-14px -10px -14px 0}
+.opt{min-width:0}
+.opt .lab-sw,.opt .lab-en{overflow-wrap:break-word;hyphens:auto}
+/* a shadow over the Back/Next row while there is more to scroll to */
+#foot{transition:box-shadow .15s}
+#foot.more{box-shadow:0 -10px 14px -8px rgba(0,0,0,.28)}
+@media (max-width:420px){
+  #stage{padding:12px 12px 8px}
+  .sec{font-size:11.5px;margin-bottom:8px;padding:4px 10px}
+  .q-sw{font-size:22px}
+  .q-en{font-size:16px}
+  .q-hint{font-size:13.5px;margin-top:6px}
+  .q-head{margin-bottom:14px}
+  .opts{gap:9px}
+  .opt{min-height:100px;padding:10px 8px;gap:6px}
+  .opt svg{width:46px;height:46px}
+  .opt .lab-sw{font-size:16.5px}
+  .opt .lab-en{font-size:13px}
+  .yn .opt{min-height:118px}
+  .scale .opt{min-height:84px}
+  .yn .opt svg{width:54px;height:54px}
+  .yn .opt .lab-sw{font-size:22px}
+  #foot{padding:8px 12px calc(10px + env(safe-area-inset-bottom))}
+  #foot button{padding:15px 12px;font-size:18px}
+  textarea{min-height:120px;font-size:19px}
+  .chip{padding:10px 16px;font-size:17px}
+}
+/* Short screens: a phone on its side. Pictures go beside the words so a
+   row of answers fits under the question. */
+@media (max-height:500px) and (min-width:500px){
+  #bar{padding:calc(4px + env(safe-area-inset-top)) 12px 4px}
+  #stage{padding:10px 14px 6px}
+  .sec{font-size:11px;margin-bottom:6px;padding:3px 9px}
+  .q-sw{font-size:20px}
+  .q-en{font-size:15px}
+  .q-hint{font-size:13px;margin-top:4px}
+  .q-head{margin-bottom:10px}
+  .opts,.scale{gap:8px}
+  .g3,.gauto{grid-template-columns:repeat(3,1fr)}
+  /* picture on the left, the two languages stacked beside it */
+  .opt,.yn .opt,.scale .opt{min-height:64px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-auto-rows:auto;
+    align-content:center;justify-items:start;text-align:left;padding:8px 10px;column-gap:10px;row-gap:1px}
+  .opt svg{grid-row:1 / span 2}
+  .counter + div{display:none}
+  .opt svg,.yn .opt svg{width:38px;height:38px}
+  .opt .lab-sw,.yn .opt .lab-sw{font-size:15.5px}
+  .opt .lab-en{font-size:12.5px}
+  .opt .txt{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+  .counter{margin:4px 0 8px}
+  .counter button{width:64px;height:64px;font-size:30px}
+  .counter .val{font-size:46px}
+  textarea{min-height:90px;font-size:18px}
+  #foot{padding:6px 14px calc(6px + env(safe-area-inset-bottom))}
+  #foot button{padding:11px 12px;font-size:17px}
+  .done-mark{width:70px;height:70px;margin:8px auto 10px}
 }
 </style>
 </head>
@@ -749,7 +813,7 @@ var CFG = {
   roster: [],
 
   house: 'House 5',
-  version: '2.3-offline'
+  version: '2.3.1-offline'
 };
 /* ------------------------------------------------------ */
 
@@ -1164,7 +1228,13 @@ function render(){
   else if (S.screen==='done')   renderDone();
   paintChrome();
   $stage.scrollTop = 0;
+  paintMore();
 }
+function paintMore(){
+  $foot.classList.toggle('more', $stage.scrollHeight - $stage.scrollTop - $stage.clientHeight > 6);
+}
+$stage.addEventListener('scroll', paintMore, {passive:true});
+window.addEventListener('resize', paintMore);
 
 /* ---------- start ---------- */
 function renderStart(){
@@ -1425,6 +1495,7 @@ function wire(q){
       saveDraft();
     });
     if (!ta.readOnly && !('ontouchstart' in window)) ta.focus();
+    ta.addEventListener('focus', function(){ var el=this; setTimeout(function(){ el.scrollIntoView({block:'center'}); }, 350); });
   }
 }
 
