@@ -826,7 +826,7 @@ var CFG = {
   roster: [],
 
   house: 'House 5',
-  version: '2.4'
+  version: '2.5'
 };
 /* ------------------------------------------------------ */
 
@@ -906,6 +906,14 @@ var QS = [
    hintSw:'Andika hapa.', hintEn:'Write it here.'},
 
   /* ===== SECTION B — about last night, her own bedroom ===== */
+  {id:'b_bedroom', sec:'B', type:'choice', layout:'g2',
+   sw:'Unalala katika chumba gani cha kulala?',
+   en:'Which bedroom do you sleep in?',
+   opts:[{v:1, sw:'Kitanda 1 (Mama)',  en:'Bed 1 (Mothers)', icon:'i-room-bed', c:'var(--s2)'},
+         {v:2, sw:'Kitanda 2',         en:'Bed 2',           icon:'i-room-bed', c:'var(--green)'},
+         {v:3, sw:'Kitanda 3',         en:'Bed 3',           icon:'i-room-bed', c:'var(--p1)'},
+         {v:4, sw:'Kitanda 4',         en:'Bed 4',           icon:'i-room-bed', c:'var(--p2)'}]},
+
   {id:'b6_bedroom_last_night', sec:'B', type:'scale', opts:SENSATION,
    sw:'Usiku uliopita, chumba chako cha kulala kilikuwaje?',
    en:'Last night, how did your bedroom feel?',
@@ -947,6 +955,14 @@ var QS = [
    opts:[{v:1, sw:'Joto sana',   en:'Too hot',  icon:'i-woke-hot',  c:'var(--p3)'},
          {v:2, sw:'Baridi sana', en:'Too cold', icon:'i-woke-cold', c:'var(--s3)'},
          {v:0, sw:'Hapana',      en:'No',       icon:'i-no',        c:'var(--muted)'}]},
+
+  {id:'b12b_cover_change', sec:'B', type:'choice', layout:'g3',
+   showIf:function(a){ return a.b12_woke_hot_cold === 1 || a.b12_woke_hot_cold === 2; },
+   sw:'Je, uliongeza au kuondoa shuka usiku?',
+   en:'Did you add or remove a cover in the night?',
+   opts:[{v:1, sw:'Niliongeza shuka',  en:'Added a cover',   icon:'i-blanket-full', c:'var(--s2)'},
+         {v:2, sw:'Niliondoa shuka',   en:'Removed a cover', icon:'i-blanket-none', c:'var(--p2)'},
+         {v:0, sw:'Sikubadilisha',     en:'No change',       icon:'i-no',           c:'var(--muted)'}]},
 
   /* ===== SECTION C — this room, right now. 13 and 14 before any options ===== */
   {id:'c13_feel_words', sec:'C', type:'text', noPrime:true,
@@ -1095,7 +1111,7 @@ var SEC_NAME = {
 /* the column order written to the sheet — must match apps-script.gs */
 var FIELDS = ['submitted_at','local_time','mode','lang','house','name','asked_by','date','time',
   'a_room','a1_doors_open','a2_people','a3_fans_on','a4_curtains_closed','a5_used_in_room','a5_other_detail',
-  'b6_bedroom_last_night','b7_used_fan','b8_why_no_fan','b9_bed_net','b10_covering','b11_slept_well','b12_woke_hot_cold',
+  'b_bedroom','b6_bedroom_last_night','b7_used_fan','b8_why_no_fan','b9_bed_net','b10_covering','b11_slept_well','b12_woke_hot_cold','b12b_cover_change',
   'c13_feel_words','c14_more_detail','c15_sensation_now','c16_preference','c17_comfortable',
   'c18_clothing','c18_layers','c19_activity','c20_went_outside','c20_outside_activity',
   'd21_mosquito_bother','d22_where_house','d23_where_room','d24_time_of_day','d25_seasonal','e_notes',
