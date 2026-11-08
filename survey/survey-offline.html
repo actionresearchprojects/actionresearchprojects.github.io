@@ -9,34 +9,9 @@
 <!-- Built by build-offline.js from index.html on 2026-11-08.
      Self-contained: no network required. Edit index.html, not this file. -->
 <script>
-(function(){
-  if(sessionStorage.getItem('arc_auth')==='1')return;
-  var s=document.createElement('style');
-  s.textContent='body{visibility:hidden}';
-  document.head.appendChild(s);
-  document.addEventListener('DOMContentLoaded',function(){
-    s.remove();
-    var o=document.createElement('div');
-    o.id='pw-overlay';
-    o.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:#111;display:flex;align-items:center;justify-content:center;font-family:sans-serif;color:#fff;';
-    o.innerHTML='<div style="text-align:center"><div style="font-size:20px;margin-bottom:20px;font-weight:500">Enter password</div><input id="pw-in" type="password" placeholder="Password" style="padding:10px 14px;font-size:16px;background:#222;color:#fff;border:1px solid #555;border-radius:4px;width:220px;outline:none;display:block;margin:0 auto 8px"><div id="pw-err" style="color:#f66;font-size:13px;height:20px"></div><button id="pw-btn" style="padding:10px 28px;background:#fff;color:#111;border:none;border-radius:4px;font-size:15px;cursor:pointer;margin-top:4px">Enter</button></div>';
-    document.body.appendChild(o);
-    document.getElementById('pw-in').focus();
-    async function check(){
-      var val=document.getElementById('pw-in').value;
-      var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(val));
-      var hash=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('');
-      if(hash==='52e32618b274e60e320245f222a7a50dd485ea0e3edcf48cb2873977502b5f19'){
-        sessionStorage.setItem('arc_auth','1');
-        o.remove();
-      }else{
-        document.getElementById('pw-err').textContent='Incorrect password';
-      }
-    }
-    document.getElementById('pw-btn').addEventListener('click',check);
-    document.getElementById('pw-in').addEventListener('keydown',function(e){if(e.key==='Enter')check();});
-  });
-})();
+/* The door is drawn by the app itself (search "the door"): the code is
+   checked by Google, not here. Until then the app stays hidden. */
+if (sessionStorage.getItem('arc_survey_in') !== '1') document.documentElement.className += ' shut';
 </script>
 <link rel="icon" type="image/png" sizes="any" href="data:image/png;base64,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">
 <link rel="apple-touch-icon" href="data:image/png;base64,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">
@@ -164,7 +139,19 @@ textarea,input[type=text]{
   font-size:21px;background:#fff;color:var(--ink);outline:none;resize:vertical;
 }
 textarea:focus,input[type=text]:focus{border-color:var(--green)}
-/* the roster dropdown and its access-code box */
+/* the door */
+html.shut #app{visibility:hidden}
+#door{position:fixed;inset:0;z-index:99999;background:var(--green);display:flex;align-items:center;justify-content:center;padding:24px}
+#door .box{background:#fff;border-radius:20px;padding:26px 22px;width:100%;max-width:380px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+#door h1{font-size:23px;font-weight:500;margin:6px 0 4px}
+#door p{font-size:15px;color:var(--muted);margin-bottom:16px}
+#door input{width:100%;border:3px solid var(--line);border-radius:var(--r);padding:14px;font-size:24px;text-align:center;letter-spacing:.08em;outline:none}
+#door input:focus{border-color:var(--green)}
+#door button{width:100%;margin-top:12px;border:none;border-radius:var(--r);padding:16px;font-size:21px;font-weight:500;background:var(--green);color:#fff;box-shadow:0 3px 0 var(--green-d);cursor:pointer}
+#door button:disabled{opacity:.6}
+#door .msg{min-height:22px;margin-top:12px;font-size:15px;color:var(--muted)}
+#door .msg.bad{color:#b3261e}
+/* the roster dropdown */
 select.pick,input.code{
   width:100%;border:3px solid var(--line);border-radius:var(--r);padding:14px;
   font-size:21px;background:#fff;color:var(--ink);outline:none;
@@ -842,7 +829,7 @@ var CFG = {
      "The roster"). Until a phone has it, Name is a free-text box. */
 
   house: 'House 5',
-  version: '2.6-offline'
+  version: '2.7-offline'
 };
 /* ------------------------------------------------------ */
 
@@ -1559,14 +1546,11 @@ function armBackgroundSend(){
 }
 
 /* ---------- the roster ----------
-   Names never ship in this file (the repository is public). The phone asks
-   the Apps Script for them with the access code, once; the script checks the
-   code on Google's side and answers with the roster and a 30-day pass. Only
-   the pass is kept, not the code, and the phone uses it to refresh the list
-   quietly whenever it is online. A pass that is not refreshed for 30 days,
-   or one cancelled by changing the code, means asking for the code again.
-   Without a roster the Name field is a plain text box, so a survey is never
-   blocked by it. */
+   Names never ship in this file (the repository is public). They come from
+   the Apps Script, which hands them over only for the right access code —
+   the code typed at the door (below). The answer also carries a 30-day
+   pass, which the phone uses to refresh the list quietly whenever it is
+   online; the code itself is never kept. */
 var ROSTER_KEY = PREFIX + 'roster', ROSTER_REFRESH = 6 * 3600e3, CUSTOM = '__custom';
 
 function rosterOn(){ return CFG.sink !== 'file' && !!CFG.endpoint; }
@@ -1582,8 +1566,10 @@ function rosterPerson(id){
   var r = roster(); if (!r || !id) return null;
   return r.people.filter(function(p){ return p.id === id; })[0] || null;
 }
-function storeRoster(res){
-  lsSet(ROSTER_KEY, {people:res.people || [], pass:res.pass, exp:Date.now() + (res.days || 30) * DAY, at:Date.now()});
+function storeRoster(res, ver){
+  var old = lsGet(ROSTER_KEY, null);
+  lsSet(ROSTER_KEY, {people:res.people || [], pass:res.pass, exp:Date.now() + (res.days || 30) * DAY, at:Date.now(),
+                     ver: ver || (old && old.ver) || null});
 }
 function askRoster(body){
   body.action = 'roster';
@@ -1601,10 +1587,10 @@ function askRoster(body){
 function RL(sw, en){ return S.lang==='en' ? en : (S.lang==='sw' ? sw : sw+' / '+en); }
 function rosterError(res){
   var e = res && res.error;
-  if (e === 'wrong code') return RL('Msimbo si sahihi.','Wrong code.') +
+  if (e === 'wrong code') return RL('Nambari si sahihi.','Wrong passcode.') +
     (res.tries_left != null ? ' ' + RL('Majaribio '+res.tries_left+' yamebaki.', res.tries_left+' tries left.') : '');
   if (e === 'locked') return RL('Majaribio mengi mno. Subiri dakika 15.','Too many tries. Wait 15 minutes.');
-  if (e === 'not configured') return RL('Msimbo haujawekwa kwenye Google bado.','No access code has been set in Google yet.');
+  if (e === 'not configured') return RL('Nambari haijawekwa kwenye Google bado.','No passcode has been set in Google yet.');
   return RL('Imeshindikana. Jaribu tena ukiwa na intaneti.','Could not load. Try again with internet.');
 }
 function refreshRoster(force){
@@ -1612,12 +1598,98 @@ function refreshRoster(force){
   if (!r || !rosterOn() || !navigator.onLine) return;
   if (!force && Date.now() - (r.at || 0) < ROSTER_REFRESH) return;
   askRoster({pass:r.pass}).then(function(res){
-    if (res.ok) storeRoster(res);
-    else if (res.error === 'expired') forgetRoster();      // code changed, or pass too old
-    else return;
-    if (S.screen === 'start') render();
+    if (res.ok){ storeRoster(res); if (S.screen === 'start') render(); return; }
+    if (res.error !== 'expired') return;
+    /* The code was changed in Google (or the pass ran out): sign this phone
+       out. On the start screen go straight back to the door; in the middle
+       of a survey let her finish — the draft is safe — and ask next launch. */
+    forgetRoster();
+    try{ sessionStorage.removeItem(IN_KEY); }catch(e){}
+    if (S.screen === 'start') location.reload();
   }).catch(function(){ /* offline or no reply: keep what we have */ });
 }
+/* ---------- the door ----------
+   The app opens only for the access code (ACCESS_CODE in the Apps Script's
+   Script Properties). The first time on a phone the code goes to Google,
+   which checks it and answers with the roster; from then on the phone can
+   check it by itself, offline, against a salted PBKDF2 hash kept with the
+   roster — never the code itself — for as long as the 30-day pass lasts.
+   It is asked for on every launch. The save-to-file copy has no Google to
+   ask, so it keeps the old site password, checked by its hash. */
+var IN_KEY = 'arc_survey_in';
+var OLD_SITE_HASH = '52e32618b274e60e320245f222a7a50dd485ea0e3edcf48cb2873977502b5f19';
+
+function toHex(buf){ return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(''); }
+function fromHex(h){ var a = new Uint8Array(h.length/2); for (var i=0;i<a.length;i++) a[i] = parseInt(h.substr(i*2,2),16); return a; }
+function stretch(code, salt){
+  return crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveBits'])
+    .then(function(k){ return crypto.subtle.deriveBits({name:'PBKDF2', hash:'SHA-256', salt:fromHex(salt), iterations:150000}, k, 256); })
+    .then(toHex);
+}
+function makeVer(code){
+  var salt = toHex(crypto.getRandomValues(new Uint8Array(16)));
+  return stretch(code, salt).then(function(h){ return {salt:salt, h:h}; });
+}
+function checkHere(code){
+  var r = roster();
+  if (!r || !r.ver) return Promise.resolve(false);
+  return stretch(code, r.ver.salt).then(function(h){ return h === r.ver.h; });
+}
+function tryDoor(code){
+  if (!rosterOn()){
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(code)).then(function(b){
+      return toHex(b) === OLD_SITE_HASH ? {ok:true} : {ok:false, msg:RL('Nambari si sahihi.','Wrong passcode.')};
+    });
+  }
+  return checkHere(code).then(function(good){
+    if (good){ refreshRoster(true); return {ok:true}; }
+    if (!navigator.onLine) return {ok:false, msg: roster()
+      ? RL('Nambari si sahihi.','Wrong passcode.')
+      : RL('Mara ya kwanza kwenye simu hii inahitaji intaneti.','The first time on this phone needs internet.')};
+    return askRoster({code:code}).then(function(res){
+      if (!res.ok) return {ok:false, msg: rosterError(res)};
+      return makeVer(code).then(function(ver){ storeRoster(res, ver); return {ok:true}; });
+    }, function(){
+      return {ok:false, msg: RL('Imeshindikana kufikia Google. Jaribu tena.','Could not reach Google. Try again.')};
+    });
+  });
+}
+function door(){
+  if (sessionStorage.getItem(IN_KEY) === '1') return Promise.resolve();
+  return new Promise(function(resolve){
+    var d = document.createElement('div');
+    d.id = 'door';
+    d.innerHTML = '<div class="box">'+
+      '<div class="logo" style="justify-content:center;margin-bottom:8px"><div class="mark">'+icon('i-mark')+'</div></div>'+
+      '<h1>Nambari ya siri</h1><p>Passcode</p>'+
+      '<input id="door-in" type="password" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false">'+
+      '<button id="door-go">Ingia / Enter</button>'+
+      '<div class="msg" id="door-msg"></div></div>';
+    document.body.appendChild(d);
+    var inp = document.getElementById('door-in'), go = document.getElementById('door-go'), msg = document.getElementById('door-msg');
+    inp.focus();
+    function attempt(){
+      var code = (inp.value || '').trim(); if (!code) return;
+      go.disabled = true; msg.className = 'msg'; msg.textContent = RL('Inaangalia…','Checking…');
+      tryDoor(code).then(function(r){
+        if (r.ok){
+          try{ sessionStorage.setItem(IN_KEY, '1'); }catch(e){}
+          d.remove(); document.documentElement.classList.remove('shut');
+          resolve(); return;
+        }
+        go.disabled = false; msg.className = 'msg bad'; msg.textContent = r.msg; inp.value = ''; inp.focus();
+      });
+    }
+    go.addEventListener('click', attempt);
+    inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') attempt(); });
+  });
+}
+function signOut(){
+  forgetRoster();
+  try{ sessionStorage.removeItem(IN_KEY); }catch(e){}
+  location.reload();
+}
+
 /* Pre-fill the bedroom from the roster, once, and only if it is still empty —
    anything the surveyor has chosen stands. */
 function prefillBedroom(){
@@ -1702,15 +1774,9 @@ function renderStart(){
         }).join('')+
         '<option value="'+CUSTOM+'"'+(sel===CUSTOM?' selected':'')+'>+ Mwingine / Other (mama)</option>'+
       '</select>'+
-      (sel===CUSTOM ? freeText.replace('placeholder="Jina / Name"','placeholder="Andika jina / Type the name"') : '')+
-      '<div class="mini" style="margin-top:8px"><button id="btn-forget">Sahau orodha kwenye simu hii / Forget the list on this phone</button></div>';
+      (sel===CUSTOM ? freeText.replace('placeholder="Jina / Name"','placeholder="Andika jina / Type the name"') : '');
   } else {
-    rosterHTML = freeText +
-      (rosterOn()
-        ? '<div class="code-row"><input class="code" type="password" id="f-code" autocomplete="off" '+
-            'placeholder="Msimbo wa orodha / List code"><button id="btn-code">Fungua / Load</button></div>'+
-          '<div class="code-msg" id="code-msg">Weka msimbo kupata orodha ya majina. / Enter the code to get the list of names.</div>'
-        : '');
+    rosterHTML = freeText;      // no roster (save-to-file copy, or the pass ran out mid-session)
   }
 
   $wrap.innerHTML =
@@ -1752,6 +1818,7 @@ function renderStart(){
 
   '<div class="mini" style="margin-top:20px;justify-content:center">'+
     '<button data-go-records="1">Rekodi kwenye simu hii / Records on this phone</button>'+
+    (roster() ? '<button id="btn-signout">Ondoa simu hii / Sign this phone out</button>' : '')+
   '</div>'+
   (CFG.endpoint ? '' :
     '<div class="note" style="margin-top:14px">No Google Sheet is connected yet. Answers are saved on this device and can be exported with the button above. See <b>survey/README.md</b>.</div>');
@@ -1783,25 +1850,12 @@ function renderStart(){
   });
   var fn=document.getElementById('f-name');
   if (fn) fn.addEventListener('input', function(){ S.meta.name=this.value; S.meta.person_id=''; });
-  var bf=document.getElementById('btn-forget');
-  if (bf) bf.addEventListener('click', function(){
-    forgetRoster(); if (S.meta.person_id){ S.meta.person_id=''; S.meta.custom=false; } render();
+  var so=document.getElementById('btn-signout');
+  if (so) so.addEventListener('click', function(){
+    if (so.dataset.sure){ signOut(); return; }
+    so.dataset.sure = '1';
+    so.textContent = 'Gusa tena kuthibitisha — itahitaji intaneti na nambari / Tap again to confirm — needs internet and the passcode';
   });
-  var bc=document.getElementById('btn-code'), fc=document.getElementById('f-code');
-  function tryCode(){
-    var code=(fc.value||'').trim(), msg=document.getElementById('code-msg');
-    if (!code) return;
-    msg.className='code-msg'; msg.textContent='Inapakua… / Loading…'; bc.disabled=true;
-    askRoster({code:code}).then(function(res){
-      if (res.ok){ storeRoster(res); render(); return; }
-      bc.disabled=false; msg.className='code-msg bad'; msg.textContent=rosterError(res);
-      if (res.error!=='locked'){ fc.value=''; fc.focus(); }
-    }).catch(function(){
-      bc.disabled=false; msg.className='code-msg bad'; msg.textContent=rosterError(null);
-    });
-  }
-  if (bc){ bc.addEventListener('click', tryCode);
-           fc.addEventListener('keydown', function(e){ if (e.key==='Enter') tryCode(); }); }
   var fa=document.getElementById('f-asked');
   if (fa) fa.addEventListener('input', function(){ S.meta.asked_by=this.value; });
   document.getElementById('f-date').addEventListener('input', function(){ S.meta.date=this.value; });
@@ -2257,10 +2311,12 @@ window.addEventListener('pagehide', saveDraft);
 wireRecordButtons($wrap);   // once: the buttons it serves are redrawn, the listener is not
 paintOnline();
 paintBadge();
-render();
-recover().then(function(){
-  if (S.screen==='start' || S.screen==='records') render();
+/* Waiting surveys keep sending whether or not anyone gets past the door. */
+recover().catch(function(){}).then(function(){
   paintBadge(); flushQueue(); armBackgroundSend();
+  return door();
+}).then(function(){
+  render();
   refreshRoster();
 });
 </script>

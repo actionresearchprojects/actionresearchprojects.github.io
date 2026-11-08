@@ -4,9 +4,10 @@ A full-screen, one-question-at-a-time version of the paper form
 *House 5 Comfort Survey / Utafiti wa Hali ya Hewa Ndani ya Nyumba* (v2).
 Bilingual, picture-led, big targets, works on a phone in portrait.
 
-Password-gated the same way as `/wiki/`, `/daylight/` and `/graphs/` — the shared
-SHA-256 gate writing `sessionStorage.arc_auth`, so one password unlocks all of them
-for the session. `robots.txt` disallows it and the page carries `noindex, nofollow`.
+Since v2.7 it opens only for the **access code** (`ACCESS_CODE`), checked by
+Google — not the site password that `/wiki/`, `/daylight/` and `/graphs/` share.
+See *The door* below. `robots.txt` disallows it and the page carries
+`noindex, nofollow`.
 
 ## The two things you have to set
 
@@ -41,30 +42,46 @@ Pages serves — HTML, JS, JSON — is readable by anyone, password or not. The
 children's names and bedrooms must never be committed here or shipped in
 the JS.
 
-**How a phone gets it.** Under the Name field there is a *list code* box.
-The phone sends the code to the Apps Script, which checks it **on Google's
-side** against `ACCESS_CODE` in Script Properties and only then returns the
-roster, together with a 30-day *pass* (signed, not guessable). The phone keeps
-the roster and the pass — never the code — and quietly refreshes with the pass
-whenever it is online (at most every 6 h, on launch, coming back online, or
-returning to the app). A phone that has not refreshed for 30 days forgets the
-list and asks for the code again. **Forget the list on this phone** under the
-dropdown wipes it at once.
+**The door (v2.7).** The survey opens with one box: *Nambari ya siri /
+Passcode*. That is `ACCESS_CODE`, set in the Apps Script's Script Properties.
+
+- **First time on a phone (needs internet):** the code goes to the Apps Script,
+  which checks it **on Google's side** and answers with the roster and a 30-day
+  *pass* (signed, not guessable). The app opens with the dropdown already
+  filled. Nothing else to do.
+- **After that, online or not:** the phone checks the code itself, against a
+  salted PBKDF2 hash stored with the roster — never the code itself — and
+  opens. Whenever it is online it refreshes the roster with the pass (at most
+  every 6 h, on launch, coming back online, or returning to the app).
+- **Every launch asks again** (the "inside" flag is in `sessionStorage`, which
+  a fresh launch clears). Deliberate on a shared phone holding answers from minors.
+- **30 days without signal:** the pass and the stored check lapse, and the
+  door says the phone needs internet.
+- Surveys waiting to send keep sending in the background even while the door
+  is shut.
+- **Ondoa simu hii / Sign this phone out** (start screen, two taps) wipes the
+  roster and the stored check from that phone.
+
+The **save-to-file copy** (`survey-offline-local.html`) has no Google to ask,
+so its door takes the old site password, checked by its SHA-256 hash, and its
+Name field is a plain text box.
 
 **Changing the code.** Apps Script → ⚙ Project Settings → Script properties →
 edit `ACCESS_CODE`. Takes effect immediately, no redeploy. Every pass already
-issued stops working, so each phone asks for the new code at its next refresh.
+issued stops working: the next time a phone is online it is signed out to the
+door and needs the new code. (A phone that stays offline still opens with the
+old code until then — it has no way to know.)
 
-**Wrong codes.** Five wrong codes in 15 minutes lock the roster for 15 minutes,
-for everyone (Apps Script cannot tell callers apart). Survey submissions are
-never affected.
+**Wrong codes.** Five wrong codes in 15 minutes lock the door for new
+sign-ins for 15 minutes, for everyone (Apps Script cannot tell callers apart).
+A phone that already knows the code still opens. Survey submissions are never
+affected.
 
 **Other / mama.** The last option in the dropdown, *+ Mwingine / Other (mama)*,
 shows a text box. That row is saved with `person_id` blank and `is_custom`
-TRUE, for review: to promote someone, add them to the Roster tab. A phone with
-no roster yet (or the save-to-file copy, which never uses one) behaves the same
-way: the typed name is saved with `is_custom` TRUE, so a survey is never
-blocked by the roster.
+TRUE, for review: to promote someone, add them to the Roster tab. The
+save-to-file copy, which never has a roster, behaves the same way: the typed
+name is saved with `is_custom` TRUE.
 
 **Bedroom.** Choosing a person pre-fills Q *b_bedroom* from `default_bedroom`,
 once, and only if it is still empty. The surveyor can change it on the
@@ -73,14 +90,17 @@ The codes are `1` Kitanda 1 (Mama) / Bed 1 (Mothers), `2`–`4` Bed 2–4.
 
 **What stays weak**, plainly:
 
-- The page password is checked in the browser. It hides the screen on a shared
-  phone; it protects no data, and anyone reading this repo can bypass it.
+- The survey's questions themselves are public (they are in this repo); the
+  door protects the names, not the form.
+- A phone's offline check is a stretched hash of the code. Someone who takes
+  the phone and its storage could guess at a short code offline — but that
+  phone already holds the roster anyway. Choose a code that is not a word.
 - `SUBMIT_TOKEN` is public, so anyone could post junk rows into the sheet
   (they could not read anything). Rows from strangers would show up as
   `is_custom` TRUE with no `person_id`.
 - A phone holding the roster shows the names to anyone who has the unlocked
-  phone and the page password. Use **Forget the list** on a phone that is
-  leaving the project.
+  phone and the code. Use **Sign this phone out** on a phone that is leaving
+  the project, or change the code.
 - The lockout can be triggered deliberately by a stranger to annoy (15 min).
 
 ## Connecting the Google Sheet
@@ -226,9 +246,8 @@ on one phone.
 
 ### Two things to know
 
-- The password is asked again on each app launch — the gate uses `sessionStorage`,
-  which a fresh launch clears. That is deliberate on a shared device holding
-  answers from minors.
+- The passcode is asked again on each app launch (see *The door*). That is
+  deliberate on a shared device holding answers from minors.
 - Installing the app does not install the Apps Script endpoint. If `CFG.endpoint`
   was blank when a device cached the page, that device keeps the blank one until
   the cache updates. Set the endpoint *before* handing devices out.
