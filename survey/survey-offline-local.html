@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1a6b4a">
 <title>ARC House 5 Comfort Survey (offline copy, saves to this computer)</title>
-<!-- Built by build-offline.js from index.html on 2026-10-18.
+<!-- Built by build-offline.js from index.html on 2026-11-08.
      Self-contained: no network required. Edit index.html, not this file. -->
 <script>
 (function(){
@@ -164,6 +164,20 @@ textarea,input[type=text]{
   font-size:21px;background:#fff;color:var(--ink);outline:none;resize:vertical;
 }
 textarea:focus,input[type=text]:focus{border-color:var(--green)}
+/* the roster dropdown and its access-code box */
+select.pick,input.code{
+  width:100%;border:3px solid var(--line);border-radius:var(--r);padding:14px;
+  font-size:21px;background:#fff;color:var(--ink);outline:none;
+}
+select.pick:focus,input.code:focus{border-color:var(--green)}
+select.pick{appearance:none;-webkit-appearance:none;padding-right:48px;
+  background-image:linear-gradient(45deg,transparent 50%,#667 50%),linear-gradient(135deg,#667 50%,transparent 50%);
+  background-position:calc(100% - 26px) 50%,calc(100% - 18px) 50%;background-size:8px 8px;background-repeat:no-repeat}
+.code-row{display:flex;gap:10px;margin-top:10px}
+.code-row input{flex:1;min-width:0}
+.code-row button{flex:0 0 auto;border:none;border-radius:var(--r);padding:0 18px;font-size:17px;font-weight:500;background:var(--green);color:#fff;cursor:pointer}
+.code-msg{font-size:14px;color:var(--muted);margin-top:8px;min-height:18px}
+.code-msg.bad{color:#b3261e}
 textarea{min-height:150px;line-height:1.4}
 .locked{background:#eef2f0;color:var(--muted);pointer-events:none}
 .lock-note{font-size:14px;color:var(--muted);margin-top:8px;display:flex;gap:6px;align-items:flex-start}
@@ -822,12 +836,13 @@ var CFG = {
   /* Must match SUBMIT_TOKEN in apps-script.gs */
   token: 'arc-house5-2026',
 
-  /* The girls, in the order you want them listed. Leave the array empty
-     to get a free-text name box instead. Initials or IDs are fine. */
-  roster: [],
+  /* There is no roster in this file, on purpose: this repository is public.
+     The names live in the Roster tab of the private sheet, and the Apps
+     Script hands them over only for the right access code (see README,
+     "The roster"). Until a phone has it, Name is a free-text box. */
 
   house: 'House 5',
-  version: '2.4-offline-local'
+  version: '2.6-offline-local'
 };
 /* ------------------------------------------------------ */
 
@@ -907,6 +922,14 @@ var QS = [
    hintSw:'Andika hapa.', hintEn:'Write it here.'},
 
   /* ===== SECTION B — about last night, her own bedroom ===== */
+  {id:'b_bedroom', sec:'B', type:'choice', layout:'g2',
+   sw:'Unalala katika chumba gani cha kulala?',
+   en:'Which bedroom do you sleep in?',
+   opts:[{v:1, sw:'Kitanda 1 (Mama)',  en:'Bed 1 (Mothers)', icon:'i-room-bed', c:'var(--s2)'},
+         {v:2, sw:'Kitanda 2',         en:'Bed 2',           icon:'i-room-bed', c:'var(--green)'},
+         {v:3, sw:'Kitanda 3',         en:'Bed 3',           icon:'i-room-bed', c:'var(--p1)'},
+         {v:4, sw:'Kitanda 4',         en:'Bed 4',           icon:'i-room-bed', c:'var(--p2)'}]},
+
   {id:'b6_bedroom_last_night', sec:'B', type:'scale', opts:SENSATION,
    sw:'Usiku uliopita, chumba chako cha kulala kilikuwaje?',
    en:'Last night, how did your bedroom feel?',
@@ -948,6 +971,14 @@ var QS = [
    opts:[{v:1, sw:'Joto sana',   en:'Too hot',  icon:'i-woke-hot',  c:'var(--p3)'},
          {v:2, sw:'Baridi sana', en:'Too cold', icon:'i-woke-cold', c:'var(--s3)'},
          {v:0, sw:'Hapana',      en:'No',       icon:'i-no',        c:'var(--muted)'}]},
+
+  {id:'b12b_cover_change', sec:'B', type:'choice', layout:'g3',
+   showIf:function(a){ return a.b12_woke_hot_cold === 1 || a.b12_woke_hot_cold === 2; },
+   sw:'Je, uliongeza au kuondoa shuka usiku?',
+   en:'Did you add or remove a cover in the night?',
+   opts:[{v:1, sw:'Niliongeza shuka',  en:'Added a cover',   icon:'i-blanket-full', c:'var(--s2)'},
+         {v:2, sw:'Niliondoa shuka',   en:'Removed a cover', icon:'i-blanket-none', c:'var(--p2)'},
+         {v:0, sw:'Sikubadilisha',     en:'No change',       icon:'i-no',           c:'var(--muted)'}]},
 
   /* ===== SECTION C — this room, right now. 13 and 14 before any options ===== */
   {id:'c13_feel_words', sec:'C', type:'text', noPrime:true,
@@ -1096,11 +1127,12 @@ var SEC_NAME = {
 /* the column order written to the sheet — must match apps-script.gs */
 var FIELDS = ['submitted_at','local_time','mode','lang','house','name','asked_by','date','time',
   'a_room','a1_doors_open','a2_people','a3_fans_on','a4_curtains_closed','a5_used_in_room','a5_other_detail',
-  'b6_bedroom_last_night','b7_used_fan','b8_why_no_fan','b9_bed_net','b10_covering','b11_slept_well','b12_woke_hot_cold',
+  'b_bedroom','b6_bedroom_last_night','b7_used_fan','b8_why_no_fan','b9_bed_net','b10_covering','b11_slept_well','b12_woke_hot_cold','b12b_cover_change',
   'c13_feel_words','c14_more_detail','c15_sensation_now','c16_preference','c17_comfortable',
   'c18_clothing','c18_layers','c19_activity','c20_went_outside','c20_outside_activity',
   'd21_mosquito_bother','d22_where_house','d23_where_room','d24_time_of_day','d25_seasonal','e_notes',
-  'duration_seconds','app_version','device','uid'];
+  'duration_seconds','app_version','device','uid',
+  'person_id','is_custom'];   // new in 2.6; the script adds them as columns at the far end
 
 /* ============================================================
    state
@@ -1110,7 +1142,7 @@ var S = {
   screen : 'start',
   lang   : 'both',       // both | sw | en
   mode   : 'surveyor',   // surveyor | self
-  meta   : {name:'', asked_by:'', date:'', time:''},
+  meta   : {name:'', asked_by:'', date:'', time:'', person_id:'', custom:false},
   ans    : {},
   i      : 0,
   started: 0,
@@ -1315,7 +1347,10 @@ function askPersist(){
 
 /* ---------- drafts ---------- */
 function saveDraft(){
-  if (!S.uid) return;
+  /* On the thank-you screen the record is already queued or sent. Saving it
+     again (phone locked, app hidden, Home tapped) used to bring it back as an
+     unfinished draft with the same uid, and resuming it sent it twice. */
+  if (!S.uid || S.screen === 'done') return;
   var st = steps();
   var d = drafts();
   d[S.uid] = {
@@ -1523,10 +1558,81 @@ function armBackgroundSend(){
   }).catch(function(){});
 }
 
+/* ---------- the roster ----------
+   Names never ship in this file (the repository is public). The phone asks
+   the Apps Script for them with the access code, once; the script checks the
+   code on Google's side and answers with the roster and a 30-day pass. Only
+   the pass is kept, not the code, and the phone uses it to refresh the list
+   quietly whenever it is online. A pass that is not refreshed for 30 days,
+   or one cancelled by changing the code, means asking for the code again.
+   Without a roster the Name field is a plain text box, so a survey is never
+   blocked by it. */
+var ROSTER_KEY = PREFIX + 'roster', ROSTER_REFRESH = 6 * 3600e3, CUSTOM = '__custom';
+
+function rosterOn(){ return CFG.sink !== 'file' && !!CFG.endpoint; }
+function roster(){
+  if (!rosterOn()) return null;            // the save-to-file copy never uses one
+  var r = lsGet(ROSTER_KEY, null);
+  if (!r || !r.people || !r.exp) return null;
+  if (Date.now() > r.exp){ forgetRoster(); return null; }
+  return r;
+}
+function forgetRoster(){ try{ localStorage.removeItem(ROSTER_KEY); }catch(e){} }
+function rosterPerson(id){
+  var r = roster(); if (!r || !id) return null;
+  return r.people.filter(function(p){ return p.id === id; })[0] || null;
+}
+function storeRoster(res){
+  lsSet(ROSTER_KEY, {people:res.people || [], pass:res.pass, exp:Date.now() + (res.days || 30) * DAY, at:Date.now()});
+}
+function askRoster(body){
+  body.action = 'roster';
+  return fetch(CFG.endpoint, {
+    method : 'POST',
+    headers: {'Content-Type':'text/plain;charset=utf-8'},
+    body   : JSON.stringify(body)
+  }).then(function(r){
+    if (!r.ok) throw new Error('HTTP '+r.status);
+    return r.text();
+  }).then(function(t){
+    try{ return JSON.parse(t); }catch(e){ throw new Error('not json'); }
+  });
+}
+function RL(sw, en){ return S.lang==='en' ? en : (S.lang==='sw' ? sw : sw+' / '+en); }
+function rosterError(res){
+  var e = res && res.error;
+  if (e === 'wrong code') return RL('Msimbo si sahihi.','Wrong code.') +
+    (res.tries_left != null ? ' ' + RL('Majaribio '+res.tries_left+' yamebaki.', res.tries_left+' tries left.') : '');
+  if (e === 'locked') return RL('Majaribio mengi mno. Subiri dakika 15.','Too many tries. Wait 15 minutes.');
+  if (e === 'not configured') return RL('Msimbo haujawekwa kwenye Google bado.','No access code has been set in Google yet.');
+  return RL('Imeshindikana. Jaribu tena ukiwa na intaneti.','Could not load. Try again with internet.');
+}
+function refreshRoster(force){
+  var r = roster();
+  if (!r || !rosterOn() || !navigator.onLine) return;
+  if (!force && Date.now() - (r.at || 0) < ROSTER_REFRESH) return;
+  askRoster({pass:r.pass}).then(function(res){
+    if (res.ok) storeRoster(res);
+    else if (res.error === 'expired') forgetRoster();      // code changed, or pass too old
+    else return;
+    if (S.screen === 'start') render();
+  }).catch(function(){ /* offline or no reply: keep what we have */ });
+}
+/* Pre-fill the bedroom from the roster, once, and only if it is still empty —
+   anything the surveyor has chosen stands. */
+function prefillBedroom(){
+  var p = rosterPerson(S.meta.person_id);
+  if (!p || p.bed == null) return;
+  var q = QS.filter(function(x){ return x.id === 'b_bedroom'; })[0];
+  if (!q || q.opts.map(function(o){ return o.v; }).indexOf(p.bed) === -1) return;
+  var v = S.ans.b_bedroom;
+  if (v === undefined || v === null || v === '') S.ans.b_bedroom = p.bed;
+}
+
 /* ---------- what differs between the two apps ---------- */
 function recLabel(m){ return (m && m.name) || '—'; }
 function freshAns(){ return {}; }
-function resetMeta(){ S.meta.name = ''; }
+function resetMeta(){ S.meta.name = ''; S.meta.person_id = ''; S.meta.custom = false; }
 
 function paintBadge(){
   if (CFG.sink === 'file'){ $badge.classList.add('hide'); return; }
@@ -1579,11 +1685,33 @@ function renderStart(){
   if (!S.meta.time) S.meta.time = now();
 
 
-  var rosterHTML = CFG.roster.length
-    ? '<div class="chips" id="roster">' + CFG.roster.map(function(n){
-        return '<button class="chip'+(S.meta.name===n?' on':'')+'" data-name="'+esc(n)+'">'+esc(n)+'</button>';
-      }).join('') + '</div>'
-    : '<input type="text" id="f-name" placeholder="Jina / Name" value="'+esc(S.meta.name)+'">';
+  var R = roster();
+  // A draft from before 2.6, or a name typed by hand, shows as "Other".
+  if (R && !S.meta.person_id && S.meta.name) S.meta.custom = true;
+  if (R && S.meta.person_id && !rosterPerson(S.meta.person_id)){ S.meta.person_id = ''; S.meta.custom = true; }
+  var freeText = '<input type="text" id="f-name" placeholder="Jina / Name" value="'+esc(S.meta.name)+'"'+
+    (R ? ' style="margin-top:10px"' : '')+'>';
+  var rosterHTML;
+  if (R){
+    var sel = S.meta.person_id || (S.meta.custom ? CUSTOM : '');
+    rosterHTML =
+      '<select class="pick" id="f-person">'+
+        '<option value=""'+(sel===''?' selected':'')+'>— Chagua / Choose —</option>'+
+        R.people.map(function(p){
+          return '<option value="'+esc(p.id)+'"'+(sel===p.id?' selected':'')+'>'+esc(p.name)+'</option>';
+        }).join('')+
+        '<option value="'+CUSTOM+'"'+(sel===CUSTOM?' selected':'')+'>+ Mwingine / Other (mama)</option>'+
+      '</select>'+
+      (sel===CUSTOM ? freeText.replace('placeholder="Jina / Name"','placeholder="Andika jina / Type the name"') : '')+
+      '<div class="mini" style="margin-top:8px"><button id="btn-forget">Sahau orodha kwenye simu hii / Forget the list on this phone</button></div>';
+  } else {
+    rosterHTML = freeText +
+      (rosterOn()
+        ? '<div class="code-row"><input class="code" type="password" id="f-code" autocomplete="off" '+
+            'placeholder="Msimbo wa orodha / List code"><button id="btn-code">Fungua / Load</button></div>'+
+          '<div class="code-msg" id="code-msg">Weka msimbo kupata orodha ya majina. / Enter the code to get the list of names.</div>'
+        : '');
+  }
 
   $wrap.innerHTML =
   '<div class="logo"><div class="mark">'+icon('i-mark')+'</div>'+
@@ -1644,13 +1772,36 @@ function renderStart(){
     S.mode=b.dataset.mode; render();
   });
   // roster
-  var r=document.getElementById('roster');
-  if (r) r.addEventListener('click', function(e){
-    var b=e.target.closest('[data-name]'); if(!b) return;
-    S.meta.name = (S.meta.name===b.dataset.name) ? '' : b.dataset.name; render();
+  var fp=document.getElementById('f-person');
+  if (fp) fp.addEventListener('change', function(){
+    var v=this.value, p=rosterPerson(v);
+    if (p){ S.meta.person_id=p.id; S.meta.name=p.name; S.meta.custom=false; }
+    else if (v===CUSTOM){ S.meta.person_id=''; S.meta.name=''; S.meta.custom=true; }
+    else { S.meta.person_id=''; S.meta.name=''; S.meta.custom=false; }
+    render();
+    var f=document.getElementById('f-name'); if (f) f.focus();
   });
   var fn=document.getElementById('f-name');
-  if (fn) fn.addEventListener('input', function(){ S.meta.name=this.value; });
+  if (fn) fn.addEventListener('input', function(){ S.meta.name=this.value; S.meta.person_id=''; });
+  var bf=document.getElementById('btn-forget');
+  if (bf) bf.addEventListener('click', function(){
+    forgetRoster(); if (S.meta.person_id){ S.meta.person_id=''; S.meta.custom=false; } render();
+  });
+  var bc=document.getElementById('btn-code'), fc=document.getElementById('f-code');
+  function tryCode(){
+    var code=(fc.value||'').trim(), msg=document.getElementById('code-msg');
+    if (!code) return;
+    msg.className='code-msg'; msg.textContent='Inapakua… / Loading…'; bc.disabled=true;
+    askRoster({code:code}).then(function(res){
+      if (res.ok){ storeRoster(res); render(); return; }
+      bc.disabled=false; msg.className='code-msg bad'; msg.textContent=rosterError(res);
+      if (res.error!=='locked'){ fc.value=''; fc.focus(); }
+    }).catch(function(){
+      bc.disabled=false; msg.className='code-msg bad'; msg.textContent=rosterError(null);
+    });
+  }
+  if (bc){ bc.addEventListener('click', tryCode);
+           fc.addEventListener('keydown', function(e){ if (e.key==='Enter') tryCode(); }); }
   var fa=document.getElementById('f-asked');
   if (fa) fa.addEventListener('input', function(){ S.meta.asked_by=this.value; });
   document.getElementById('f-date').addEventListener('input', function(){ S.meta.date=this.value; });
@@ -1661,7 +1812,10 @@ function renderStart(){
       alertish('Tafadhali andika jina. / Please enter a name.'); return;
     }
     if (S.meta.asked_by){ var p=prefs(); p.asked_by=S.meta.asked_by; savePrefs(p); }
-    if (S.uid){ S.i=0; S.screen='q'; saveDraft(); } else newSurvey();
+    S.meta.name = S.meta.name.trim();
+    if (S.uid){ S.i=0; S.screen='q'; } else newSurvey();
+    prefillBedroom();
+    saveDraft();
     render();
   });
 
@@ -1935,6 +2089,10 @@ function buildPayload(){
   p.app_version      = CFG.version;
   p.device           = navigator.userAgent;
   p.uid              = S.uid;
+  /* Picked from the roster: its id. Typed by hand (Other / mama, or no
+     roster on this phone yet): no id, and flagged so it can be reviewed. */
+  p.person_id        = S.meta.person_id || '';
+  p.is_custom        = !p.person_id;
   return p;
 }
 
@@ -1964,6 +2122,13 @@ function submit(){
     return;
   }
 
+  /* Belt and braces with saveDraft(): a record this phone has already sent is
+     never queued a second time. (Google also ignores a repeated uid.) */
+  if (sentLog().map(function(x){ return recId(x.p); }).indexOf(recId(payload)) > -1){
+    deleteDraft(S.uid);
+    S.screen='done'; paintChrome(); renderDone();
+    return;
+  }
   var q = queue();
   if (q.map(recId).indexOf(recId(payload)) === -1) q.push(payload);
   var ok = setQueue(q);
@@ -2080,12 +2245,12 @@ function paintOnline(){
   el.classList.toggle('hide', !off);
   el.textContent = '\u25CF ' + (S.lang==='en' ? 'offline' : 'nje ya mtandao');
 }
-window.addEventListener('online',  function(){ paintOnline(); flushQueue(); });
+window.addEventListener('online',  function(){ paintOnline(); flushQueue(); refreshRoster(); });
 window.addEventListener('offline', paintOnline);
 
 /* back in front: try the queue again; going to the background: make sure the draft is down */
 document.addEventListener('visibilitychange', function(){
-  if (document.hidden) saveDraft(); else flushQueue();
+  if (document.hidden) saveDraft(); else { flushQueue(); refreshRoster(); }
 });
 window.addEventListener('pagehide', saveDraft);
 
@@ -2096,6 +2261,7 @@ render();
 recover().then(function(){
   if (S.screen==='start' || S.screen==='records') render();
   paintBadge(); flushQueue(); armBackgroundSend();
+  refreshRoster();
 });
 </script>
 </body>

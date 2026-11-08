@@ -8,15 +8,80 @@ Password-gated the same way as `/wiki/`, `/daylight/` and `/graphs/` — the sha
 SHA-256 gate writing `sessionStorage.arc_auth`, so one password unlocks all of them
 for the session. `robots.txt` disallows it and the page carries `noindex, nofollow`.
 
-## The three things you have to set
+## The two things you have to set
 
 All at the top of `index.html`, in `var CFG`:
 
 | key | what it is |
 |---|---|
 | `endpoint` | the Google Apps Script `/exec` URL (below). **Blank until you do the setup** |
-| `token` | shared secret; must equal `SUBMIT_TOKEN` in `apps-script.gs` |
-| `roster` | the girls' names, e.g. `['Amina','Zawadi',…]`. Leave `[]` for a free-text box |
+| `token` | must equal `SUBMIT_TOKEN` in `apps-script.gs`. It is in a public file, so it only keeps out accidental junk |
+
+There is deliberately **no roster in this file** — see *The roster* below.
+
+## The roster (v2.6)
+
+The surveyor picks the person from a dropdown instead of typing a name. Each
+row then carries a stable `person_id` as well as the display name, so a full
+name, a nickname and a misspelling of the same girl stop being three people.
+
+**Where it lives.** A **Roster** tab in the private Google Sheet, one row per person:
+
+| person_id | display_name | role | default_bedroom | aliases | active |
+|---|---|---|---|---|---|
+| `H5-01` | first name only | girl / carer | `1`–`4`, or blank | other spellings, separated by `\|` | `TRUE` / `FALSE` |
+
+Edit it in Sheets; no code change and no redeploy. Phones pick changes up the
+next time they refresh. To retire someone set `active` to `FALSE` rather than
+deleting the row, so their id is never reused. `aliases` stays in the sheet —
+it is never sent to a phone.
+
+**Why not in the page.** This repository is public, and everything GitHub
+Pages serves — HTML, JS, JSON — is readable by anyone, password or not. The
+children's names and bedrooms must never be committed here or shipped in
+the JS.
+
+**How a phone gets it.** Under the Name field there is a *list code* box.
+The phone sends the code to the Apps Script, which checks it **on Google's
+side** against `ACCESS_CODE` in Script Properties and only then returns the
+roster, together with a 30-day *pass* (signed, not guessable). The phone keeps
+the roster and the pass — never the code — and quietly refreshes with the pass
+whenever it is online (at most every 6 h, on launch, coming back online, or
+returning to the app). A phone that has not refreshed for 30 days forgets the
+list and asks for the code again. **Forget the list on this phone** under the
+dropdown wipes it at once.
+
+**Changing the code.** Apps Script → ⚙ Project Settings → Script properties →
+edit `ACCESS_CODE`. Takes effect immediately, no redeploy. Every pass already
+issued stops working, so each phone asks for the new code at its next refresh.
+
+**Wrong codes.** Five wrong codes in 15 minutes lock the roster for 15 minutes,
+for everyone (Apps Script cannot tell callers apart). Survey submissions are
+never affected.
+
+**Other / mama.** The last option in the dropdown, *+ Mwingine / Other (mama)*,
+shows a text box. That row is saved with `person_id` blank and `is_custom`
+TRUE, for review: to promote someone, add them to the Roster tab. A phone with
+no roster yet (or the save-to-file copy, which never uses one) behaves the same
+way: the typed name is saved with `is_custom` TRUE, so a survey is never
+blocked by the roster.
+
+**Bedroom.** Choosing a person pre-fills Q *b_bedroom* from `default_bedroom`,
+once, and only if it is still empty. The surveyor can change it on the
+question. Bedroom is only recorded from v2.5 onwards; nothing is back-filled.
+The codes are `1` Kitanda 1 (Mama) / Bed 1 (Mothers), `2`–`4` Bed 2–4.
+
+**What stays weak**, plainly:
+
+- The page password is checked in the browser. It hides the screen on a shared
+  phone; it protects no data, and anyone reading this repo can bypass it.
+- `SUBMIT_TOKEN` is public, so anyone could post junk rows into the sheet
+  (they could not read anything). Rows from strangers would show up as
+  `is_custom` TRUE with no `person_id`.
+- A phone holding the roster shows the names to anyone who has the unlocked
+  phone and the page password. Use **Forget the list** on a phone that is
+  leaving the project.
+- The lockout can be triggered deliberately by a stranger to annoy (15 min).
 
 ## Connecting the Google Sheet
 
@@ -126,7 +191,7 @@ node build-offline.js --local   # survey-offline-local.html  -> saves to the com
 ```
 
 It inlines the fonts and icon, strips the service worker and manifest (meaningless
-off a server), tags the version `2.0-offline`, and fails loudly if anything external
+off a server), tags the version `<version>-offline`, and fails loudly if anything external
 is left behind. Do not edit `survey-offline.html` by hand — edit `index.html` and
 rebuild, or the two drift apart.
 
@@ -191,6 +256,11 @@ the assumption that any step can be interrupted. The same code is in
 
 **On the phone**
 
+- After **Tuma** the record is never saved as a draft again. (Up to v2.5 the
+  phone locking, or Home being tapped, on the thank-you screen brought it back
+  as an unfinished draft with the same uid; resuming it sent it twice — the
+  6 Nov duplicate.) A record the phone has already sent is also never queued
+  a second time.
 - Every record gets its own `uid` on its first tap. Unfinished records are kept
   separately, so several can be in progress and starting a new one never touches
   another. (Before Oct 2026 there was one draft slot: tapping home and starting
@@ -292,6 +362,10 @@ numbers, not labels, so they sort and plot directly:
 - `d23_where_room` — comma-separated 1–5, or `0` I do not know (exclusive)
 - `d24_time_of_day` — comma-separated 1–4
 - `d25_seasonal` — free text
+- `person_id` — from the Roster tab, e.g. `H5-06`; blank when the name was typed
+- `is_custom` — `TRUE` when the name was typed (Other / mama, or no roster on
+  the phone), `FALSE` when picked from the roster. `person_id` and `is_custom`
+  were added as new columns at the far right, so no existing column moved
 
 `c13_feel_words` and `c14_more_detail` are free text, and are the two columns the
 study is actually about. `d25_seasonal` and `e_notes` are free text too.
