@@ -1,6 +1,6 @@
 /* ARC Tank Monitoring — offline service worker.
    Bump CACHE whenever index.html changes, or devices keep serving the old page. */
-var CACHE = 'arc-tanks-v1.1.0';
+var CACHE = 'arc-tanks-v1.2.0';
 
 var ASSETS = [
   './',

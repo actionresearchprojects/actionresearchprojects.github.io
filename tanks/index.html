@@ -550,7 +550,7 @@ var CFG = {
   tanks: ['1','2','3'],
 
   site: "Children's Ecovillage",
-  version: '1.1'
+  version: '1.2'
 };
 /* ------------------------------------------------------ */
 
@@ -959,7 +959,10 @@ function askPersist(){
 
 /* ---------- drafts ---------- */
 function saveDraft(){
-  if (!S.uid) return;
+  /* On the thank-you screen the record is already queued or sent. Saving it
+     again (phone locked, app hidden, Home tapped) used to bring it back as an
+     unfinished draft with the same uid, and resuming it sent it twice. */
+  if (!S.uid || S.screen === 'done') return;
   var st = steps();
   var d = drafts();
   d[S.uid] = {
@@ -1620,6 +1623,13 @@ function submit(){
     return;
   }
 
+  /* Belt and braces with saveDraft(): a record this phone has already sent is
+     never queued a second time. (Google also ignores a repeated uid.) */
+  if (sentLog().map(function(x){ return recId(x.p); }).indexOf(recId(payload)) > -1){
+    deleteDraft(S.uid);
+    S.screen='done'; paintChrome(); renderDone();
+    return;
+  }
   var q = queue();
   if (q.map(recId).indexOf(recId(payload)) === -1) q.push(payload);
   var ok = setQueue(q);
